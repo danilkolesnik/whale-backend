@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthenticateDto } from './dto/authenticate.dto';
 import { verifyTelegramWebAppData } from '../utils/checker';
+import { InventoryItem, Balance } from '../types/inventory.types';
 
 @Injectable()
 export class AuthService {
@@ -40,14 +41,21 @@ export class AuthService {
         data: {
           telegramId: userData.id,
           displayName: userData.first_name,
-          isNewUser: true
+          isNewUser: true,
+          inventory: [],
+          balance: { money: 0, shield: 0 }
         }
       });
     }
 
     const payload = { sub: user.id, telegramId: user.telegramId };
     return {
-      access_token: this.jwtService.sign(payload)
+      access_token: this.jwtService.sign(payload),
+      // user: {
+      //   ...user,
+      //   inventory: user.inventory as unknown as InventoryItem[],
+      //   balance: user.balance as unknown as Balance
+      // }
     };
   }
 
@@ -62,9 +70,35 @@ export class AuthService {
         throw new UnauthorizedException('User not found');
       }
 
-      return user;
+      return {
+        ...user,
+        inventory: user.inventory as unknown as InventoryItem[],
+        balance: user.balance as unknown as Balance
+      };
     } catch {
       throw new UnauthorizedException('Invalid token');
     }
+  }
+
+  async createTestUser() {
+    const testUser = await this.prisma.user.create({
+      data: {
+        telegramId: '12365666666',
+        displayName: 'Test User',
+        isNewUser: false,
+        inventory: [],
+        balance: { money: 0, shield: 0 }
+      }
+    });
+
+    const payload = { sub: testUser.id, telegramId: testUser.telegramId };
+    return {
+      user: {
+        ...testUser,
+        inventory: testUser.inventory as unknown as InventoryItem[],
+        balance: testUser.balance as unknown as Balance
+      },
+      access_token: this.jwtService.sign(payload)
+    };
   }
 } 

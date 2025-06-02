@@ -1,6 +1,8 @@
-import { Controller, Post, Body, Get, Headers, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Headers, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { AuthenticateDto } from './dto/authenticate.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -44,13 +46,14 @@ export class AuthController {
     }
   })
   @ApiResponse({ status: 401, description: 'Invalid Telegram data' })
-  async authenticate(@Body('initData') initData: string) {
-    return this.authService.authenticate(initData);
+  async authenticate(@Body() authenticateDto: AuthenticateDto) {
+    return this.authService.authenticate(authenticateDto.initData);
   }
 
   @Get('verify')
   @ApiOperation({ summary: 'Verify JWT token and get user data' })
   @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiResponse({ 
     status: 200, 
     description: 'Token is valid',
@@ -66,10 +69,12 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: 'Invalid or missing token' })
   async verifyUser(@Headers('authorization') auth: string) {
-    if (!auth) {
-      throw new UnauthorizedException('No token provided');
-    }
-    const token = auth.replace('Bearer ', '');
+    const token = auth.split(' ')[1];
     return this.authService.verifyUser(token);
+  }
+
+  @Post('test-user')
+  async createTestUser() {
+    return this.authService.createTestUser();
   }
 } 

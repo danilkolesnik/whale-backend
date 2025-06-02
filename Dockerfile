@@ -3,18 +3,16 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
+COPY prisma ./prisma/
 
-RUN npm install
+RUN npm install --production
 
 COPY . .
 
-# Генерируем Prisma Client
 RUN npx prisma generate
 
-# В режиме разработки не будем делать build
-# RUN npm run build
+RUN npm run build
 
 EXPOSE 3000
 
-# Используем start:dev для разработки
-CMD ["npm", "run", "start:dev"] 
+CMD ["npm", "run", "start:prod"]
