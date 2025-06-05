@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
-import { AuthenticateDto } from './dto/authenticate.dto';
+import { CryptAPIService } from '../utils/cryptoServei';
 import { verifyTelegramWebAppData } from '../utils/checker';
 import { InventoryItem, Balance } from '../types/inventory.types';
 
@@ -51,11 +51,6 @@ export class AuthService {
     const payload = { sub: user.id, telegramId: user.telegramId };
     return {
       access_token: this.jwtService.sign(payload),
-      // user: {
-      //   ...user,
-      //   inventory: user.inventory as unknown as InventoryItem[],
-      //   balance: user.balance as unknown as Balance
-      // }
     };
   }
 
@@ -70,10 +65,17 @@ export class AuthService {
         throw new UnauthorizedException('User not found');
       }
 
+      const cryptApiService = new CryptAPIService();
+
+      const usdtAddressBEP20 = await cryptApiService.createBEP20Payment(user.telegramId, "bep20");
+      const usdtAddressTRC20 = await cryptApiService.createBEP20Payment(user.telegramId, "trc20");
+
       return {
         ...user,
         inventory: user.inventory as unknown as InventoryItem[],
-        balance: user.balance as unknown as Balance
+        balance: user.balance as unknown as Balance,
+        usdtAddressBEP20: usdtAddressBEP20.data.address_in,
+        usdtAddressTRC20: usdtAddressTRC20.data.address_in
       };
     } catch {
       throw new UnauthorizedException('Invalid token');
@@ -83,11 +85,11 @@ export class AuthService {
   async createTestUser() {
     const testUser = await this.prisma.user.create({
       data: {
-        telegramId: '12365666666',
+        telegramId: '12345678',
         displayName: 'Test User',
         isNewUser: false,
         inventory: [],
-        balance: { money: 0, shield: 0 }
+        balance: { money: 100000, shield: 0 }
       }
     });
 

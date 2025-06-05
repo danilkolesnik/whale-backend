@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { TelegramService } from './telegram.service';
 import { ConfigModule } from '@nestjs/config';
+import { TelegramSubService } from './telegram-sub.service';
 
 @Module({
   imports: [ConfigModule],
-  providers: [TelegramService],
-  exports: [TelegramService],
+  providers: [TelegramSubService],
+  exports: [TelegramSubService]
 })
 export class TelegramModule {} 

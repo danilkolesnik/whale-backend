@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "BuyOrder" ALTER COLUMN "currency" DROP NOT NULL,
+ALTER COLUMN "itemType" DROP NOT NULL;

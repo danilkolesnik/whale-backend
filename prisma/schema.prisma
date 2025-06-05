@@ -11,15 +11,18 @@ datasource db {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  telegramId  String   @unique
-  displayName String
-  isNewUser   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  inventory   Json     @default("[]")
-  balance     Json     @default("{\"money\": 0, \"shield\": 0}")
-  equipment   Json     @default("[]")
+  id            Int      @id @default(autoincrement())
+  telegramId    String   @unique
+  displayName      String?
+  firstName     String?
+  lastName      String?
+  isNewUser     Boolean  @default(true)
+  balance       Json     @default("{\"money\": 0, \"shield\": 0}")
+  inventory     Json     @default("[]")
+  equipment     Json     @default("[]")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  tasks         Task[]
 }
 
 model Item {
@@ -31,4 +34,42 @@ model Item {
   price     Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model MarketListing {
+  id        Int      @id @default(autoincrement())
+  sellerId  String
+  item      Json
+  price     Float
+  currency  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sellerId])
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  type        String   // 'subscription' или 'invite'
+  coin        Int
+  status      String   // 'available', 'in_progress', 'completed'
+  completedAt DateTime?
+  chatId      Int?
+  userId      String   // ID пользователя, выполняющего задачу
+  user        User     @relation(fields: [userId], references: [telegramId])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
+
+model BuyOrder {
+  id        Int      @id @default(autoincrement())
+  buyerId   String
+  itemType  String?
+  level     Int
+  price     Int
+  currency  String?
+  createdAt DateTime @default(now())
 }

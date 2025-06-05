@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   postgres:
+    mem_limit: 1GB
     image: postgres:16
     container_name: whale-postgres
     ports:
@@ -18,6 +19,7 @@ services:
       retries: 5
 
   backend:
+    mem_limit: 1GB
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -38,6 +40,7 @@ services:
     command: sh -c "npm install && npx prisma generate && nodemon --legacy-watch --watch src --ext ts,json --exec 'npm run start:dev'"
 
   bot:
+    mem_limit: 1GB
     build:
       context: .
       dockerfile: Dockerfile.dev

@@ -7,7 +7,10 @@ import { AuthModule } from './auth/auth.module';
 import { TelegramModule } from './telegram/telegram.module';
 import { ShopModule } from './shop/shop.module';
 import { UserModule } from './user/user.module';
+import { MarketModule } from './market/market.module';
 import configuration from './config/configuration';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CronService } from './schedule/cron.service';
 
 @Module({
   imports: [
@@ -20,8 +23,10 @@ import configuration from './config/configuration';
     TelegramModule,
     ShopModule,
     UserModule,
+    MarketModule,
+    ScheduleModule.forRoot()
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, CronService],
 })
 export class AppModule {}

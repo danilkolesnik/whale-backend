@@ -1,77 +1,54 @@
-import { Controller, Post, Get, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, UseGuards, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('equip/:itemId')
-  @ApiBearerAuth()
+  @Post('items/:itemId/equip')
   @ApiOperation({ summary: 'Equip an item' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        telegramId: {
-          type: 'string',
-          description: 'Telegram ID of the user',
-          example: '123456789'
-        }
-      },
-      required: ['telegramId']
-    }
-  })
-  @ApiResponse({ status: 200, description: 'Item successfully equipped' })
-  @ApiResponse({ status: 400, description: 'Maximum equipment limit reached or item already equipped' })
+  @ApiResponse({ status: 200, description: 'Item equipped successfully' })
   @ApiResponse({ status: 404, description: 'User or item not found' })
-  equipItem(@Param('itemId') itemId: string, @Body() body: { telegramId: string }) {
+  @ApiResponse({ status: 400, description: 'Maximum equipment limit reached or item already equipped' })
+  async equipItem(
+    @Param('itemId') itemId: string,
+    @Body() body: { telegramId: string }
+  ) {
     return this.userService.equipItem(body.telegramId, parseInt(itemId));
   }
 
-  @Post('unequip/:itemId')
-  @ApiBearerAuth()
+  @Post('items/:itemId/unequip')
   @ApiOperation({ summary: 'Unequip an item' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        telegramId: {
-          type: 'string',
-          description: 'Telegram ID of the user',
-          example: '123456789'
-        }
-      },
-      required: ['telegramId']
-    }
-  })
-  @ApiResponse({ status: 200, description: 'Item successfully unequipped' })
+  @ApiResponse({ status: 200, description: 'Item unequipped successfully' })
   @ApiResponse({ status: 404, description: 'User or item not found' })
-  unequipItem(@Param('itemId') itemId: string, @Body() body: { telegramId: string }) {
+  async unequipItem(
+    @Param('itemId') itemId: string,
+    @Body() body: { telegramId: string }
+  ) {
     return this.userService.unequipItem(body.telegramId, parseInt(itemId));
   }
 
+  @Post('items/:itemId/upgrade')
+  @ApiOperation({ summary: 'Upgrade an item' })
+  @ApiResponse({ status: 200, description: 'Item upgraded successfully' })
+  @ApiResponse({ status: 404, description: 'User or item not found' })
+  @ApiResponse({ status: 400, description: 'Not enough money for upgrade' })
+  async upgradeItem(
+    @Param('itemId') itemId: string,
+    @Body() body: { telegramId: string }
+  ) {
+    return this.userService.upgradeItem(body.telegramId, parseInt(itemId));
+  }
+
   @Get('equipment')
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get user equipment' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        telegramId: {
-          type: 'string',
-          description: 'Telegram ID of the user',
-          example: '123456789'
-        }
-      },
-      required: ['telegramId']
-    }
-  })
   @ApiResponse({ status: 200, description: 'Return user equipment and total shield' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  getEquipment(@Body() body: { telegramId: string }) {
-    return this.userService.getEquipment(body.telegramId);
+  async getEquipment(
+    @Query('telegramId') telegramId: string
+  ) {
+    return this.userService.getEquipment(telegramId);
   }
 } 

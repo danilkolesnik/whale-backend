@@ -54,9 +54,9 @@ export class ShopService {
       shield: item.shield,
       type: item.type,
       price: item.price,
+      isActive: false,
     });
 
-    // Update user's balance and inventory
     return await this.prisma.user.update({
       where: { telegramId },
       data: {

@@ -14,37 +14,31 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
-    // Parse user's inventory and equipment
     const inventory = user.inventory as any[];
     const equipment = user.equipment as any[] || [];
 
-    // Find item in inventory
     const item = inventory.find(i => i.id === itemId);
     if (!item) {
       throw new NotFoundException('Item not found in inventory');
     }
 
-    // Check if user already has 3 items equipped
     if (equipment.length >= 3) {
       throw new BadRequestException('Maximum equipment limit reached (3 items)');
     }
 
-    // Check if item is already equipped
     if (equipment.some(e => e.id === itemId)) {
       throw new BadRequestException('Item is already equipped');
     }
-
-    // Add item to equipment
+    item.isActive = true;
     equipment.push(item);
 
-    // Calculate total shield from equipped items
     const totalShield = equipment.reduce((sum, item) => sum + item.shield, 0);
 
-    // Update user's equipment and shield
     return await this.prisma.user.update({
       where: { telegramId },
       data: {
         equipment: equipment,
+        inventory: inventory,
         balance: {
           money: (user.balance as any).money,
           shield: totalShield
@@ -62,26 +56,29 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
-    // Parse user's equipment
     const equipment = user.equipment as any[] || [];
+    const inventory = user.inventory as any[] || [];
 
-    // Find item in equipment
     const itemIndex = equipment.findIndex(i => i.id === itemId);
     if (itemIndex === -1) {
       throw new NotFoundException('Item not found in equipment');
     }
 
-    // Remove item from equipment
+    // Update isActive in inventory
+    const inventoryItem = inventory.find(i => i.id === itemId);
+    if (inventoryItem) {
+      inventoryItem.isActive = false;
+    }
+
     equipment.splice(itemIndex, 1);
 
-    // Calculate new total shield
     const totalShield = equipment.reduce((sum, item) => sum + item.shield, 0);
 
-    // Update user's equipment and shield
     return await this.prisma.user.update({
       where: { telegramId },
       data: {
         equipment: equipment,
+        inventory: inventory,
         balance: {
           money: (user.balance as any).money,
           shield: totalShield
@@ -104,4 +101,58 @@ export class UserService {
       totalShield: (user.balance as any).shield
     };
   }
+
+  async upgradeItem(telegramId: string, itemId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { telegramId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const inventory = user.inventory as any[] || [];
+    const equipment = user.equipment as any[] || [];
+    const balance = user.balance as any;
+
+    const item = inventory.find(i => i.id === itemId);
+    if (!item) {
+      throw new NotFoundException('Item not found in inventory');
+    }
+
+    const upgradeCost = 100;
+    if (balance.money < upgradeCost) {
+      throw new BadRequestException('Not enough money for upgrade');
+    }
+
+    // Upgrade item
+    item.level = (item.level || 0) + 1;
+    item.shield = (item.shield || 0) + 4;
+
+    // Update item in equipment if it's equipped
+    if (item.isActive) {
+      const equippedItem = equipment.find(e => e.id === itemId);
+      if (equippedItem) {
+        equippedItem.level = item.level;
+        equippedItem.shield = item.shield;
+      }
+    }
+
+    // Calculate total shield from equipment
+    const totalShield = equipment.reduce((sum, item) => sum + item.shield, 0);
+
+    return await this.prisma.user.update({
+      where: { telegramId },
+      data: {
+        inventory: inventory,
+        equipment: equipment,
+        balance: {
+          money: balance.money - upgradeCost,
+          shield: totalShield
+        }
+      },
+    });
+  }
+
+  
 } 
