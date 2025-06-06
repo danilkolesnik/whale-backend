@@ -6,5 +6,5 @@ export interface Task {
   coin: number;
   status: 'available' | 'in_progress' | 'completed';
   completedAt: Date | null;
-  chatId: number | null;
+  chatId: string | null;
 } 

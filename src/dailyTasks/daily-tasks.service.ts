@@ -23,12 +23,8 @@ export class DailyTasksService {
           type: createTaskDto.type,
           coin: createTaskDto.coin,
           status: 'available' as const,
-          chatId: createTaskDto.chatId,
-          user: {
-            connect: {
-              telegramId: createTaskDto.userId
-            }
-          }
+          chatId: createTaskDto.chatId ? String(createTaskDto.chatId) : null,
+          channelLink: createTaskDto.channelLink,
         }
       });
 
@@ -41,6 +37,7 @@ export class DailyTasksService {
         }
       };
     } catch (error) {
+      console.log(error);
       return {
         success: false,
         error: 'Failed to create task'
@@ -48,7 +45,7 @@ export class DailyTasksService {
     }
   }
 
-  async getAvailableTasks(telegramId: string): Promise<{
+  async getUserTasks(telegramId: string): Promise<{
     success: boolean;
     error?: string;
     data?: Task[];
@@ -70,11 +67,13 @@ export class DailyTasksService {
 
       return {
         success: true,
-        data: user.tasks.map(task => ({
-          ...task,
-          type: task.type as TaskType,
-          status: task.status as 'available' | 'in_progress' | 'completed'
-        }))
+        data: user.tasks
+          .filter(task => task.status === 'available' || task.status === 'in_progress')
+          .map(task => ({
+            ...task,
+            type: task.type as TaskType,
+            status: task.status as 'available' | 'in_progress' | 'completed'
+          }))
       };
     } catch (error) {
       return {
@@ -90,19 +89,26 @@ export class DailyTasksService {
     data?: Task;
   }> {
     try {
-      const [user, task] = await Promise.all([
-        this.prisma.user.findUnique({
-          where: { telegramId }
-        }),
-        this.prisma.task.findUnique({
-          where: { id: taskId }
-        })
-      ]);
+      const user = await this.prisma.user.findUnique({
+        where: { telegramId },
+        include: { tasks: true }
+      });
 
-      if (!user || !task) {
+      if (!user) {
         return {
           success: false,
-          error: 'User or task not found'
+          error: 'User not found'
+        };
+      }
+
+      const task = await this.prisma.task.findUnique({
+        where: { id: taskId }
+      });
+
+      if (!task) {
+        return {
+          success: false,
+          error: 'Task not found'
         };
       }
 
@@ -117,7 +123,19 @@ export class DailyTasksService {
         where: { id: taskId },
         data: {
           status: 'in_progress' as const,
-          userId: telegramId
+          user: {
+            connect: { telegramId }
+          }
+        }
+      });
+
+      // Update the user's tasks array to include the new task
+      await this.prisma.user.update({
+        where: { telegramId },
+        data: {
+          tasks: {
+            connect: { id: taskId }
+          }
         }
       });
 
@@ -172,9 +190,17 @@ export class DailyTasksService {
         };
       }
 
+      const chatIdNumber = task.chatId ? parseInt(task.chatId, 10) : undefined;
+      if (chatIdNumber === undefined || isNaN(chatIdNumber)) {
+        return {
+          success: false,
+          error: 'Invalid chatId'
+        };
+      }
+
       const subscriptionResult = await this.telegramSubService.checkSubscription(
-        task.chatId,
-        parseInt(telegramId)
+        chatIdNumber,
+        parseInt(telegramId, 10)
       );
 
       if (!subscriptionResult.success || !subscriptionResult.data?.isSubscribed) {
@@ -219,6 +245,39 @@ export class DailyTasksService {
         success: false,
         error: 'Failed to complete task'
       };
+    }
+  }
+
+  async getAllTasks(): Promise<{
+    success: boolean;
+    error?: string;
+    data?: Task[];
+  }> {
+    try {
+      const tasks = await this.prisma.task.findMany();
+
+      return {
+        success: true,
+        data: tasks.map(task => ({
+          ...task,
+          type: task.type as TaskType,
+          status: task.status as 'available' | 'in_progress' | 'completed'
+        }))
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: 'Failed to retrieve tasks'
+      };
+    }
+  }
+
+  async testCheckSubscription(chatId: string, telegramId: string): Promise<{ success: boolean; isSubscribed?: boolean; error?: string }> {
+    try {
+      const response = await this.telegramSubService.checkSubscription(parseInt(chatId, 10), parseInt(telegramId, 10));
+      return { success: true, isSubscribed: response.data?.isSubscribed };
+    } catch (error) {
+      return { success: false, error: 'Failed to check subscription' };
     }
   }
 } 

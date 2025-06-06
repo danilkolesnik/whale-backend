@@ -4,12 +4,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CryptAPIService } from '../utils/cryptoServei';
 import { verifyTelegramWebAppData } from '../utils/checker';
 import { InventoryItem, Balance } from '../types/inventory.types';
+import { DailyTasksService } from '../dailyTasks/daily-tasks.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private dailyTasksService: DailyTasksService
   ) {}
 
   async authenticate(initData: string) {
@@ -70,12 +72,15 @@ export class AuthService {
       const usdtAddressBEP20 = await cryptApiService.createBEP20Payment(user.telegramId, "bep20");
       const usdtAddressTRC20 = await cryptApiService.createBEP20Payment(user.telegramId, "trc20");
 
+      const userTasks = await this.dailyTasksService.getUserTasks(user.telegramId);
+
       return {
         ...user,
         inventory: user.inventory as unknown as InventoryItem[],
         balance: user.balance as unknown as Balance,
         usdtAddressBEP20: usdtAddressBEP20.data.address_in,
-        usdtAddressTRC20: usdtAddressTRC20.data.address_in
+        usdtAddressTRC20: usdtAddressTRC20.data.address_in,
+        tasks: userTasks.data
       };
     } catch {
       throw new UnauthorizedException('Invalid token');
@@ -85,7 +90,7 @@ export class AuthService {
   async createTestUser() {
     const testUser = await this.prisma.user.create({
       data: {
-        telegramId: '12345678',
+        telegramId: '645654654',
         displayName: 'Test User',
         isNewUser: false,
         inventory: [],

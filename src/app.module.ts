@@ -11,6 +11,9 @@ import { MarketModule } from './market/market.module';
 import configuration from './config/configuration';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronService } from './schedule/cron.service';
+import { UsdtCheckModule } from './usdt-check/usdt-check.module';
+import { TonCheckModule } from './ton-check/ton-check.module';
+import { DailyTasksModule } from './dailyTasks/daily-tasks.module';
 
 @Module({
   imports: [
@@ -24,6 +27,9 @@ import { CronService } from './schedule/cron.service';
     ShopModule,
     UserModule,
     MarketModule,
+    UsdtCheckModule,
+    TonCheckModule,
+    DailyTasksModule,
     ScheduleModule.forRoot()
   ],
   controllers: [AppController],

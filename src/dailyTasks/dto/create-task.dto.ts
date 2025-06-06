@@ -7,10 +7,10 @@ export class CreateTaskDto {
   @IsNumber()
   coin: number;
 
-  @IsNumber()
   @IsOptional()
-  chatId?: number;
+  chatId?: string;
 
+  @IsOptional()
   @IsString()
-  userId: string;
+  channelLink?: string;
 } 

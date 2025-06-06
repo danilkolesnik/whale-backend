@@ -54,15 +54,15 @@ model Task {
   coin        Int
   status      String   // 'available', 'in_progress', 'completed'
   completedAt DateTime?
-  chatId      Int?
-  userId      String   // ID пользователя, выполняющего задачу
-  user        User     @relation(fields: [userId], references: [telegramId])
+  chatId      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  userId      Int?
+  user        User?     @relation(fields: [userId], references: [id])
+  channelLink String?
 
   @@index([userId])
 }
-
 
 model BuyOrder {
   id        Int      @id @default(autoincrement())
@@ -72,4 +72,13 @@ model BuyOrder {
   price     Int
   currency  String?
   createdAt DateTime @default(now())
+}
+
+model RechargeHistory {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  valueCoin Float
+  amount    Float
+  date      DateTime @default(now())
+  @@index([userId])
 }
