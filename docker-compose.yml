@@ -30,6 +30,9 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/whale?schema=public
       - JWT_SECRET=your-secret-key-here
+      - TRANSACTION_BOT_TOKEN=7610443390:AAH1WJkif38kYru8GhcA5jICgO4nfgYXocI
+      - TELEGRAM_BOT_TOKEN=7738656789:AAFKiGGh_UFLg29NIIBFs7G5PRpbrMpdu7k
+      - BOT_NAME=whaleDev_bot
       - NODE_ENV=development
     volumes:
       - .:/app
@@ -52,6 +55,20 @@ services:
       - .:/app
       - /app/node_modules
     command: sh -c "npm install && npm run start:bot"
+
+  # bot-transaction:
+  #   mem_limit: 1GB
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.dev
+  #   container_name: whale-bot-transaction
+  #   environment:
+  #     - TRANSACTION_BOT_TOKEN=7610443390:AAH1WJkif38kYru8GhcA5jICgO4nfgYXocI
+  #     - NODE_ENV=development
+  #   volumes:
+  #     - .:/app
+  #     - /app/node_modules
+  #   command: sh -c "npm install && npm run start:bot-transaction"
 
 volumes:
   postgres_data:

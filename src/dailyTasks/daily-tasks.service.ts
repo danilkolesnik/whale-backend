@@ -67,13 +67,11 @@ export class DailyTasksService {
 
       return {
         success: true,
-        data: user.tasks
-          .filter(task => task.status === 'available' || task.status === 'in_progress')
-          .map(task => ({
-            ...task,
-            type: task.type as TaskType,
-            status: task.status as 'available' | 'in_progress' | 'completed'
-          }))
+        data: user.tasks.map(task => ({
+          ...task,
+          type: task.type as TaskType,
+          status: task.status as 'available' | 'in_progress' | 'completed'
+        }))
       };
     } catch (error) {
       return {
@@ -83,7 +81,7 @@ export class DailyTasksService {
     }
   }
 
-  async takeTask(telegramId: string, taskId: number): Promise<{
+  async takeTask(telegramId: string, taskId: string): Promise<{
     success: boolean;
     error?: string;
     data?: Task;
@@ -101,8 +99,9 @@ export class DailyTasksService {
         };
       }
 
+      const taskIdInt = parseInt(taskId, 10);
       const task = await this.prisma.task.findUnique({
-        where: { id: taskId }
+        where: { id: taskIdInt }
       });
 
       if (!task) {
@@ -112,15 +111,23 @@ export class DailyTasksService {
         };
       }
 
-      if (task.status !== 'available') {
+      // if (task.status !== 'available') {
+      //   return {
+      //     success: false,
+      //     error: 'Task is not available'
+      //   };
+      // }
+
+      const existingTask = user.tasks.find(t => t.id === taskIdInt);
+      if (existingTask) {
         return {
           success: false,
-          error: 'Task is not available'
+          error: 'Task already taken by the user'
         };
       }
 
       const updatedTask = await this.prisma.task.update({
-        where: { id: taskId },
+        where: { id: taskIdInt },
         data: {
           status: 'in_progress' as const,
           user: {
@@ -134,7 +141,7 @@ export class DailyTasksService {
         where: { telegramId },
         data: {
           tasks: {
-            connect: { id: taskId }
+            connect: { id: taskIdInt }
           }
         }
       });
@@ -148,6 +155,7 @@ export class DailyTasksService {
         }
       };
     } catch (error) {
+      console.log(error);
       return {
         success: false,
         error: 'Failed to take task'
@@ -155,7 +163,7 @@ export class DailyTasksService {
     }
   }
 
-  async checkAndCompleteSubscriptionTask(
+  async checkAndCompleteTask(
     telegramId: string,
     taskId: number
   ): Promise<{
@@ -167,80 +175,114 @@ export class DailyTasksService {
     };
   }> {
     try {
-      const [user, task] = await Promise.all([
-        this.prisma.user.findUnique({
-          where: { telegramId }
-        }),
-        this.prisma.task.findUnique({
-          where: { id: taskId }
-        })
-      ]);
-
-      if (!user || !task) {
+      const user = await this.prisma.user.findUnique({
+        where: { telegramId },
+        include: { tasks: true }
+      });
+  
+      if (!user) {
         return {
           success: false,
-          error: 'User or task not found'
+          error: 'User not found'
         };
       }
-
-      if (task.type !== 'subscription' || !task.chatId) {
+  
+      const task = user.tasks.find(t => t.id === taskId);
+  
+      if (!task) {
         return {
           success: false,
-          error: 'Invalid task type or missing chatId'
+          error: 'Task not found for user'
         };
       }
-
-      const chatIdNumber = task.chatId ? parseInt(task.chatId, 10) : undefined;
-      if (chatIdNumber === undefined || isNaN(chatIdNumber)) {
+  
+      if (task.status === 'completed') {
         return {
           success: false,
-          error: 'Invalid chatId'
+          error: 'Task already completed'
         };
       }
-
-      const subscriptionResult = await this.telegramSubService.checkSubscription(
-        chatIdNumber,
-        parseInt(telegramId, 10)
-      );
-
-      if (!subscriptionResult.success || !subscriptionResult.data?.isSubscribed) {
-        return {
-          success: false,
-          error: 'User is not subscribed'
-        };
-      }
-
-      const [updatedTask, updatedUser] = await Promise.all([
-        this.prisma.task.update({
-          where: { id: taskId },
-          data: {
-            status: 'completed' as const,
-            completedAt: new Date()
+  
+      if (task.type === 'subscription') {
+        if (task.chatId) {
+          const chatIdNumber = parseInt(task.chatId, 10);
+          const subscriptionResult = await this.telegramSubService.checkSubscription(
+            chatIdNumber,
+            parseInt(telegramId, 10)
+          );
+  
+          if (!subscriptionResult.success || !subscriptionResult.data?.isSubscribed) {
+            return {
+              success: false,
+              error: 'User is not subscribed'
+            };
           }
-        }),
-        this.prisma.user.update({
-          where: { telegramId },
-          data: {
-            balance: {
+        } else {
+          return {
+            success: false,
+            error: 'Invalid chatId'
+          };
+        }
+      }
+  
+      else if (task.type === 'invite') {
+        const friends = typeof user.friends === 'string'
+          ? JSON.parse(user.friends)
+          : (user.friends || []);
+        const newFriends = friends.filter((friend: any) => friend.isNewUser);
+  
+        const friendsCount = newFriends.length;
+        const requiredCount = task.requiredFriends ?? 0;
+  
+        if (friendsCount < requiredCount) {
+          return {
+            success: false,
+            error: 'Not enough friends added'
+          };
+        }
+      }
+  
+      else {
+        return {
+          success: false,
+          error: 'Invalid task type'
+        };
+      }
+  
+      await this.prisma.user.update({
+        where: { telegramId },
+        data: {
+          tasks: {
+            update: {
+              where: { id: taskId },
+              data: {
+                status: 'completed',
+                completedAt: new Date()
+              }
+            }
+          },
+          balance: {
+            set: {
               money: (user.balance as any).money + task.coin,
               shield: (user.balance as any).shield
             }
           }
-        })
-      ]);
-
+        }
+      });
+  
       return {
         success: true,
         data: {
           task: {
-            ...updatedTask,
-            type: updatedTask.type as TaskType,
-            status: updatedTask.status as 'available' | 'in_progress' | 'completed'
+            ...task,
+            status: 'completed',
+            type: task.type as 'invite' | 'subscription'
           },
           reward: task.coin
         }
       };
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error('Error completing task:', error);
       return {
         success: false,
         error: 'Failed to complete task'
@@ -277,7 +319,40 @@ export class DailyTasksService {
       const response = await this.telegramSubService.checkSubscription(parseInt(chatId, 10), parseInt(telegramId, 10));
       return { success: true, isSubscribed: response.data?.isSubscribed };
     } catch (error) {
+      console.log(error);
       return { success: false, error: 'Failed to check subscription' };
+    }
+  }
+
+  async createInviteTask(telegramId: string, requiredFriends: number): Promise<{ success: boolean; error?: string; data?: Task }> {
+    try {
+      const task = await this.prisma.task.create({
+        data: {
+          type: 'invite',
+          coin: 0, // Set the reward for completing the task
+          status: 'available',
+          user: {
+            connect: { telegramId }
+          },
+          channelLink: null,
+          chatId: null
+        }
+      });
+
+      return {
+        success: true,
+        data: {
+          ...task,
+          type: task.type as TaskType,
+          status: task.status as 'available' | 'in_progress' | 'completed'
+        }
+      };
+    } catch (error: any) {
+      console.log(error);
+      return {
+        success: false,
+        error: 'Failed to create invite task'
+      };
     }
   }
 } 

@@ -13,7 +13,7 @@ datasource db {
 model User {
   id            Int      @id @default(autoincrement())
   telegramId    String   @unique
-  displayName      String?
+  displayName   String?
   firstName     String?
   lastName      String?
   isNewUser     Boolean  @default(true)
@@ -23,6 +23,9 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   tasks         Task[]
+  transactions  Transaction[]
+  friends       Json     @default("[]")
+  walletAddress String?
 }
 
 model Item {
@@ -49,17 +52,18 @@ model MarketListing {
 }
 
 model Task {
-  id          Int      @id @default(autoincrement())
-  type        String   // 'subscription' или 'invite'
-  coin        Int
-  status      String   // 'available', 'in_progress', 'completed'
-  completedAt DateTime?
-  chatId      String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  userId      Int?
-  user        User?     @relation(fields: [userId], references: [id])
-  channelLink String?
+  id             Int      @id @default(autoincrement())
+  type           String   // 'subscription' или 'invite'
+  coin           Int
+  status         String   // 'available', 'in_progress', 'completed'
+  completedAt    DateTime?
+  chatId         String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  userId         Int?
+  user           User?    @relation(fields: [userId], references: [id])
+  channelLink    String?
+  requiredFriends Int?    // Новое поле для хранения количества друзей
 
   @@index([userId])
 }
@@ -81,4 +85,27 @@ model RechargeHistory {
   amount    Float
   date      DateTime @default(now())
   @@index([userId])
+}
+
+model Rating {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  users       Json     @default("[]")
+  roundCreatedAt DateTime @default(now())
+}
+
+model Transaction {
+  id            Int      @id @default(autoincrement())
+  telegramId    String
+  displayName   String
+  amount        Float
+  walletNumber  String
+  status        String   // 'pending', 'completed', 'failed'
+  messageId     Int?
+  date          DateTime @default(now())
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@index([telegramId])
 }

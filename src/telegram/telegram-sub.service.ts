@@ -29,7 +29,7 @@ export class TelegramSubService {
       );
 
       const status = response.data.result.status;
-      const isSubscribed = ['member', 'administrator', 'creator'].includes(status);
+      const isSubscribed = ['member', 'administrator', 'creator'].includes(status as string);
 
       return {
         success: true,
@@ -38,6 +38,7 @@ export class TelegramSubService {
         }
       };
     } catch (error) {
+      console.log(error);
       return {
         success: false,
         error: 'Failed to check subscription'

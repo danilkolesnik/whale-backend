@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { generateReferralLink } from '../utils/generateReferralLink';
 
 @Injectable()
 export class UserService {
@@ -154,5 +155,67 @@ export class UserService {
     });
   }
 
-  
+  async inviteUser(telegramId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { telegramId: telegramId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const referralLink = generateReferralLink(user.telegramId);
+    return referralLink;
+  }
+
+  async processReferralLink(inviterTelegramId: string, inviteeTelegramId: string) {
+    const inviter = await this.prisma.user.findUnique({
+      where: { telegramId: inviterTelegramId },
+    });
+
+    const invitee = await this.prisma.user.findUnique({
+      where: { telegramId: inviteeTelegramId },
+    });
+
+    if (!inviter || !invitee) {
+      throw new NotFoundException('Inviter or invitee not found');
+    }
+
+    const inviterFriends = inviter.friends as string[];
+    const inviteeFriends = invitee.friends as string[];
+
+    if (!inviterFriends.includes(inviteeTelegramId)) {
+      inviterFriends.push(inviteeTelegramId);
+    }
+
+    if (!inviteeFriends.includes(inviterTelegramId)) {
+      inviteeFriends.push(inviterTelegramId);
+    }
+
+    await this.prisma.user.update({
+      where: { telegramId: inviterTelegramId },
+      data: { friends: inviterFriends },
+    });
+
+    await this.prisma.user.update({
+      where: { telegramId: inviteeTelegramId },
+      data: { friends: inviteeFriends },
+    });
+
+    return { message: 'Users added to each other\'s friend list' };
+  }
+
+  async connectWallet(telegramId: string, walletAddress: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { telegramId: telegramId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    await this.prisma.user.update({
+      where: { telegramId: telegramId },
+      data: { walletAddress: walletAddress },
+    });
+    return { message: 'Wallet connected' };
+  }
 } 

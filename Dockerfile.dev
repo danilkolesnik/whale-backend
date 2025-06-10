@@ -5,8 +5,8 @@ WORKDIR /app
 COPY package*.json ./
 
 RUN npm install
-RUN npm install -g nodemon
+RUN npm install -g nodemon ts-node
 
 EXPOSE 3000
 
-CMD ["nodemon", "--watch", "src", "--ext", "ts,json", "--exec", "npm", "run", "start:dev"] 
+CMD ["nodemon", "--watch", "src", "--ext", "ts,json", "--exec", "ts-node", "src/telegram/transactionBot/bot.ts"] 

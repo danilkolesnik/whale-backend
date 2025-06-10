@@ -51,4 +51,34 @@ export class UserController {
   ) {
     return this.userService.getEquipment(telegramId);
   }
+
+  @Get('invite')
+  @ApiOperation({ summary: 'Get user invite link' })
+  @ApiResponse({ status: 200, description: 'Return user invite link' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async inviteUser(
+    @Query('telegramId') telegramId: string
+  ) {
+    return this.userService.inviteUser(telegramId);
+  }
+
+  // @Post('process-referral')
+  // @ApiOperation({ summary: 'Process referral link' })
+  // @ApiResponse({ status: 200, description: 'Users added to each other\'s friend list' })
+  // @ApiResponse({ status: 404, description: 'Inviter or invitee not found' })
+  // async processReferral(
+  //   @Body() body: { inviterTelegramId: string, inviteeTelegramId: string }
+  // ) {
+  //   return this.userService.processReferralLink(body.inviterTelegramId, body.inviteeTelegramId);
+  // }
+
+  @Post('connect-wallet')
+  @ApiOperation({ summary: 'Connect wallet' })
+  @ApiResponse({ status: 200, description: 'Wallet connected' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async connectWallet(
+    @Body() body: { telegramId: string, walletAddress: string }
+  ) {
+    return this.userService.connectWallet(body.telegramId, body.walletAddress);
+  }
 } 

@@ -33,7 +33,7 @@ export class DailyTasksController {
   @ApiResponse({ status: 200, description: 'Task taken successfully' })
   @ApiResponse({ status: 404, description: 'User or task not found' })
   async takeTask(@Param('taskId') taskId: number, @Body('telegramId') telegramId: string) {
-    return this.dailyTasksService.takeTask(telegramId, taskId);
+    return this.dailyTasksService.takeTask(telegramId, String(taskId));
   }
 
   @Post('complete/:taskId')
@@ -43,7 +43,7 @@ export class DailyTasksController {
   @ApiResponse({ status: 200, description: 'Task completed successfully' })
   @ApiResponse({ status: 404, description: 'User or task not found' })
   async completeTask(@Param('taskId') taskId: number, @Body('telegramId') telegramId: string) {
-    return this.dailyTasksService.checkAndCompleteSubscriptionTask(telegramId, taskId);
+    return this.dailyTasksService.checkAndCompleteTask(telegramId, taskId);
   }
 
   @Get('all')
