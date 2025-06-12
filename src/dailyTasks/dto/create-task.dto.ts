@@ -13,4 +13,8 @@ export class CreateTaskDto {
   @IsOptional()
   @IsString()
   channelLink?: string;
+
+  @IsOptional()
+  @IsNumber()
+  requiredFriends?: number;
 } 

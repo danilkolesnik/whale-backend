@@ -13,7 +13,10 @@ export class ShopService {
   }
 
   async getAllItems() {
-    return await this.prisma.item.findMany();
+    return {
+      data: await this.prisma.item.findMany(),
+      message: 'Items fetched successfully',
+    };
   }
 
   async buyItem(telegramId: string, itemId: number) {

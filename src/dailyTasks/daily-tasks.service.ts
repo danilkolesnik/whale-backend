@@ -25,6 +25,7 @@ export class DailyTasksService {
           status: 'available' as const,
           chatId: createTaskDto.chatId ? String(createTaskDto.chatId) : null,
           channelLink: createTaskDto.channelLink,
+          requiredFriends: createTaskDto.requiredFriends || null
         }
       });
 

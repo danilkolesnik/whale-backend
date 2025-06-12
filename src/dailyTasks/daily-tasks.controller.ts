@@ -53,12 +53,12 @@ export class DailyTasksController {
     return await this.dailyTasksService.getAllTasks();
   }
 
-  @Get('test-subscription')
-  @ApiOperation({ summary: 'Test subscription check' })
-  @ApiQuery({ name: 'chatId', type: 'string', description: 'Chat ID' })
-  @ApiQuery({ name: 'telegramId', type: 'string', description: 'User Telegram ID' })
-  @ApiResponse({ status: 200, description: 'Subscription check result' })
-  async testCheckSubscription(@Query('chatId') chatId: string, @Query('telegramId') telegramId: string) {
-    return await this.dailyTasksService.testCheckSubscription(chatId, telegramId);
-  }
+  // @Get('test-subscription')
+  // @ApiOperation({ summary: 'Test subscription check' })
+  // @ApiQuery({ name: 'chatId', type: 'string', description: 'Chat ID' })
+  // @ApiQuery({ name: 'telegramId', type: 'string', description: 'User Telegram ID' })
+  // @ApiResponse({ status: 200, description: 'Subscription check result' })
+  // async testCheckSubscription(@Query('chatId') chatId: string, @Query('telegramId') telegramId: string) {
+  //   return await this.dailyTasksService.testCheckSubscription(chatId, telegramId);
+  // }
 } 
