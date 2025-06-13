@@ -1,4 +1,4 @@
-export const API_URL = 'http://backend:3000';
+export const API_URL = 'http://45.66.11.45:3000';
 
 export const SHOP_TYPES = ['helmet', 'armor', 'leg'];
 
