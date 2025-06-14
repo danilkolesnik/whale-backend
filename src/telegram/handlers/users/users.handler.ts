@@ -77,8 +77,10 @@ export async function handleUpdateUserMenu(ctx: BotContext) {
 export async function handleGetAllUsers(ctx: BotContext) {
   try {
     const users = await fetchUsers();
+    const usersList = users.map(user => `ID: ${String(user.telegramId)}\nІм'я: ${String(user.displayName)}`).join('\n\n');
+    
     if (ctx.callbackQuery) {
-      await ctx.editMessageText('Список користувачів:', {
+      await ctx.editMessageText(`Список користувачів:\n\n${usersList}`, {
         reply_markup: {
           inline_keyboard: [
             [{ text: '🔙 Назад', callback_data: 'users_menu' }]
@@ -86,16 +88,13 @@ export async function handleGetAllUsers(ctx: BotContext) {
         }
       });
     } else {
-      await ctx.reply('Список користувачів:', {
+      await ctx.reply(`Список користувачів:\n\n${usersList}`, {
         reply_markup: {
           inline_keyboard: [
             [{ text: '🔙 Назад', callback_data: 'users_menu' }]
           ]
         }
       });
-    }
-    for (const user of users) {
-      await ctx.reply(`ID: ${String(user.telegramId)}\nІм'я: ${String(user.displayName)}`);
     }
   } catch (error) {
     if (ctx.callbackQuery) {

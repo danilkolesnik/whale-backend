@@ -95,8 +95,15 @@ export async function handleCreateTaskInvite(ctx: BotContext) {
 export async function handleGetAllTasks(ctx: BotContext) {
   try {
     const tasks = await fetchTasks();
+    const tasksList = tasks.map(task => {
+      const date = new Date(String(task.createdAt));
+      const formattedDate = `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+      const taskType = task.type === 'subscription' ? 'Підписка' : task.type === 'invite' ? 'Запрошення' : 'Невідомий тип';
+      return `ID: ${String(task.id)}\nТип: ${taskType}\nНагорода: ${String(task.coin)}\nПосилання на канал: ${task.channelLink || 'Немає'}\nДата створення: ${formattedDate}`;
+    }).join('\n\n');
+
     if (ctx.callbackQuery) {
-      await ctx.editMessageText('Список задач:', {
+      await ctx.editMessageText(`Список задач:\n\n${tasksList}`, {
         reply_markup: {
           inline_keyboard: [
             [{ text: '🔙 Назад', callback_data: 'tasks_menu' }]
@@ -104,19 +111,13 @@ export async function handleGetAllTasks(ctx: BotContext) {
         }
       });
     } else {
-      await ctx.reply('Список задач:', {
+      await ctx.reply(`Список задач:\n\n${tasksList}`, {
         reply_markup: {
           inline_keyboard: [
             [{ text: '🔙 Назад', callback_data: 'tasks_menu' }]
           ]
         }
       });
-    }
-    for (const task of tasks) {
-      const date = new Date(String(task.createdAt));
-      const formattedDate = `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
-      const taskType = task.type === 'subscription' ? 'Підписка' : task.type === 'invite' ? 'Запрошення' : 'Невідомий тип';
-      await ctx.reply(`\nID: ${String(task.id)}\nТип: ${taskType}\nНагорода: ${String(task.coin)}\nПосилання на канал: ${task.channelLink || 'Немає'}\nДата створення: ${formattedDate}`);
     }
   } catch (error) {
     if (ctx.callbackQuery) {

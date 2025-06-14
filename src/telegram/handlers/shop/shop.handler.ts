@@ -29,8 +29,12 @@ export async function handleShopMenu(ctx: BotContext) {
 export async function handleGetShopItems(ctx: BotContext) {
   try {
     const items = await fetchItems();
+    const itemsList = items.map(item => 
+      `ID: ${item.id}\nНазва: ${item.name}\nРівень: ${item.level}\nЩит: ${item.shield}\nТип: ${item.type}\nЦіна: ${item.price}`
+    ).join('\n\n');
+
     if (ctx.callbackQuery) {
-      await ctx.editMessageText('Список предметів магазину:', {
+      await ctx.editMessageText(`Список предметів магазину:\n\n${itemsList}`, {
         reply_markup: {
           inline_keyboard: [
             [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
@@ -38,16 +42,13 @@ export async function handleGetShopItems(ctx: BotContext) {
         }
       });
     } else {
-      await ctx.reply('Список предметів магазину:', {
+      await ctx.reply(`Список предметів магазину:\n\n${itemsList}`, {
         reply_markup: {
           inline_keyboard: [
             [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
           ]
         }
       });
-    }
-    for (const item of items) {
-      await ctx.reply(`ID: ${item.id}\nНазва: ${item.name}\nРівень: ${item.level}\nЩит: ${item.shield}\nТип: ${item.type}\nЦіна: ${item.price}`);
     }
   } catch (error) {
     if (ctx.callbackQuery) {
@@ -106,8 +107,7 @@ export async function handleShopItemInput(ctx: BotContext) {
   }
 
   if (!ctx.session.itemType) {
-    ctx.session.itemType = messageText;
-    await ctx.reply('Введіть назву предмета:', {
+    await ctx.reply('Помилка: тип предмета не вибрано. Спробуйте ще раз.', {
       reply_markup: {
         inline_keyboard: [
           [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
@@ -195,6 +195,7 @@ export async function handleShopItemInput(ctx: BotContext) {
 async function createShopItem(ctx: BotContext) {
   const { itemType, itemName, itemShield, itemLevel, itemPrice } = ctx.session;
   try {
+    console.log('Creating shop item with data:', { itemType, itemName, itemShield, itemLevel, itemPrice });
     const response = await axios.post(`${API_URL}/shop/create-item`, {
       type: itemType,
       name: itemName,
@@ -202,6 +203,7 @@ async function createShopItem(ctx: BotContext) {
       level: itemLevel,
       price: itemPrice
     });
+    
     if (response.data.success) {
       await ctx.reply('Предмет створено успішно.', {
         reply_markup: {
@@ -220,7 +222,7 @@ async function createShopItem(ctx: BotContext) {
       });
     }
   } catch (error) {
-    console.error(error);
+    console.error('Error creating shop item:', error);
     await ctx.reply('Помилка при створенні предмета.', {
       reply_markup: {
         inline_keyboard: [

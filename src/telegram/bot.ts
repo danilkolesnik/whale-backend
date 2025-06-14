@@ -60,6 +60,16 @@ bot.on('callback_query', async (ctx) => {
     await handleGetShopItems(ctx);
   } else if (callbackData === 'create_shop_item') {
     await handleCreateShopItem(ctx);
+  } else if (callbackData.startsWith('type_')) {
+    const itemType = callbackData.replace('type_', '');
+    ctx.session.itemType = itemType;
+    await ctx.editMessageText('Введіть назву предмета:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
+        ]
+      }
+    });
   }
 
   // Tasks menu
