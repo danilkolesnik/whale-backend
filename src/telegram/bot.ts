@@ -16,7 +16,7 @@ const ADMIN_IDS = [667243325,7418956723,6657451847];
 
 // Start command
 bot.command('start', async (ctx) => {
-  await ctx.reply('Вітаю! Я бот для управління системою.');
+  await ctx.reply('Вітаю! Я бот Whale!');
 });
 
 // Admin command
@@ -77,7 +77,7 @@ bot.on('callback_query', async (ctx) => {
 
   // Navigation
   else if (callbackData === 'back_to_main') {
-    await ctx.reply('Головне меню:', {
+    await ctx.editMessageText('Головне меню:', {
       reply_markup: {
         inline_keyboard: [
           [{ text: '👥 Користувачі', callback_data: 'users_menu' }],

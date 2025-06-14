@@ -4,62 +4,117 @@ import { API_URL } from '../../../utils/constant';
 import { BotContext } from '../../types';
 
 export async function handleUsersMenu(ctx: BotContext) {
-  await ctx.reply('Меню користувачів:', {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: '📋 Список всіх користувачів', callback_data: 'get_all_users' }],
-        [{ text: '🔍 Переглянути користувача', callback_data: 'view_user_menu' }],
-        [{ text: '💰 Оновити параметри', callback_data: 'update_user_menu' }],
-        [{ text: '🔙 Назад', callback_data: 'back_to_main' }]
-      ]
-    }
-  });
+  if (ctx.callbackQuery) {
+    await ctx.editMessageText('Меню користувачів:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '📋 Список всіх користувачів', callback_data: 'get_all_users' }],
+          [{ text: '🔍 Переглянути користувача', callback_data: 'view_user_menu' }],
+          [{ text: '💰 Оновити параметри', callback_data: 'update_user_menu' }],
+          [{ text: '🔙 Назад', callback_data: 'back_to_main' }]
+        ]
+      }
+    });
+  } else {
+    await ctx.reply('Меню користувачів:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '📋 Список всіх користувачів', callback_data: 'get_all_users' }],
+          [{ text: '🔍 Переглянути користувача', callback_data: 'view_user_menu' }],
+          [{ text: '💰 Оновити параметри', callback_data: 'update_user_menu' }],
+          [{ text: '🔙 Назад', callback_data: 'back_to_main' }]
+        ]
+      }
+    });
+  }
 }
 
 export async function handleViewUserMenu(ctx: BotContext) {
   ctx.session.waitingForTelegramId = true;
-  await ctx.reply('Введіть Telegram ID користувача:', {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: '🔙 Назад', callback_data: 'users_menu' }]
-      ]
-    }
-  });
+  if (ctx.callbackQuery) {
+    await ctx.editMessageText('Введіть Telegram ID користувача:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+        ]
+      }
+    });
+  } else {
+    await ctx.reply('Введіть Telegram ID користувача:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+        ]
+      }
+    });
+  }
 }
 
 export async function handleUpdateUserMenu(ctx: BotContext) {
-  await ctx.reply('Виберіть дію:', {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: '💰 Оновити гроші', callback_data: 'update_user_money' }],
-        [{ text: '🛡️ Оновити щит', callback_data: 'update_user_shield' }],
-        [{ text: '🔙 Назад', callback_data: 'users_menu' }]
-      ]
-    }
-  });
+  if (ctx.callbackQuery) {
+    await ctx.editMessageText('Виберіть дію:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '💰 Оновити гроші', callback_data: 'update_user_money' }],
+          [{ text: '🛡️ Оновити щит', callback_data: 'update_user_shield' }],
+          [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+        ]
+      }
+    });
+  } else {
+    await ctx.reply('Виберіть дію:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '💰 Оновити гроші', callback_data: 'update_user_money' }],
+          [{ text: '🛡️ Оновити щит', callback_data: 'update_user_shield' }],
+          [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+        ]
+      }
+    });
+  }
 }
 
 export async function handleGetAllUsers(ctx: BotContext) {
   try {
     const users = await fetchUsers();
-    await ctx.reply('Список користувачів:', {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: '🔙 Назад', callback_data: 'users_menu' }]
-        ]
-      }
-    });
+    if (ctx.callbackQuery) {
+      await ctx.editMessageText('Список користувачів:', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
+    } else {
+      await ctx.reply('Список користувачів:', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
+    }
     for (const user of users) {
       await ctx.reply(`ID: ${String(user.telegramId)}\nІм'я: ${String(user.displayName)}`);
     }
   } catch (error) {
-    await ctx.reply(error instanceof Error ? error.message : 'An unexpected error occurred.', {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: '🔙 Назад', callback_data: 'users_menu' }]
-        ]
-      }
-    });
+    if (ctx.callbackQuery) {
+      await ctx.editMessageText(error instanceof Error ? error.message : 'An unexpected error occurred.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
+    } else {
+      await ctx.reply(error instanceof Error ? error.message : 'An unexpected error occurred.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
+    }
   }
 }
 
