@@ -146,49 +146,25 @@ export async function handleTaskInput(ctx: BotContext) {
   const taskType = ctx.session.taskType;
   const messageText = ctx.message?.text;
   if (!messageText) {
-    await ctx.reply('Будь ласка, введіть коректне значення.', {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: '🔙 Назад', callback_data: 'create_task_menu' }]
-        ]
-      }
-    });
+    await ctx.reply('Будь ласка, введіть коректне значення.');
     return;
   }
 
   if (taskType === 'invite' && ctx.session.reward === undefined) {
     const reward = parseInt(messageText, 10);
     if (isNaN(reward)) {
-      await ctx.reply('Будь ласка, введіть коректну суму нагороди.', {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: '🔙 Назад', callback_data: 'create_task_menu' }]
-          ]
-        }
-      });
+      await ctx.reply('Будь ласка, введіть коректну суму нагороди.');
       return;
     }
     ctx.session.reward = reward;
-    await ctx.reply('Введіть кількість друзів, яке потрібно додати:', {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: '🔙 Назад', callback_data: 'create_task_menu' }]
-        ]
-      }
-    });
+    await ctx.reply('Введіть кількість друзів, яке потрібно додати:');
     return;
   }
 
   if (taskType === 'invite' && ctx.session.reward !== undefined) {
     const requiredFriends = parseInt(messageText, 10);
     if (isNaN(requiredFriends)) {
-      await ctx.reply('Будь ласка, введіть коректну кількість друзів.', {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: '🔙 Назад', callback_data: 'create_task_menu' }]
-          ]
-        }
-      });
+      await ctx.reply('Будь ласка, введіть коректну кількість друзів.');
       return;
     }
     ctx.session.requiredFriends = requiredFriends;
@@ -200,34 +176,16 @@ export async function handleTaskInput(ctx: BotContext) {
     if (!ctx.session.reward) {
       const reward = parseInt(messageText, 10);
       if (isNaN(reward)) {
-        await ctx.reply('Будь ласка, введіть коректну суму нагороди.', {
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: '🔙 Назад', callback_data: 'create_task_menu' }]
-            ]
-          }
-        });
+        await ctx.reply('Будь ласка, введіть коректну суму нагороди.');
         return;
       }
       ctx.session.reward = reward;
-      await ctx.reply('Введіть ID каналу:', {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: '🔙 Назад', callback_data: 'create_task_menu' }]
-          ]
-        }
-      });
+      await ctx.reply('Введіть ID каналу:');
       return;
     }
     if (!ctx.session.chatId) {
       ctx.session.chatId = messageText;
-      await ctx.reply('Введіть посилання на канал:', {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: '🔙 Назад', callback_data: 'create_task_menu' }]
-          ]
-        }
-      });
+      await ctx.reply('Введіть посилання на канал:');
       return;
     }
     if (!ctx.session.channelLink) {

@@ -96,95 +96,47 @@ export async function handleCreateShopItem(ctx: BotContext) {
 export async function handleShopItemInput(ctx: BotContext) {
   const messageText = ctx.message?.text;
   if (!messageText) {
-    await ctx.reply('Будь ласка, введіть коректне значення.', {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
-        ]
-      }
-    });
+    await ctx.reply('Будь ласка, введіть коректне значення.');
     return;
   }
 
   if (!ctx.session.itemType) {
-    await ctx.reply('Помилка: тип предмета не вибрано. Спробуйте ще раз.', {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
-        ]
-      }
-    });
+    await ctx.reply('Помилка: тип предмета не вибрано. Спробуйте ще раз.');
     return;
   }
 
   if (!ctx.session.itemName) {
     ctx.session.itemName = messageText;
-    await ctx.reply('Введіть рівень щита:', {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
-        ]
-      }
-    });
+    await ctx.reply('Введіть рівень щита:');
     return;
   }
 
   if (ctx.session.itemShield === undefined) {
     const shield = parseInt(messageText, 10);
     if (isNaN(shield)) {
-      await ctx.reply('Будь ласка, введіть коректний рівень щита.', {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
-          ]
-        }
-      });
+      await ctx.reply('Будь ласка, введіть коректний рівень щита.');
       return;
     }
     ctx.session.itemShield = shield;
-    await ctx.reply('Введіть рівень предмета:', {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
-        ]
-      }
-    });
+    await ctx.reply('Введіть рівень предмета:');
     return;
   }
 
   if (ctx.session.itemLevel === undefined) {
     const level = parseInt(messageText, 10);
     if (isNaN(level)) {
-      await ctx.reply('Будь ласка, введіть коректний рівень предмета.', {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
-          ]
-        }
-      });
+      await ctx.reply('Будь ласка, введіть коректний рівень предмета.');
       return;
     }
     ctx.session.itemLevel = level;
-    await ctx.reply('Введіть ціну предмета:', {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
-        ]
-      }
-    });
+    await ctx.reply('Введіть ціну предмета:');
     return;
   }
 
   if (ctx.session.itemPrice === undefined) {
     const price = parseInt(messageText, 10);
     if (isNaN(price)) {
-      await ctx.reply('Будь ласка, введіть коректну ціну.', {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
-          ]
-        }
-      });
+      await ctx.reply('Будь ласка, введіть коректну ціну.');
       return;
     }
     ctx.session.itemPrice = price;
@@ -196,7 +148,7 @@ async function createShopItem(ctx: BotContext) {
   const { itemType, itemName, itemShield, itemLevel, itemPrice } = ctx.session;
   try {
     console.log('Creating shop item with data:', { itemType, itemName, itemShield, itemLevel, itemPrice });
-    const response = await axios.post(`${API_URL}/shop/create-item`, {
+    const response = await axios.post(`${API_URL}/shop/items`, {
       type: itemType,
       name: itemName,
       shield: itemShield,
