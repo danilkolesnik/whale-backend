@@ -9,8 +9,24 @@ export class UserController {
 
   @Post('set-user-name')
   @ApiOperation({ summary: 'Set user name' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        telegramId: {
+          type: 'string',
+          example: '123456789'
+        },
+        name: {
+          type: 'string',
+          example: 'John Doe'
+        }
+      }
+    }
+  })
   @ApiResponse({ status: 200, description: 'User name set successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiTags('Users')
   async setUserName(
     @Body() body: { telegramId: string, name: string }
   ) {
