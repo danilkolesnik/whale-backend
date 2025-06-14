@@ -3,61 +3,115 @@ import axios from 'axios';
 import { API_URL } from '../../../utils/constant';
 
 export async function handleTasksMenu(ctx: BotContext) {
-  await ctx.reply('Меню завдань:', {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: '📋 Список завдань', callback_data: 'get_all_tasks' }],
-        [{ text: '➕ Створити завдання', callback_data: 'create_task_menu' }],
-        [{ text: '🔙 Назад', callback_data: 'back_to_main' }]
-      ]
-    }
-  });
+  if (ctx.callbackQuery) {
+    await ctx.editMessageText('Меню завдань:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '📋 Список завдань', callback_data: 'get_all_tasks' }],
+          [{ text: '➕ Створити завдання', callback_data: 'create_task_menu' }],
+          [{ text: '🔙 Назад', callback_data: 'back_to_main' }]
+        ]
+      }
+    });
+  } else {
+    await ctx.reply('Меню завдань:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '📋 Список завдань', callback_data: 'get_all_tasks' }],
+          [{ text: '➕ Створити завдання', callback_data: 'create_task_menu' }],
+          [{ text: '🔙 Назад', callback_data: 'back_to_main' }]
+        ]
+      }
+    });
+  }
 }
 
 export async function handleCreateTaskMenu(ctx: BotContext) {
-  await ctx.reply('Виберіть тип завдання:', {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: '📢 Підписка', callback_data: 'create_task_subscription' }],
-        [{ text: '👥 Запрошення', callback_data: 'create_task_invite' }],
-        [{ text: '🔙 Назад', callback_data: 'tasks_menu' }]
-      ]
-    }
-  });
+  if (ctx.callbackQuery) {
+    await ctx.editMessageText('Виберіть тип завдання:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '📢 Підписка', callback_data: 'create_task_subscription' }],
+          [{ text: '👥 Запрошення', callback_data: 'create_task_invite' }],
+          [{ text: '🔙 Назад', callback_data: 'tasks_menu' }]
+        ]
+      }
+    });
+  } else {
+    await ctx.reply('Виберіть тип завдання:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '📢 Підписка', callback_data: 'create_task_subscription' }],
+          [{ text: '👥 Запрошення', callback_data: 'create_task_invite' }],
+          [{ text: '🔙 Назад', callback_data: 'tasks_menu' }]
+        ]
+      }
+    });
+  }
 }
 
 export async function handleCreateTaskSubscription(ctx: BotContext) {
   ctx.session.taskType = 'subscription';
-  await ctx.reply('Введіть нагороду для завдання:', {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: '🔙 Назад', callback_data: 'create_task_menu' }]
-      ]
-    }
-  });
+  if (ctx.callbackQuery) {
+    await ctx.editMessageText('Введіть нагороду для завдання:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🔙 Назад', callback_data: 'create_task_menu' }]
+        ]
+      }
+    });
+  } else {
+    await ctx.reply('Введіть нагороду для завдання:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🔙 Назад', callback_data: 'create_task_menu' }]
+        ]
+      }
+    });
+  }
 }
 
 export async function handleCreateTaskInvite(ctx: BotContext) {
   ctx.session.taskType = 'invite';
-  await ctx.reply('Введіть нагороду для завдання:', {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: '🔙 Назад', callback_data: 'create_task_menu' }]
-      ]
-    }
-  });
+  if (ctx.callbackQuery) {
+    await ctx.editMessageText('Введіть нагороду для завдання:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🔙 Назад', callback_data: 'create_task_menu' }]
+        ]
+      }
+    });
+  } else {
+    await ctx.reply('Введіть нагороду для завдання:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🔙 Назад', callback_data: 'create_task_menu' }]
+        ]
+      }
+    });
+  }
 }
 
 export async function handleGetAllTasks(ctx: BotContext) {
   try {
     const tasks = await fetchTasks();
-    await ctx.reply('Список задач:', {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: '🔙 Назад', callback_data: 'tasks_menu' }]
-        ]
-      }
-    });
+    if (ctx.callbackQuery) {
+      await ctx.editMessageText('Список задач:', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'tasks_menu' }]
+          ]
+        }
+      });
+    } else {
+      await ctx.reply('Список задач:', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'tasks_menu' }]
+          ]
+        }
+      });
+    }
     for (const task of tasks) {
       const date = new Date(String(task.createdAt));
       const formattedDate = `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
@@ -65,13 +119,23 @@ export async function handleGetAllTasks(ctx: BotContext) {
       await ctx.reply(`\nID: ${String(task.id)}\nТип: ${taskType}\nНагорода: ${String(task.coin)}\nПосилання на канал: ${task.channelLink || 'Немає'}\nДата створення: ${formattedDate}`);
     }
   } catch (error) {
-    await ctx.reply(error instanceof Error ? error.message : 'An unexpected error occurred.', {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: '🔙 Назад', callback_data: 'tasks_menu' }]
-        ]
-      }
-    });
+    if (ctx.callbackQuery) {
+      await ctx.editMessageText(error instanceof Error ? error.message : 'An unexpected error occurred.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'tasks_menu' }]
+          ]
+        }
+      });
+    } else {
+      await ctx.reply(error instanceof Error ? error.message : 'An unexpected error occurred.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'tasks_menu' }]
+          ]
+        }
+      });
+    }
   }
 }
 

@@ -3,50 +3,93 @@ import axios from 'axios';
 import { API_URL, SHOP_TYPES } from '../../../utils/constant';
 
 export async function handleShopMenu(ctx: BotContext) {
-  await ctx.reply('Меню магазину:', {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: '📋 Список предметів', callback_data: 'get_shop_items' }],
-        [{ text: '➕ Створити предмет', callback_data: 'create_shop_item' }],
-        [{ text: '🔙 Назад', callback_data: 'back_to_main' }]
-      ]
-    }
-  });
-}
-
-export async function handleGetShopItems(ctx: BotContext) {
-  try {
-    const items = await fetchItems();
-    await ctx.reply('Список предметів магазину:', {
+  if (ctx.callbackQuery) {
+    await ctx.editMessageText('Меню магазину:', {
       reply_markup: {
         inline_keyboard: [
-          [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
+          [{ text: '📋 Список предметів', callback_data: 'get_shop_items' }],
+          [{ text: '➕ Створити предмет', callback_data: 'create_shop_item' }],
+          [{ text: '🔙 Назад', callback_data: 'back_to_main' }]
         ]
       }
     });
-    for (const item of items) {
-      await ctx.reply(`ID: ${item.id}\nНазва: ${item.name}\nРівень: ${item.level}\nЩит: ${item.shield}\nТип: ${item.type}\nЦіна: ${item.price}`);
-    }
-  } catch (error) {
-    await ctx.reply(error instanceof Error ? error.message : 'An unexpected error occurred.', {
+  } else {
+    await ctx.reply('Меню магазину:', {
       reply_markup: {
         inline_keyboard: [
-          [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
+          [{ text: '📋 Список предметів', callback_data: 'get_shop_items' }],
+          [{ text: '➕ Створити предмет', callback_data: 'create_shop_item' }],
+          [{ text: '🔙 Назад', callback_data: 'back_to_main' }]
         ]
       }
     });
   }
 }
 
-export async function handleCreateShopItem(ctx: BotContext) {
-  await ctx.reply('Виберіть тип предмета:', {
-    reply_markup: {
-      inline_keyboard: [
-        ...SHOP_TYPES.map(type => [{ text: type, callback_data: `type_${type}` }]),
-        [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
-      ]
+export async function handleGetShopItems(ctx: BotContext) {
+  try {
+    const items = await fetchItems();
+    if (ctx.callbackQuery) {
+      await ctx.editMessageText('Список предметів магазину:', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
+          ]
+        }
+      });
+    } else {
+      await ctx.reply('Список предметів магазину:', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
+          ]
+        }
+      });
     }
-  });
+    for (const item of items) {
+      await ctx.reply(`ID: ${item.id}\nНазва: ${item.name}\nРівень: ${item.level}\nЩит: ${item.shield}\nТип: ${item.type}\nЦіна: ${item.price}`);
+    }
+  } catch (error) {
+    if (ctx.callbackQuery) {
+      await ctx.editMessageText(error instanceof Error ? error.message : 'An unexpected error occurred.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
+          ]
+        }
+      });
+    } else {
+      await ctx.reply(error instanceof Error ? error.message : 'An unexpected error occurred.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
+          ]
+        }
+      });
+    }
+  }
+}
+
+export async function handleCreateShopItem(ctx: BotContext) {
+  if (ctx.callbackQuery) {
+    await ctx.editMessageText('Виберіть тип предмета:', {
+      reply_markup: {
+        inline_keyboard: [
+          ...SHOP_TYPES.map(type => [{ text: type, callback_data: `type_${type}` }]),
+          [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
+        ]
+      }
+    });
+  } else {
+    await ctx.reply('Виберіть тип предмета:', {
+      reply_markup: {
+        inline_keyboard: [
+          ...SHOP_TYPES.map(type => [{ text: type, callback_data: `type_${type}` }]),
+          [{ text: '🔙 Назад', callback_data: 'shop_menu' }]
+        ]
+      }
+    });
+  }
 }
 
 export async function handleShopItemInput(ctx: BotContext) {
