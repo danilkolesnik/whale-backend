@@ -51,7 +51,7 @@ export class AuthService {
       user = await this.prisma.user.create({
         data: {
           telegramId: userData.id,
-          displayName: userData.first_name,
+          displayName: "",
           isNewUser: true,
           inventory: [],
           balance: { money: 0, shield: 0 },

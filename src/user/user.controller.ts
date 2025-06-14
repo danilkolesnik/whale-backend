@@ -7,6 +7,16 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nes
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Post('set-user-name')
+  @ApiOperation({ summary: 'Set user name' })
+  @ApiResponse({ status: 200, description: 'User name set successfully' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async setUserName(
+    @Body() body: { telegramId: string, name: string }
+  ) {
+    return this.userService.setUserName(body.telegramId, body.name);
+  }
+
   @Get('user-by-telegram-id')
   @ApiOperation({ summary: 'Get user by telegram id' })
   @ApiResponse({ status: 200, description: 'Return user by telegram id' })

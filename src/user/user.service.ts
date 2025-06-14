@@ -7,6 +7,23 @@ import { UPGRADE_CHANCES } from '../utils/constant';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
+  async setUserName(telegramId: string, name: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { telegramId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    await this.prisma.user.update({
+      where: { telegramId },
+      data: {
+        displayName: name,
+      },
+    });
+  }
+
   async equipItem(telegramId: string, itemId: number) {
     const user = await this.prisma.user.findUnique({
       where: { telegramId },
