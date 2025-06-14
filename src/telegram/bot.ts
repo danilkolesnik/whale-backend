@@ -100,4 +100,12 @@ bot.on('message:text', async (ctx) => {
   }
 });
 
+bot.start({
+  onStart: (botInfo) => {
+    console.log(`Bot started as @${botInfo.username}`);
+  },
+}).catch((err) => {
+  console.error('Error starting bot:', err);
+}); 
+
 export default bot; 
