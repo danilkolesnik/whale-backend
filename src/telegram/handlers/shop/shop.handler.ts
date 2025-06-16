@@ -156,7 +156,7 @@ async function createShopItem(ctx: BotContext) {
       price: itemPrice
     });
     
-    if (response.data.success) {
+    if (response.data) {
       await ctx.reply('Предмет створено успішно.', {
         reply_markup: {
           inline_keyboard: [
