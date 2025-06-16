@@ -436,4 +436,63 @@ export class MarketController {
   ) {
     return this.marketService.fulfillBuyOrder(body.telegramId, parseInt(id), body.itemId);
   }
+
+  @Post('buy-orders/:id/change-price')
+  @ApiOperation({ 
+    summary: 'Change the price of a buy order',
+    description: 'Update the price of an existing buy order'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Buy order ID',  
+    type: 'number',
+    example: 1
+  })
+  @ApiBody({
+    description: 'New price for the buy order',
+    schema: {
+      type: 'object',
+      properties: {
+        newPrice: {
+          type: 'number',
+          example: 100
+        }
+      }
+    }
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Price changed successfully',
+    schema: {
+      example: {
+        message: "Price changed successfully"
+      }
+    }
+  })
+  @ApiResponse({ 
+    status: 400, 
+    description: 'Invalid request or not your order',
+    schema: {
+      example: {
+        statusCode: 400,
+        message: "You can only change the price of your own orders"
+      }
+    }
+  })
+  @ApiResponse({ 
+    status: 404, 
+    description: 'Order not found',
+    schema: {
+      example: {
+        statusCode: 404,
+        message: "Order not found"
+      }
+    }
+  })
+  async changePriceOrder(
+    @Param('id') id: string,
+    @Body() body: { newPrice: number }
+  ) {
+    return this.marketService.changePriceOrder(parseInt(id), body.newPrice);
+  }
 } 

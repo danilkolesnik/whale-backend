@@ -193,4 +193,16 @@ export class MarketService {
       return this.handleError(error);
     }
   }
+
+  async changePriceOrder(orderId: number, newPrice: number) {
+    try {
+      const order = await this.prisma.buyOrder.findUnique({ where: { id: orderId } });
+      if (!order) return { success: false, error: 'Order not found', data: null };
+
+      const updatedOrder = await this.prisma.buyOrder.update({ where: { id: orderId }, data: { price: newPrice } });
+      return { success: true, error: null, data: updatedOrder };
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
 }
