@@ -71,4 +71,8 @@ export class ShopService {
       },
     });
   }
+
+  async buyTool(telegramId: string, toolId: number) { 
+    
+  }
 } 
