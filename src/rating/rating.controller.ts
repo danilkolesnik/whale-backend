@@ -34,4 +34,11 @@ export class RatingController {
   async getRatingList() {
     return this.ratingService.getRatingList();
   }
+
+  @Post('create')
+  @ApiOperation({ summary: 'Create rating' })
+  @ApiResponse({ status: 200, description: 'Rating created successfully' })
+  async createRating() {
+    return this.ratingService.createRating();
+  }
 } 
