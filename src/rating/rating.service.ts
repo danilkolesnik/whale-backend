@@ -107,4 +107,18 @@ export class RatingService {
   async getRatingList() {
     return await this.prisma.rating.findMany();
   }
+
+  async createRating() {
+    const existingRound = await this.prisma.rating.findFirst();
+    if (existingRound) {
+      await this.prisma.rating.deleteMany();
+    }
+
+    await this.prisma.rating.create({
+      data: {
+        users: [],
+        roundCreatedAt: new Date()
+      }
+    });
+  } 
 } 

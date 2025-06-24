@@ -72,7 +72,30 @@ export class ShopService {
     });
   }
 
-  async buyTool(telegramId: string, toolId: number) { 
+  async buyTool(telegramId: string, toolQuantity: number) { 
+    const user = await this.prisma.user.findUnique({
+      where: { telegramId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const balance = user.balance as { money: number; shield: number; tools: number };
+
+    await this.prisma.user.update({
+      where: { telegramId },
+      data: {
+        balance: {
+          tools: balance.tools + toolQuantity,
+        },
+      },
+    });
+
+    return{
+      data: user,
+      message: 'Tools bought successfully',
+    }
     
   }
 } 

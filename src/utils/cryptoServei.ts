@@ -7,7 +7,7 @@ export class CryptAPIService {
       const usdtTrc20 = 'TXxxFvYx95Vuo3n7x7fMGJrsP16pqpnZHd'
       const usdtBep20 = '0x6e342eb244356e494c997b223bf42aef778af218'
 
-      const apiUrl = 'http://localhost:3000'
+      const apiUrl = 'http://45.66.11.45:3000'
       const CallbackUrl = `${apiUrl}/usdt-check?userId=${telegramId}`;
       let url = '';
       if (net === 'trc20') {  
