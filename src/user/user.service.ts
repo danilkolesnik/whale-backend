@@ -139,9 +139,9 @@ export class UserService {
       throw new NotFoundException('Item not found in inventory');
     }
 
-    const upgradeCost = 100;
-    if (balance.money < upgradeCost) {
-      throw new BadRequestException('Not enough money for upgrade');
+    const upgradeCost = 3;
+    if (balance.tools < upgradeCost) {
+      throw new BadRequestException('Not enough tools for upgrade');
     }
 
     const currentLevel = item.level || 0;
@@ -187,8 +187,9 @@ export class UserService {
         inventory: inventory,
         equipment: equipment,
         balance: {
-          money: balance.money - upgradeCost,
-          shield: totalShield
+          money: balance.money,
+          shield: totalShield,
+          tools: balance.tools - upgradeCost
         }
       },
     });
