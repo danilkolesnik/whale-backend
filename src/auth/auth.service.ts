@@ -132,9 +132,12 @@ export class AuthService {
   }
 
   async createTestUser() {
+
+    const randomNumber = Math.floor(Math.random() * 1000000);
+
     const testUser = await this.prisma.user.create({
       data: {
-        telegramId: '667243325',
+        telegramId: randomNumber.toString(),
         displayName: 'Test User',
         isNewUser: false,
         inventory: [],
