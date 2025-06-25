@@ -13,6 +13,16 @@ export interface SessionData {
   itemShield?: number;
   itemLevel?: number;
   itemPrice?: number;
+  // Upgrade settings fields
+  upgradeAction?: string;
+  upgradeStep?: string;
+  upgradeData?: {
+    levelRange?: string;
+    toolsCost?: number;
+    successRate?: number;
+    useSequence?: boolean;
+    sequence?: boolean[];
+  };
 }
 
 export type BotContext = Context & {

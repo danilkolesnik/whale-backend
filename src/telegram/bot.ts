@@ -3,6 +3,7 @@ import { BotContext } from './handlers/types';
 import { handleUsersMenu, handleViewUserMenu, handleUpdateUserMenu, handleGetAllUsers, handleUserInput } from './handlers/users/users.handler';
 import { handleShopMenu, handleGetShopItems, handleCreateShopItem, handleShopItemInput } from './handlers/shop/shop.handler';
 import { handleTasksMenu, handleCreateTaskMenu, handleCreateTaskSubscription, handleCreateTaskInvite, handleGetAllTasks, handleTaskInput } from './handlers/tasks/tasks.handler';
+import { handleUpgradeMenu, handleViewUpgradeSettings, handleCreateUpgradeSettings, handleEditUpgradeSettings, handleResetSequenceMenu, handleUpgradeInput, handleResetSequence } from './handlers/upgrade/upgrade.handler';
 
 const bot = new Bot<BotContext>(process.env.TELEGRAM_BOT_TOKEN || '');
 
@@ -31,7 +32,8 @@ bot.command('admin', async (ctx) => {
       inline_keyboard: [
         [{ text: '👥 Користувачі', callback_data: 'users_menu' }],
         [{ text: '🛍️ Магазин', callback_data: 'shop_menu' }],
-        [{ text: '📋 Завдання', callback_data: 'tasks_menu' }]
+        [{ text: '📋 Завдання', callback_data: 'tasks_menu' }],
+        [{ text: '⚙️ Налаштування прокачки', callback_data: 'upgrade_menu' }]
       ]
     }
   });
@@ -85,6 +87,22 @@ bot.on('callback_query', async (ctx) => {
     await handleGetAllTasks(ctx);
   }
 
+  // Upgrade menu
+  else if (callbackData === 'upgrade_menu') {
+    await handleUpgradeMenu(ctx);
+  } else if (callbackData === 'view_upgrade_settings') {
+    await handleViewUpgradeSettings(ctx);
+  } else if (callbackData === 'create_upgrade_settings') {
+    await handleCreateUpgradeSettings(ctx);
+  } else if (callbackData === 'edit_upgrade_settings') {
+    await handleEditUpgradeSettings(ctx);
+  } else if (callbackData === 'reset_sequence_menu') {
+    await handleResetSequenceMenu(ctx);
+  } else if (callbackData.startsWith('reset_seq_')) {
+    const levelRange = callbackData.replace('reset_seq_', '');
+    await handleResetSequence(ctx, levelRange);
+  }
+
   // Navigation
   else if (callbackData === 'back_to_main') {
     await ctx.editMessageText('Головне меню:', {
@@ -92,7 +110,8 @@ bot.on('callback_query', async (ctx) => {
         inline_keyboard: [
           [{ text: '👥 Користувачі', callback_data: 'users_menu' }],
           [{ text: '🛍️ Магазин', callback_data: 'shop_menu' }],
-          [{ text: '📋 Завдання', callback_data: 'tasks_menu' }]
+          [{ text: '📋 Завдання', callback_data: 'tasks_menu' }],
+          [{ text: '⚙️ Налаштування прокачки', callback_data: 'upgrade_menu' }]
         ]
       }
     });
@@ -107,6 +126,8 @@ bot.on('message:text', async (ctx) => {
     await handleShopItemInput(ctx);
   } else if (ctx.session.taskType) {
     await handleTaskInput(ctx);
+  } else if (ctx.session.upgradeAction) {
+    await handleUpgradeInput(ctx);
   }
 });
 

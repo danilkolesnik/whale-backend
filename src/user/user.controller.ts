@@ -658,4 +658,96 @@ export class UserController {
   ) {
     return this.userService.removeItem(body.telegramId, parseInt(itemId));
   }
+
+  // Upgrade Settings Management Endpoints
+  @Post('upgrade-settings')
+  @ApiOperation({ 
+    summary: 'Create upgrade settings',
+    description: 'Creates new upgrade settings for a specific level range'
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['levelRange', 'toolsCost', 'successRate'],
+      properties: {
+        levelRange: { type: 'string', example: '1-5' },
+        toolsCost: { type: 'number', example: 3 },
+        successRate: { type: 'number', example: 0.8 },
+        useSequence: { type: 'boolean', example: false },
+        sequence: { type: 'array', items: { type: 'boolean' }, example: [true, false, true] }
+      }
+    }
+  })
+  async createUpgradeSettings(
+    @Body() body: {
+      levelRange: string;
+      toolsCost: number;
+      successRate: number;
+      useSequence?: boolean;
+      sequence?: boolean[];
+    }
+  ) {
+    return this.userService.createUpgradeSettings(
+      body.levelRange,
+      body.toolsCost,
+      body.successRate,
+      body.useSequence,
+      body.sequence
+    );
+  }
+
+  @Post('upgrade-settings/:levelRange/update')
+  @ApiOperation({ 
+    summary: 'Update upgrade settings',
+    description: 'Updates existing upgrade settings for a specific level range'
+  })
+  @ApiParam({
+    name: 'levelRange',
+    description: 'Level range to update (e.g., "1-5")',
+    type: 'string'
+  })
+  async updateUpgradeSettings(
+    @Param('levelRange') levelRange: string,
+    @Body() body: {
+      toolsCost?: number;
+      successRate?: number;
+      useSequence?: boolean;
+      sequence?: boolean[];
+    }
+  ) {
+    return this.userService.updateUpgradeSettings(levelRange, body);
+  }
+
+  @Get('upgrade-settings')
+  @ApiOperation({ 
+    summary: 'Get all upgrade settings',
+    description: 'Retrieves all upgrade settings or specific level range'
+  })
+  @ApiQuery({
+    name: 'levelRange',
+    description: 'Specific level range to retrieve (optional)',
+    type: 'string',
+    required: false
+  })
+  async getUpgradeSettings(
+    @Query('levelRange') levelRange?: string
+  ) {
+    return this.userService.getUpgradeSettings(levelRange);
+  }
+
+  @Post('upgrade-settings/:levelRange/reset-sequence')
+  @ApiOperation({ 
+    summary: 'Reset upgrade sequence',
+    description: 'Resets the current index of upgrade sequence to 0'
+  })
+  @ApiParam({
+    name: 'levelRange',
+    description: 'Level range to reset sequence for',
+    type: 'string'
+  })
+  async resetUpgradeSequence(
+    @Param('levelRange') levelRange: string
+  ) {
+    return this.userService.resetUpgradeSequence(levelRange);
+  }
 } 

@@ -1,11 +1,27 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { generateReferralLink } from '../utils/generateReferralLink';
-import { UPGRADE_CHANCES } from '../utils/constant';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
+
+  private async getUpgradeSettingsForLevel(level: number) {
+    // Determine level range based on current level
+    let levelRange: string;
+    
+    if (level <= 5) levelRange = '1-5';
+    else if (level <= 10) levelRange = '6-10';
+    else if (level <= 15) levelRange = '11-15';
+    else if (level <= 20) levelRange = '16-20';
+    else if (level <= 25) levelRange = '21-25';
+    else if (level <= 30) levelRange = '26-30';
+    else return null; // Maximum level reached
+
+    return await this.prisma.upgradeSettings.findUnique({
+      where: { levelRange }
+    });
+  }
 
   async setUserName(telegramId: string, name: string) {
     const user = await this.prisma.user.findUnique({
@@ -139,60 +155,95 @@ export class UserService {
       throw new NotFoundException('Item not found in inventory');
     }
 
-    const upgradeCost = 3;
-    if (balance.tools < upgradeCost) {
-      throw new BadRequestException('Not enough tools for upgrade');
+    const currentLevel = item.level || 0;
+    
+    // Get upgrade settings from database based on current level
+    const upgradeSettings = await this.getUpgradeSettingsForLevel(currentLevel);
+    if (!upgradeSettings) {
+      throw new BadRequestException('Maximum level reached or no upgrade settings found');
     }
 
-    const currentLevel = item.level || 0;
-    let successChance = 0;
+    // Check if user has enough tools
+    if (balance.tools < upgradeSettings.toolsCost) {
+      throw new BadRequestException(`Not enough tools for upgrade. Required: ${upgradeSettings.toolsCost}`);
+    }
 
-    // Determine success chance based on current level
-    if (currentLevel <= 5) successChance = UPGRADE_CHANCES['1-5'];
-    else if (currentLevel <= 10) successChance = UPGRADE_CHANCES['6-10'];
-    else if (currentLevel <= 15) successChance = UPGRADE_CHANCES['11-15'];
-    else if (currentLevel <= 20) successChance = UPGRADE_CHANCES['16-20'];
-    else if (currentLevel <= 25) successChance = UPGRADE_CHANCES['21-25'];
-    else if (currentLevel <= 30) successChance = UPGRADE_CHANCES['26-30'];
-    else throw new BadRequestException('Maximum level reached');
-
-    // Random check for upgrade success
-    const isSuccessful = Math.random() < successChance;
+    // Determine upgrade success
+    let isSuccessful: boolean;
+    
+    if (upgradeSettings.useSequence && upgradeSettings.sequence) {
+      // Use programmed sequence
+      const sequence = upgradeSettings.sequence as boolean[];
+      isSuccessful = sequence[upgradeSettings.currentIndex % sequence.length];
+      
+      // Update sequence index for next attempt
+      await this.prisma.upgradeSettings.update({
+        where: { id: upgradeSettings.id },
+        data: { currentIndex: upgradeSettings.currentIndex + 1 }
+      });
+    } else {
+      // Use random chance
+      isSuccessful = Math.random() < upgradeSettings.successRate;
+    }
 
     if (isSuccessful) {
       // Successful upgrade
       item.level = currentLevel + 1;
       item.shield = (item.shield || 0) + 4;
-    } else {
-      // Failed upgrade - reset to level 0 and shield 1
-      item.level = 0;
-      item.shield = 1;
-    }
-
-    // Update item in equipment if it's equipped
-    if (item.isActive) {
-      const equippedItem = equipment.find(e => e.id === itemId);
-      if (equippedItem) {
-        equippedItem.level = item.level;
-        equippedItem.shield = item.shield;
-      }
-    }
-
-    // Calculate total shield from equipment
-    const totalShield = equipment.reduce((sum, item) => sum + item.shield, 0);
-
-    return await this.prisma.user.update({
-      where: { telegramId },
-      data: {
-        inventory: inventory,
-        equipment: equipment,
-        balance: {
-          money: balance.money,
-          shield: totalShield,
-          tools: balance.tools - upgradeCost
+      
+      // Update item in equipment if it's equipped
+      if (item.isActive) {
+        const equippedItem = equipment.find(e => e.id === itemId);
+        if (equippedItem) {
+          equippedItem.level = item.level;
+          equippedItem.shield = item.shield;
         }
-      },
-    });
+      }
+
+      // Calculate total shield from equipment
+      const totalShield = equipment.reduce((sum, item) => sum + item.shield, 0);
+
+      return await this.prisma.user.update({
+        where: { telegramId },
+        data: {
+          inventory: inventory,
+          equipment: equipment,
+          balance: {
+            money: balance.money,
+            shield: totalShield,
+            tools: balance.tools - upgradeSettings.toolsCost
+          }
+        },
+      });
+    } else {
+      // Failed upgrade - remove item completely
+      const inventoryIndex = inventory.findIndex(i => i.id === itemId);
+      if (inventoryIndex !== -1) {
+        inventory.splice(inventoryIndex, 1);
+      }
+
+      // Remove from equipment if equipped
+      const equipmentIndex = equipment.findIndex(i => i.id === itemId);
+      if (equipmentIndex !== -1) {
+        equipment.splice(equipmentIndex, 1);
+      }
+
+      // Recalculate total shield
+      const totalShield = equipment.reduce((sum, item) => sum + item.shield, 0);
+
+      return await this.prisma.user.update({
+        where: { telegramId },
+        data: {
+          inventory: inventory,
+          equipment: equipment,
+          balance: {
+            money: balance.money,
+            shield: totalShield,
+            tools: balance.tools - upgradeSettings.toolsCost
+          }
+        },
+      });
+    }
   }
 
   async inviteUser(telegramId: string) {
@@ -386,6 +437,49 @@ export class UserService {
           shield: totalShield
         }
       },
+    });
+  }
+
+  // Upgrade Settings Management Methods
+  async createUpgradeSettings(levelRange: string, toolsCost: number, successRate: number, useSequence: boolean = false, sequence?: boolean[]) {
+    return await this.prisma.upgradeSettings.create({
+      data: {
+        levelRange,
+        toolsCost,
+        successRate,
+        useSequence,
+        sequence: sequence || null,
+      },
+    });
+  }
+
+  async updateUpgradeSettings(levelRange: string, updateData: {
+    toolsCost?: number;
+    successRate?: number;
+    useSequence?: boolean;
+    sequence?: boolean[];
+  }) {
+    return await this.prisma.upgradeSettings.update({
+      where: { levelRange },
+      data: updateData,
+    });
+  }
+
+  async getUpgradeSettings(levelRange?: string) {
+    if (levelRange) {
+      return await this.prisma.upgradeSettings.findUnique({
+        where: { levelRange },
+      });
+    }
+    return await this.prisma.upgradeSettings.findMany({
+      orderBy: { levelRange: 'asc' },
+    });
+  }
+
+  async resetUpgradeSequence(levelRange: string) {
+    return await this.prisma.upgradeSettings.update({
+      where: { levelRange },
+      data: { currentIndex: 0 },
     });
   }
 } 
