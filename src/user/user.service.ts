@@ -448,7 +448,7 @@ export class UserService {
         toolsCost,
         successRate,
         useSequence,
-        sequence: sequence || null,
+        sequence: sequence || undefined,
       },
     });
   }
