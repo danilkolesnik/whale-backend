@@ -187,32 +187,8 @@ export async function handleUpgradeInput(ctx: BotContext) {
             return;
           }
           ctx.session.upgradeData!.successRate = successRate / 100;
-          ctx.session.upgradeStep = 'useSequence';
-          await ctx.reply('Використовувати програмовану послідовність? (так/ні):');
-          break;
-        }
-          
-        case 'useSequence': {
-          const useSequence = text.toLowerCase() === 'так' || text.toLowerCase() === 'yes';
-          ctx.session.upgradeData!.useSequence = useSequence;
-          
-          if (useSequence) {
-            ctx.session.upgradeStep = 'sequence';
-            await ctx.reply('Введіть послідовність через кому (наприклад: false,true,false,false):');
-          } else {
-            await createUpgradeSettingsInDB(ctx);
-          }
-          break;
-        }
-          
-        case 'sequence': {
-          try {
-            const sequence = text.split(',').map(s => s.trim().toLowerCase() === 'true');
-            ctx.session.upgradeData!.sequence = sequence;
-            await createUpgradeSettingsInDB(ctx);
-          } catch (error) {
-            await ctx.reply('❌ Некоректна послідовність. Спробуйте ще раз:');
-          }
+          ctx.session.upgradeData!.useSequence = false; // Всегда используем простой шанс
+          await createUpgradeSettingsInDB(ctx);
           break;
         }
       }
