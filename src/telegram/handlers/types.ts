@@ -6,6 +6,7 @@ export interface SessionData {
   chatId?: string;
   channelLink?: string;
   requiredFriends?: number;
+  title?: string;
   waitingForTelegramId?: boolean;
   creationStep?: string;
   itemType?: string;

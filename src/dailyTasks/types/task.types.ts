@@ -1,4 +1,4 @@
-export type TaskType = 'subscription' | 'invite';
+export type TaskType = 'subscription' | 'invite' | 'external_sub';
 
 export interface Task {
   id: number;
