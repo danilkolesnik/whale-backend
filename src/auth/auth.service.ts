@@ -98,14 +98,6 @@ export class AuthService {
         throw new UnauthorizedException('User not found');
       }
 
-      if(user.isNewUser) {
-        user.isNewUser = false;
-        await this.prisma.user.update({
-          where: { id: user.id },
-          data: { isNewUser: false }
-        });
-      }
-
       const cryptApiService = new CryptAPIService();
 
       const usdtAddressBEP20 = await cryptApiService.createBEP20Payment(user.telegramId, "bep20");
