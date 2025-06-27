@@ -15,6 +15,7 @@ export class AuthService {
   ) {}
 
   async authenticate(initData: string) {
+    console.log("initData", initData);
     const [userData, error, rawParams] = verifyTelegramWebAppData(initData);
     
     if (error || !userData) {
