@@ -38,8 +38,9 @@ export class ShopService {
       throw new NotFoundException('Item not found');
     }
 
-    const balance = JSON.parse(user.balance as string) as { money: number; shield: number; tools: number };
-    
+    // Assuming user.balance is already an object
+    const balance = user.balance as { money: number; shield: number; tools: number };
+
     if (balance.money < item.price) {
       throw new BadRequestException('Not enough money');
     }
