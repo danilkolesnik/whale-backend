@@ -10,45 +10,33 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('authenticate')
-  @ApiOperation({ summary: 'Authenticate user with Telegram data' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        initData: {
-          type: 'string',
-          description: 'Telegram WebApp initData string',
-          example: 'query_id=AAHdF6IQAAAAAN0XohAhrGcJ&user=%7B%22id%22%3A123456789%2C%22first_name%22%3A%22John%22%7D&auth_date=1234567890&hash=abc123...'
+@ApiOperation({ summary: 'Authenticate user with Telegram WebApp data' })
+@ApiBody({
+  schema: {
+    type: 'object',
+    properties: {
+      webAppData: {
+        type: 'object',
+        description: 'Telegram WebApp data object',
+        properties: {
+          user: {
+            type: 'object',
+            properties: {
+              id: { type: 'number' },
+              first_name: { type: 'string' },
+              username: { type: 'string' }
+            }
+          },
+          auth_date: { type: 'number' },
+          hash: { type: 'string' }
         }
       }
     }
-  })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'User authenticated successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        access_token: {
-          type: 'string',
-          description: 'JWT access token'
-        },
-        user: {
-          type: 'object',
-          properties: {
-            id: { type: 'number' },
-            telegramId: { type: 'string' },
-            displayName: { type: 'string' },
-            isNewUser: { type: 'boolean' }
-          }
-        }
-      }
-    }
-  })
-  @ApiResponse({ status: 401, description: 'Invalid Telegram data' })
-  async authenticate(@Body() authenticateDto: AuthenticateDto) {
-    return this.authService.authenticate(authenticateDto.initData);
   }
+})
+async authenticate(@Body() body: { webAppData: any }) {
+  return this.authService.authenticate(body);
+}
 
   @Get('verify')
   @ApiOperation({ summary: 'Verify JWT token and get user data' })

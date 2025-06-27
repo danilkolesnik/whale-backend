@@ -14,43 +14,40 @@ export class AuthService {
     private dailyTasksService: DailyTasksService
   ) {}
 
-  async authenticate(initData: string) {
-    console.log("initData", initData);
-    const [userData, error, rawParams] = verifyTelegramWebAppData(initData);
+  async authenticate(body: { webAppData: any }) {
+    console.log("Received webAppData:", body.webAppData);
     
-    if (error || !userData) {
-      throw new UnauthorizedException('Invalid Telegram data');
+    if (!body.webAppData || !body.webAppData.user || !body.webAppData.user.id) {
+      throw new UnauthorizedException('Invalid webAppData: missing user data');
     }
-  
+
+    const userData = body.webAppData.user;
+    const telegramId: string = userData.id.toString();
+    
+    console.log("Processing user:", userData);
+
     const existingUser = await this.prisma.user.findUnique({
-      where: {
-        telegramId: userData.id
-      }
+      where: { telegramId }
     });
-  
+
     let user;
     if (existingUser) {
       user = await this.prisma.user.update({
-        where: {
-          telegramId: userData.id
-        },
-        data: {
-          isNewUser: false
-        }
+        where: { telegramId },
+        data: { isNewUser: false }
       });
     } else {
-  
-      const urlSearchParams = new URLSearchParams(rawParams);
-      const refTelegramId = urlSearchParams.get('ref');
-  
+      // Проверяем start_param для реферальной системы  
+      const startParam: string | undefined = body.webAppData.start_param?.toString();
       const friends: string[] = [];
-      if (refTelegramId && refTelegramId !== userData.id.toString()) {
-        friends.push(refTelegramId);
+      
+      if (startParam && startParam !== telegramId) {
+        friends.push(startParam);
       }
-  
+
       user = await this.prisma.user.create({
         data: {
-          telegramId: userData.id,
+          telegramId,
           displayName: userData.username || userData.first_name,
           isNewUser: true,
           inventory: [],
@@ -58,34 +55,38 @@ export class AuthService {
           friends: JSON.stringify(friends),
         }
       });
-  
-      if (refTelegramId && refTelegramId !== userData.id.toString()) {
+
+      // Обновляем друзей реферера
+      if (startParam && startParam !== telegramId) {
         const refUser = await this.prisma.user.findUnique({
-          where: { telegramId: refTelegramId }
+          where: { telegramId: startParam }
         });
-  
+
         if (refUser) {
           const refUserFriends = JSON.parse(refUser.friends as string || '[]') as string[];
-          if (!refUserFriends.includes(userData.id.toString())) {
-            refUserFriends.push(userData.id.toString());
-  
+          if (!refUserFriends.includes(telegramId)) {
+            refUserFriends.push(telegramId);
             await this.prisma.user.update({
-              where: { telegramId: refTelegramId },
-              data: {
-                friends: JSON.stringify(refUserFriends)
-              }
+              where: { telegramId: startParam },
+              data: { friends: JSON.stringify(refUserFriends) }
             });
           }
         }
       }
     }
-  
+
     const payload = { sub: user.id, telegramId: user.telegramId };
     return {
       access_token: this.jwtService.sign(payload),
+      user: {
+        id: user.id,
+        telegramId: user.telegramId,
+        displayName: user.displayName,
+        isNewUser: user.isNewUser,
+        balance: user.balance
+      }
     };
-  }
-
+}
   async verifyUser(token: string) {
     try {
       const payload = this.jwtService.verify(token);
