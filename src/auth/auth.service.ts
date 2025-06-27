@@ -15,16 +15,12 @@ export class AuthService {
   ) {}
 
   async authenticate(body: { webAppData: any }) {
-    console.log("Received webAppData:", body.webAppData);
-    
     if (!body.webAppData || !body.webAppData.user || !body.webAppData.user.id) {
       throw new UnauthorizedException('Invalid webAppData: missing user data');
     }
 
     const userData = body.webAppData.user;
     const telegramId: string = userData.id.toString();
-    
-    console.log("Processing user:", userData);
 
     const existingUser = await this.prisma.user.findUnique({
       where: { telegramId }
@@ -37,7 +33,6 @@ export class AuthService {
         data: { isNewUser: false }
       });
     } else {
-      // Проверяем start_param для реферальной системы  
       const startParam: string | undefined = body.webAppData.start_param?.toString();
       const friends: string[] = [];
       
@@ -49,10 +44,6 @@ export class AuthService {
         data: {
           telegramId,
           displayName: userData.username || userData.first_name,
-          isNewUser: true,
-          inventory: [],
-          balance: { money: 0, shield: 0 },
-          friends: JSON.stringify(friends),
         }
       });
 
@@ -135,7 +126,7 @@ export class AuthService {
         displayName: 'Test User',
         isNewUser: false,
         inventory: [],
-        balance: { money: 100000, shield: 0 }
+        balance: { money: 100000, shield: 0, tools: 1000 }
       }
     });
 

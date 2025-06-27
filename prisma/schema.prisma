@@ -18,7 +18,6 @@ model User {
   lastName      String?
   isNewUser     Boolean  @default(true)
   balance       Json     @default("{\"money\": 0, \"shield\": 0, \"tools\": 0}")
-  // balance       Json     @default("{\"money\": 0, \"shield\": 0}")
   inventory     Json     @default("[]")
   equipment     Json     @default("[]")
   createdAt     DateTime @default(now())

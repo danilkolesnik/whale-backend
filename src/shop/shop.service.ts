@@ -64,8 +64,9 @@ export class ShopService {
       where: { telegramId },
       data: {
         balance: {
-          money: balance.money - item.level * 100,
+          money: balance.money - item.price,
           shield: balance.shield,
+          tools: balance.tools,
         },
         inventory: inventory,
       },
