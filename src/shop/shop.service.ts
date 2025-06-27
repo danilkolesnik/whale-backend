@@ -39,7 +39,7 @@ export class ShopService {
     }
 
     // Parse user's balance
-    const balance = user.balance as { money: number; shield: number };
+    const balance = user.balance as { money: number; shield: number; tools: number };
     
     // Check if user has enough money
     if (balance.money < item.level * 100) { // Price is level * 100
