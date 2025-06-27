@@ -38,18 +38,14 @@ export class ShopService {
       throw new NotFoundException('Item not found');
     }
 
-    // Parse user's balance
-    const balance = user.balance as { money: number; shield: number; tools: number };
+    const balance = JSON.parse(user.balance as string) as { money: number; shield: number; tools: number };
     
-    // Check if user has enough money
-    if (balance.money < item.level * 100) { // Price is level * 100
+    if (balance.money < item.price) {
       throw new BadRequestException('Not enough money');
     }
 
-    // Parse user's inventory
     const inventory = user.inventory as any[];
 
-    // Add complete item info to inventory
     inventory.push({
       id: item.id,
       name: item.name,
@@ -64,9 +60,8 @@ export class ShopService {
       where: { telegramId },
       data: {
         balance: {
+          ...balance,
           money: balance.money - item.price,
-          shield: balance.shield,
-          tools: balance.tools,
         },
         inventory: inventory,
       },
@@ -82,7 +77,7 @@ export class ShopService {
       throw new NotFoundException('User not found');
     }
 
-    const balance = user.balance as { money: number; shield: number; tools: number };
+    const balance = JSON.parse(user.balance as string) as { money: number; shield: number; tools: number };
 
     await this.prisma.user.update({
       where: { telegramId },
