@@ -155,14 +155,11 @@ export class UserService {
 
     const currentLevel = item.level || 0;
 
-    
     const upgradeSettings = await this.getUpgradeSettingsForLevel(currentLevel);
     
     if (!upgradeSettings) {
       throw new BadRequestException('Maximum level reached or no upgrade settings found');
     }
-
-    console.log(upgradeSettings.toolsCost);
 
     // Check if user has enough tools
     if (balance.tools < upgradeSettings.toolsCost) {

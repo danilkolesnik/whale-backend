@@ -22,6 +22,12 @@ export class RatingService {
     }
 
     const usersArray = Array.isArray(currentRound.users) ? currentRound.users : JSON.parse(currentRound.users as string);
+
+    const userAlreadyAdded = usersArray.some((u: any) => u.telegramId === user.telegramId);
+    if (userAlreadyAdded) {
+      return { success: false, error: 'User already added to the rating' };
+    }
+
     const updatedUsers = [...usersArray, {
       displayName: user.displayName ?? 'Unknown',
       telegramId: user.telegramId ?? 'Unknown',
@@ -48,10 +54,16 @@ export class RatingService {
 
     const users = topUsers.map(user => {
       let shield = 0;
+      let tools = 0;
       try {
         const balance = JSON.parse(user.balance as string);
-        if (balance && typeof balance === 'object' && 'shield' in balance) {
-          shield = balance.shield;
+        if (balance && typeof balance === 'object') {
+          if ('shield' in balance) {
+            shield = balance.shield;
+          }
+          if ('tools' in balance) {
+            tools = balance.tools;
+          }
         }
       } catch (error) {
         console.error('Invalid balance format for user:', user.telegramId);
@@ -59,7 +71,8 @@ export class RatingService {
       return {
         displayName: user.displayName,
         telegramId: user.telegramId,
-        shield
+        shield,
+        tools
       };
     });
 
@@ -97,7 +110,8 @@ export class RatingService {
         data: {
           balance: {
             money: money + reward,
-            // shield: topUsers[i].balance.shield
+            tools: top100Users[i].tools,
+            shield: top100Users[i].shield
           }
         }
       });
