@@ -23,17 +23,12 @@ export class RatingService {
 
     const usersArray = Array.isArray(currentRound.users) ? currentRound.users : JSON.parse(currentRound.users as string);
 
-    const userAlreadyAdded = usersArray.some((u: any) => u.telegramId === user.telegramId);
+    const userAlreadyAdded = usersArray.some((u: any) => u === user.telegramId);
     if (userAlreadyAdded) {
       return { success: false, error: 'User already added to the rating' };
     }
 
-    const updatedUsers = [...usersArray, {
-      displayName: user.displayName ?? 'Unknown',
-      telegramId: user.telegramId ?? 'Unknown',
-      shield: user.balance.shield,
-      addedAt: new Date()
-    }];
+    const updatedUsers = [...usersArray, user.telegramId];
 
     await this.prisma.rating.update({
       where: { id: currentRound.id },
@@ -119,7 +114,36 @@ export class RatingService {
   }
 
   async getRatingList() {
-    return await this.prisma.rating.findMany();
+    const ratingRounds = await this.prisma.rating.findMany();
+    const userIds = ratingRounds.flatMap(round => round.users as string[]);
+    const users = await this.prisma.user.findMany({
+      where: {
+        telegramId: { in: userIds }
+      }
+    });
+    return users.map(user => {
+      let shield = 0;
+      let tools = 0;
+      try {
+        const balance = JSON.parse(user.balance as string);
+        if (balance && typeof balance === 'object') {
+          if ('shield' in balance) {
+            shield = balance.shield;
+          }
+          if ('tools' in balance) {
+            tools = balance.tools;
+          }
+        }
+      } catch (error) {
+        console.error('Invalid balance format for user:', user.telegramId);
+      }
+      return {
+        displayName: user.displayName,
+        telegramId: user.telegramId,
+        shield,
+        tools
+      };
+    });
   }
 
   async createRating() {
