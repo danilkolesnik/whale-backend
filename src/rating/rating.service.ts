@@ -53,10 +53,10 @@ export class RatingService {
       try {
         const balance = JSON.parse(user.balance as string);
         if (balance && typeof balance === 'object') {
-          if ('shield' in balance) {
+          if ('shield' in balance && typeof balance.shield === 'number') {
             shield = balance.shield;
           }
-          if ('tools' in balance) {
+          if ('tools' in balance && typeof balance.tools === 'number') {
             tools = balance.tools;
           }
         }
@@ -129,18 +129,15 @@ export class RatingService {
         if (user) {
           let shield = 0;
           let tools = 0;
-          try {
-            const balance = JSON.parse(user.balance as string);
-            if (balance && typeof balance === 'object') {
-              if ('shield' in balance) {
-                shield = balance.shield;
-              }
-              if ('tools' in balance) {
-                tools = balance.tools;
-              }
+          console.log('Using balance for user:', user.telegramId, 'Balance data:', user.balance);
+          const balance = user.balance;
+          if (balance && typeof balance === 'object') {
+            if ('shield' in balance && typeof balance.shield === 'number') {
+              shield = balance.shield;
             }
-          } catch (error) {
-            console.error('Invalid balance format for user:', user.telegramId);
+            if ('tools' in balance && typeof balance.tools === 'number') {
+              tools = balance.tools;
+            }
           }
           return {
             displayName: user.displayName,
