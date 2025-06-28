@@ -158,8 +158,9 @@ export class UserService {
     }
 
     const currentLevel = item.level || 0;
+
+    console.log(currentLevel);
     
-    // Get upgrade settings from database based on current level
     const upgradeSettings = await this.getUpgradeSettingsForLevel(currentLevel);
     if (!upgradeSettings) {
       throw new BadRequestException('Maximum level reached or no upgrade settings found');
