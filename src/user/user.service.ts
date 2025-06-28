@@ -7,21 +7,16 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   private async getUpgradeSettingsForLevel(level: number) {
-    let levelRange: string;
+    const upgradeSettings = await this.prisma.upgradeSettings.findMany();
 
-    console.log(level);
-    
-    if (level <= 5) levelRange = '1-5';
-    else if (level <= 10) levelRange = '6-10';
-    else if (level <= 15) levelRange = '11-15';
-    else if (level <= 20) levelRange = '16-20';
-    else if (level <= 25) levelRange = '21-25';
-    else if (level <= 30) levelRange = '26-30';
-    else return null; // Maximum level reached
+    for (const setting of upgradeSettings) {
+      const [minLevel, maxLevel] = setting.levelRange.split('-').map(Number);
+      if (level >= minLevel && level <= maxLevel) {
+        return setting;
+      }
+    }
 
-    return await this.prisma.upgradeSettings.findUnique({
-      where: { levelRange }
-    });
+    return null;
   }
 
   async setUserName(telegramId: string, name: string) {
