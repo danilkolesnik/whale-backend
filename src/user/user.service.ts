@@ -7,8 +7,9 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   private async getUpgradeSettingsForLevel(level: number) {
-    // Determine level range based on current level
     let levelRange: string;
+
+    console.log(level);
     
     if (level <= 5) levelRange = '1-5';
     else if (level <= 10) levelRange = '6-10';
@@ -159,9 +160,11 @@ export class UserService {
 
     const currentLevel = item.level || 0;
 
-    console.log(currentLevel);
     
     const upgradeSettings = await this.getUpgradeSettingsForLevel(currentLevel);
+
+    console.log(upgradeSettings);
+    
     if (!upgradeSettings) {
       throw new BadRequestException('Maximum level reached or no upgrade settings found');
     }
@@ -190,11 +193,9 @@ export class UserService {
     }
 
     if (isSuccessful) {
-      // Successful upgrade
       item.level = currentLevel + 1;
       item.shield = (item.shield || 0) + 4;
-      
-      // Update item in equipment if it's equipped
+
       if (item.isActive) {
         const equippedItem = equipment.find(e => e.id === itemId);
         if (equippedItem) {
@@ -203,7 +204,6 @@ export class UserService {
         }
       }
 
-      // Calculate total shield from equipment
       const totalShield = equipment.reduce((sum, item) => sum + item.shield, 0);
 
       return await this.prisma.user.update({
