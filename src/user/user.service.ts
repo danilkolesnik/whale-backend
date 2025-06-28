@@ -162,6 +162,8 @@ export class UserService {
       throw new BadRequestException('Maximum level reached or no upgrade settings found');
     }
 
+    console.log(upgradeSettings.toolsCost);
+
     // Check if user has enough tools
     if (balance.tools < upgradeSettings.toolsCost) {
       throw new BadRequestException(`Not enough tools for upgrade. Required: ${upgradeSettings.toolsCost}`);
