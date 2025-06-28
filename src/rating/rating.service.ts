@@ -148,6 +148,7 @@ export class RatingService {
         }
         return { telegramId };
       });
+      roundUsers.sort((a, b) => (b.shield || 0) - (a.shield || 0));
       return {
         ...round,
         users: roundUsers
