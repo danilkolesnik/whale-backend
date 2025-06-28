@@ -121,27 +121,39 @@ export class RatingService {
         telegramId: { in: userIds }
       }
     });
-    return users.map(user => {
-      let shield = 0;
-      let tools = 0;
-      try {
-        const balance = JSON.parse(user.balance as string);
-        if (balance && typeof balance === 'object') {
-          if ('shield' in balance) {
-            shield = balance.shield;
+    const userMap = new Map(users.map(user => [user.telegramId, user]));
+
+    return ratingRounds.map(round => {
+      const roundUsers = (round.users as string[]).map(telegramId => {
+        const user = userMap.get(telegramId);
+        if (user) {
+          let shield = 0;
+          let tools = 0;
+          try {
+            const balance = JSON.parse(user.balance as string);
+            if (balance && typeof balance === 'object') {
+              if ('shield' in balance) {
+                shield = balance.shield;
+              }
+              if ('tools' in balance) {
+                tools = balance.tools;
+              }
+            }
+          } catch (error) {
+            console.error('Invalid balance format for user:', user.telegramId);
           }
-          if ('tools' in balance) {
-            tools = balance.tools;
-          }
+          return {
+            displayName: user.displayName,
+            telegramId: user.telegramId,
+            shield,
+            tools
+          };
         }
-      } catch (error) {
-        console.error('Invalid balance format for user:', user.telegramId);
-      }
+        return { telegramId };
+      });
       return {
-        displayName: user.displayName,
-        telegramId: user.telegramId,
-        shield,
-        tools
+        ...round,
+        users: roundUsers
       };
     });
   }
