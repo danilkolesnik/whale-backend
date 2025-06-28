@@ -157,8 +157,6 @@ export class UserService {
 
     
     const upgradeSettings = await this.getUpgradeSettingsForLevel(currentLevel);
-
-    console.log(upgradeSettings);
     
     if (!upgradeSettings) {
       throw new BadRequestException('Maximum level reached or no upgrade settings found');
@@ -201,7 +199,7 @@ export class UserService {
 
       const totalShield = equipment.reduce((sum, item) => sum + item.shield, 0);
 
-      return await this.prisma.user.update({
+      await this.prisma.user.update({
         where: { telegramId },
         data: {
           inventory: inventory,
@@ -213,6 +211,19 @@ export class UserService {
           }
         },
       });
+      return { 
+        code: 200,
+        message: 'Upgrade successful',
+        data: {
+          inventory: inventory,
+          equipment: equipment,
+          balance: {
+            shield: totalShield,
+            money: balance.money,
+            tools: balance.tools - upgradeSettings.toolsCost
+          }
+        }
+      };
     } else {
       // Failed upgrade - remove item completely
       const inventoryIndex = inventory.findIndex(i => i.id === itemId);
@@ -229,7 +240,7 @@ export class UserService {
       // Recalculate total shield
       const totalShield = equipment.reduce((sum, item) => sum + item.shield, 0);
 
-      return await this.prisma.user.update({
+      await this.prisma.user.update({
         where: { telegramId },
         data: {
           inventory: inventory,
@@ -241,6 +252,19 @@ export class UserService {
           }
         },
       });
+      return { 
+        code: 400,
+        message: 'Upgrade failed',
+        data: {
+          inventory: inventory,
+          equipment: equipment,
+          balance: {
+            shield: totalShield,
+            money: balance.money,
+            tools: balance.tools - upgradeSettings.toolsCost
+          }
+        }
+      };
     }
   }
 
