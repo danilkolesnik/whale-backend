@@ -75,7 +75,6 @@ export class UserService {
         equipment: equipment,
         inventory: inventory,
         balance: {
-          money: (user.balance as any).money,
           shield: totalShield
         }
       },
@@ -115,7 +114,6 @@ export class UserService {
         equipment: equipment,
         inventory: inventory,
         balance: {
-          money: (user.balance as any).money,
           shield: totalShield
         }
       },
@@ -209,7 +207,6 @@ export class UserService {
           inventory: inventory,
           equipment: equipment,
           balance: {
-            money: balance.money,
             shield: totalShield,
             tools: balance.tools - upgradeSettings.toolsCost
           }
@@ -237,7 +234,6 @@ export class UserService {
           inventory: inventory,
           equipment: equipment,
           balance: {
-            money: balance.money,
             shield: totalShield,
             tools: balance.tools - upgradeSettings.toolsCost
           }
@@ -392,7 +388,6 @@ export class UserService {
         inventory: inventory,
         equipment: equipment,
         balance: {
-          money: (user.balance as any).money,
           shield: totalShield
         }
       },
@@ -433,7 +428,6 @@ export class UserService {
         inventory: inventory,
         equipment: equipment,
         balance: {
-          money: (user.balance as any).money,
           shield: totalShield
         }
       },
