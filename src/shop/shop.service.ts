@@ -97,4 +97,33 @@ export class ShopService {
     }
     
   }
+
+  async buyMoney(telegramId: string, usdtQuantity: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { telegramId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const balance = JSON.parse(user.balance as string) as { money: number; usdt: number; shield: number; tools: number };
+
+    await this.prisma.user.update({
+      where: { telegramId },
+      data: {
+        balance: {
+          money: balance.money + usdtQuantity * 10,
+          usdt: balance.usdt - usdtQuantity,
+          shield: balance.shield,
+          tools: balance.tools,
+        },
+      },
+    });
+
+    return{
+      data: user,
+      message: 'Money bought successfully',
+    }
+  }
 } 

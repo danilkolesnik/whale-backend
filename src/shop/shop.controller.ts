@@ -80,4 +80,33 @@ export class ShopController {
   buyTools(@Body() body: { telegramId: string, toolQuantity: number }) {  
     return this.shopService.buyTool(body.telegramId, body.toolQuantity);
   }
+
+  @Post('buy/money')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Buy money' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        telegramId: {
+          type: 'string',
+          description: 'Telegram ID of the user',
+          example: '123456789'
+        },
+        usdtQuantity: {
+          type: 'number',
+          description: 'Quantity of USDT to buy',
+          example: 1  
+        }
+      },
+      required: ['telegramId', 'usdtQuantity']
+    }
+  })
+  @ApiResponse({ status: 200, description: 'Money bought successfully' })
+  @ApiResponse({ status: 400, description: 'Not enough money' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  buyMoney(@Body() body: { telegramId: string, usdtQuantity: number }) {
+    return this.shopService.buyMoney(body.telegramId, body.usdtQuantity);
+  }
 } 

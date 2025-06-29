@@ -76,7 +76,14 @@ export class MarketService {
       if (listing.sellerId === telegramId) return { success: false, error: 'Cannot buy your own listing', data: null };
 
       const balance = user.balance as any;
-      if (balance.money < listing.price) return { success: false, error: 'Not enough money', data: null };
+      const currencyType = listing.currency || 'COINS';
+      const price = listing.price;
+
+      if (currencyType === 'USDT' && balance.usdt < price) {
+        return { success: false, error: 'Not enough USDT', data: null };
+      } else if (currencyType === 'COINS' && balance.money < price) {
+        return { success: false, error: 'Not enough COINS', data: null };
+      }
 
       const seller = await this.findUser(listing.sellerId);
       if (!seller) return { success: false, error: 'Seller not found', data: null };
@@ -88,9 +95,12 @@ export class MarketService {
       const itemIndex = sellerInventory.findIndex(i => i.id === (listing.item as any).id);
       if (itemIndex !== -1) sellerInventory.splice(itemIndex, 1);
 
+      const buyerBalanceUpdate = currencyType === 'USDT' ? { usdt: balance.usdt - price } : { money: balance.money - price };
+      const sellerBalanceUpdate = currencyType === 'USDT' ? { usdt: (seller.balance as any).usdt + price } : { money: (seller.balance as any).money + price };
+
       await Promise.all([
-        this.updateUserInventoryAndBalance(telegramId, buyerInventory, { money: balance.money - listing.price, shield: balance.shield }),
-        this.updateUserInventoryAndBalance(listing.sellerId, sellerInventory, { money: (seller.balance as any).money + listing.price, shield: (seller.balance as any).shield }),
+        this.updateUserInventoryAndBalance(telegramId, buyerInventory, { ...buyerBalanceUpdate, shield: balance.shield }),
+        this.updateUserInventoryAndBalance(listing.sellerId, sellerInventory, { ...sellerBalanceUpdate, shield: (seller.balance as any).shield }),
         this.prisma.marketListing.delete({ where: { id: listingId } }),
       ]);
 
@@ -146,7 +156,6 @@ export class MarketService {
     try {
       const orders = await this.prisma.buyOrder.findMany({ orderBy: { createdAt: 'desc' } });
       if (telegramId) {
-        // Prioritize orders from the specified user
         const userOrders = orders.filter(order => order.buyerId === telegramId);
         const otherOrders = orders.filter(order => order.buyerId !== telegramId);
         return { success: true, error: null, data: [...userOrders, ...otherOrders] };

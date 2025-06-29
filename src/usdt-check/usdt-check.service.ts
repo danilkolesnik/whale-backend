@@ -16,12 +16,14 @@ export class UsdtCheckService {
       }
 
       const balance = typeof user.balance === 'string' ? JSON.parse(user.balance) : user.balance;
-      const currentBalance = balance?.money || 0; // Handle nullable balance
-      const updatedBalance = currentBalance + valueCoin * 100; // 1 USDT = 100 money
-
       await this.prisma.user.update({
         where: { telegramId: userId },
-        data: { balance: { ...balance, money: updatedBalance } },
+        data: { balance: { ...balance, 
+          money: balance.money,
+          usdt: balance.usdt + valueCoin,
+          shield: balance.shield,
+          tools: balance.tools,
+        } },
       });
 
       await this.prisma.rechargeHistory.create({

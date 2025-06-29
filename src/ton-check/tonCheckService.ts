@@ -42,13 +42,25 @@ export class TonCheckService {
 
           const tonAmount = parseInt(tx.in_msg.value as string) / 1000000000;
           const usdtAmount = tonAmount * tonPrice / 100; 
+          const user = await this.prisma.user.findUnique({
+            where: { telegramId },
+          });
+
+          if (!user) {
+            console.log('Skipping transaction: user not found');
+            continue;
+          }
+
+          const balance = JSON.parse(user.balance as string) as { money: number; usdt: number; shield: number; tools: number };
+
           await this.prisma.user.update({
             where: { telegramId },
             data: {
               balance: {
-                money: {
-                    money: usdtAmount * 100
-                }
+                usdt: balance.usdt + usdtAmount,
+                money: balance.money,
+                shield: balance.shield,
+                tools: balance.tools,
               }
             }
           });
