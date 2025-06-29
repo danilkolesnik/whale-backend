@@ -31,7 +31,7 @@ export class MarketService {
       const item = (user.inventory as any[]).find(i => i.id === createListingDto.itemId);
       if (!item) return { success: false, error: 'Item not found in inventory', data: null };
       // if (item.level < 10) return { success: false, error: 'Item level must be at least 10 to sell', data: null };
-      if (item.isActive) return { success: false, error: 'Cannot sell equipped item', data: null };
+      // if (item.isActive) return { success: false, error: 'Cannot sell equipped item', data: null };
 
       const listing = await this.prisma.marketListing.create({
         data: {
@@ -109,8 +109,12 @@ export class MarketService {
         tools: (seller.balance as any).tools
       };
 
+      const buyerEquipment = user.equipment as any[];
+      const equipmentIndex = buyerEquipment.findIndex(e => e.id === (listing.item as any).id);
+      if (equipmentIndex !== -1) buyerEquipment.splice(equipmentIndex, 1);
+
       await Promise.all([
-        this.updateUserInventoryAndBalance(telegramId, buyerInventory, { ...buyerBalanceUpdate, shield: balance.shield }),
+        this.updateUserInventoryAndBalance(telegramId, buyerInventory, { ...buyerBalanceUpdate, shield: balance.shield, equipment: buyerEquipment }),
         this.updateUserInventoryAndBalance(listing.sellerId, sellerInventory, { ...sellerBalanceUpdate, shield: (seller.balance as any).shield }),
         this.prisma.marketListing.delete({ where: { id: listingId } }),
       ]);
