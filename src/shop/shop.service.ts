@@ -86,6 +86,7 @@ export class ShopService {
       where: { telegramId },
       data: {
         balance: {
+          ...balance,
           tools: balance.tools + toolQuantity,
         },
       },

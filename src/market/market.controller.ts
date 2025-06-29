@@ -183,6 +183,10 @@ export class MarketController {
         telegramId: {
           type: 'string',
           example: '123456789'
+        },
+        currency: {
+          type: 'string',
+          example: 'USDT'
         }
       }
     }
@@ -218,9 +222,9 @@ export class MarketController {
   })
   async buyListing(
     @Param('id') id: string,
-    @Body() body: { telegramId: string }
+    @Body() body: { telegramId: string, currency: string }
   ) {
-    return this.marketService.buyListing(body.telegramId, parseInt(id));
+    return this.marketService.buyListing({ telegramId: body.telegramId, currency: body.currency, listingId: parseInt(id) });
   }
 
   @Get('listings')

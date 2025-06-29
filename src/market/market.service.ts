@@ -65,7 +65,7 @@ export class MarketService {
     }
   }
 
-  async buyListing(telegramId: string, listingId: number) {
+  async buyListing({ telegramId, listingId, currency }: { telegramId: string; listingId: number; currency: string }) {
     try {
       const [user, listing] = await Promise.all([
         this.findUser(telegramId),
@@ -76,7 +76,7 @@ export class MarketService {
       if (listing.sellerId === telegramId) return { success: false, error: 'Cannot buy your own listing', data: null };
 
       const balance = user.balance as any;
-      const currencyType = listing.currency || 'COINS';
+      const currencyType = currency || 'COINS'; // Assuming 'COINS' as default if not specified
       const price = listing.price;
 
       if (currencyType === 'USDT' && balance.usdt < price) {
