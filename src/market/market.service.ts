@@ -30,7 +30,7 @@ export class MarketService {
 
       const item = (user.inventory as any[]).find(i => i.id === createListingDto.itemId);
       if (!item) return { success: false, error: 'Item not found in inventory', data: null };
-      if (item.level < 10) return { success: false, error: 'Item level must be at least 10 to sell', data: null };
+      // if (item.level < 10) return { success: false, error: 'Item level must be at least 10 to sell', data: null };
       if (item.isActive) return { success: false, error: 'Cannot sell equipped item', data: null };
 
       const listing = await this.prisma.marketListing.create({
