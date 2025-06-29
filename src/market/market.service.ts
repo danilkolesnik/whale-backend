@@ -76,7 +76,7 @@ export class MarketService {
       if (listing.sellerId === telegramId) return { success: false, error: 'Cannot buy your own listing', data: null };
 
       const balance = user.balance as any;
-      const currencyType = currency || 'COINS'; // Assuming 'COINS' as default if not specified
+      const currencyType = currency || 'COINS';
       const price = listing.price;
 
       if (currencyType === 'USDT' && balance.usdt < price) {
@@ -95,8 +95,19 @@ export class MarketService {
       const itemIndex = sellerInventory.findIndex(i => i.id === (listing.item as any).id);
       if (itemIndex !== -1) sellerInventory.splice(itemIndex, 1);
 
-      const buyerBalanceUpdate = currencyType === 'USDT' ? { usdt: balance.usdt - price } : { money: balance.money - price };
-      const sellerBalanceUpdate = currencyType === 'USDT' ? { usdt: (seller.balance as any).usdt + price } : { money: (seller.balance as any).money + price };
+      const buyerBalanceUpdate = {
+        usdt: currencyType === 'USDT' ? balance.usdt - price : balance.usdt,
+        money: currencyType === 'COINS' ? balance.money - price : balance.money,
+        shield: balance.shield,
+        tools: balance.tools
+      };
+
+      const sellerBalanceUpdate = {
+        usdt: currencyType === 'USDT' ? (seller.balance as any).usdt + price : (seller.balance as any).usdt,
+        money: currencyType === 'COINS' ? (seller.balance as any).money + price : (seller.balance as any).money,
+        shield: (seller.balance as any).shield,
+        tools: (seller.balance as any).tools
+      };
 
       await Promise.all([
         this.updateUserInventoryAndBalance(telegramId, buyerInventory, { ...buyerBalanceUpdate, shield: balance.shield }),
@@ -192,8 +203,22 @@ export class MarketService {
       buyerInventory.push({ ...item, isActive: false });
 
       await Promise.all([
-        this.updateUserInventoryAndBalance(sellerTelegramId, sellerInventory, { money: (seller.balance as any).money + order.price, shield: (seller.balance as any).shield }),
-        this.updateUserInventoryAndBalance(order.buyerId, buyerInventory, { money: buyerBalance.money - order.price, shield: buyerBalance.shield }),
+        this.updateUserInventoryAndBalance(sellerTelegramId, sellerInventory, 
+          { 
+            money: (seller.balance as any).money + order.price, 
+            shield: (seller.balance as any).shield,
+            usdt: (seller.balance as any).usdt,
+            tools: (seller.balance as any).tools,
+          }
+        ),
+        this.updateUserInventoryAndBalance(order.buyerId, buyerInventory, 
+          { 
+            money: buyerBalance.money - order.price, 
+            shield: buyerBalance.shield,
+            usdt: buyerBalance.usdt,
+            tools: buyerBalance.tools,
+          }
+        ),
         this.prisma.buyOrder.delete({ where: { id: orderId } }),
       ]);
 
