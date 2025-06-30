@@ -441,7 +441,7 @@ export class MarketController {
     return this.marketService.fulfillBuyOrder(body.telegramId, parseInt(id), body.itemId);
   }
 
-  @Post('buy-orders/:id/change-price')
+  @Post('buy-orders/:id/update')
   @ApiOperation({ 
     summary: 'Change the price of a buy order',
     description: 'Update the price of an existing buy order'
@@ -460,6 +460,10 @@ export class MarketController {
         newPrice: {
           type: 'number',
           example: 100
+        },
+        newLevel: {
+          type: 'number',
+          example: 17
         }
       }
     }
@@ -495,8 +499,8 @@ export class MarketController {
   })
   async changePriceOrder(
     @Param('id') id: string,
-    @Body() body: { newPrice: number }
+    @Body() body: { newPrice: number, newLevel: number }
   ) {
-    return this.marketService.changePriceOrder(parseInt(id), body.newPrice);
+    return this.marketService.changePriceOrder(parseInt(id), body.newPrice, body.newLevel);
   }
 } 
