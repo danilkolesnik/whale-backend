@@ -48,21 +48,27 @@ export class MarketService {
     }
   }
 
-  async updateListing(telegramId: string, listingId: number, updateListingDto: UpdateListingDto) {
-    try {
-      const listing = await this.prisma.marketListing.findUnique({ where: { id: listingId } });
-      if (!listing) return { success: false, error: 'Listing not found', data: null };
-      if (listing.sellerId !== telegramId) return { success: false, error: 'You can only update your own listings', data: null };
-
-      const updatedListing = await this.prisma.marketListing.update({
-        where: { id: listingId },
-        data: { price: updateListingDto.price }
-      });
-
-      return { success: true, error: null, data: updatedListing };
-    } catch (error) {
-      return this.handleError(error);
+  async updateListing({ listingId, updateListingDto }: { listingId: number; updateListingDto: UpdateListingDto }) {
+    const currentListing = await this.prisma.marketListing.findUnique({ where: { id: listingId } });
+    if (!currentListing) {
+      throw new Error('Listing not found');
     }
+
+    const currentItem = typeof currentListing.item === 'object' && !Array.isArray(currentListing.item) && currentListing.item ? currentListing.item : {};
+    const updatedItem = {
+      ...currentItem,
+      level: 'level' in updateListingDto ? (updateListingDto.level as number) : (currentItem.level as number | undefined)
+    };
+
+    const updatedListing = await this.prisma.marketListing.update({
+      where: { id: listingId },
+      data: {
+        price: updateListingDto.price,
+        item: updatedItem
+      }
+    });
+
+    return updatedListing;
   }
 
   async buyListing({ telegramId, listingId, currency }: { telegramId: string; listingId: number; currency: string }) {

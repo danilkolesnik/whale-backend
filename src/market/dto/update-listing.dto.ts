@@ -8,4 +8,10 @@ export class UpdateListingDto {
   @Min(0)
   @IsOptional()
   price?: number;
+
+  @ApiProperty({ description: 'Новый уровень предмета', required: false })
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  level?: number;
 } 

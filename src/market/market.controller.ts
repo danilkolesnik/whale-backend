@@ -161,7 +161,7 @@ export class MarketController {
     @Body() body: { telegramId: string } & UpdateListingDto
   ) {
     const { telegramId, ...updateListingDto } = body;
-    return this.marketService.updateListing(telegramId, parseInt(id), updateListingDto);
+    return this.marketService.updateListing({ listingId: parseInt(id), updateListingDto });
   }
 
   @Post('listings/:id/buy')
