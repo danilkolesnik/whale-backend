@@ -99,7 +99,7 @@ export class ShopService {
     
   }
 
-  async buyMoney(telegramId: string, usdtQuantity: number) {
+  async conversionCoin(telegramId: string, usdtQuantity: number) {
     const user = await this.prisma.user.findUnique({
       where: { telegramId },
     });
@@ -114,7 +114,7 @@ export class ShopService {
       where: { telegramId },
       data: {
         balance: {
-          money: balance.money + usdtQuantity * 10,
+          money: balance.money + usdtQuantity,
           usdt: balance.usdt - usdtQuantity,
           shield: balance.shield,
           tools: balance.tools,
@@ -126,5 +126,29 @@ export class ShopService {
       data: user,
       message: 'Money bought successfully',
     }
+  }
+
+  async conversionUsdt(telegramId: string, moneyQuantity: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { telegramId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const balance = JSON.parse(user.balance as string) as { money: number; usdt: number; shield: number; tools: number };
+    
+    await this.prisma.user.update({
+      where: { telegramId },
+      data: {
+        balance: {
+          money: balance.money - moneyQuantity,
+          usdt: balance.usdt + moneyQuantity,
+          shield: balance.shield,
+          tools: balance.tools,
+        },
+      },
+    });
   }
 } 

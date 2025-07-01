@@ -81,9 +81,9 @@ export class ShopController {
     return this.shopService.buyTool(body.telegramId, body.toolQuantity);
   }
 
-  @Post('buy/money')
+  @Post('conversion/coin')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Buy money' })
+  @ApiOperation({ summary: 'Conversion coin' })
   @ApiBody({
     schema: {
       type: 'object',
@@ -106,7 +106,36 @@ export class ShopController {
   @ApiResponse({ status: 400, description: 'Not enough money' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  buyMoney(@Body() body: { telegramId: string, usdtQuantity: number }) {
-    return this.shopService.buyMoney(body.telegramId, body.usdtQuantity);
+  conversionCoin(@Body() body: { telegramId: string, usdtQuantity: number }) {
+    return this.shopService.conversionCoin(body.telegramId, body.usdtQuantity);
   }
+
+  @Post('conversion/usdt')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Conversion usdt' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        telegramId: {
+          type: 'string',
+          description: 'Telegram ID of the user',
+          example: '123456789'
+        },
+        moneyQuantity: {
+          type: 'number',
+          description: 'Quantity of money to buy',
+          example: 1
+        } 
+      },
+      required: ['telegramId', 'moneyQuantity']
+    }
+  })
+  @ApiResponse({ status: 200, description: 'USDT bought successfully' })
+  @ApiResponse({ status: 400, description: 'Not enough money' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'User not found' })  
+  conversionUsdt(@Body() body: { telegramId: string, moneyQuantity: number }) {
+    return this.shopService.conversionUsdt(body.telegramId, body.moneyQuantity);
+  } 
 } 
