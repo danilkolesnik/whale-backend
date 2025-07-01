@@ -248,14 +248,14 @@ export class MarketController {
         },
         price: 100,
         currency: "USDT",
-        createdAt: "2024-03-14T12:00:00Z"
+        createdAt: "2024-03-14T12:00:00Z" 
       }]
     }
   })
   async getListings(
-    @Body() body: { telegramId: string }
+    @Query('telegramId') telegramId?: string
   ) {
-    return this.marketService.getListings(body.telegramId);
+    return this.marketService.getListings(telegramId);
   }
 
   @Get('listings/user')
