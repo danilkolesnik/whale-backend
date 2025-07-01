@@ -131,9 +131,10 @@ export class MarketService {
     }
   }
 
-  async getListings(telegramId: string) {
+  async getListings(telegramId?: string) {
     try {
       const listings = await this.prisma.marketListing.findMany({ orderBy: { createdAt: 'desc' } });
+      if (telegramId) {
       const sortedListings = listings.sort((a, b) => {
         if (a.sellerId === telegramId && b.sellerId !== telegramId) {
           return -1;
@@ -141,9 +142,11 @@ export class MarketService {
         if (a.sellerId !== telegramId && b.sellerId === telegramId) {
           return 1; 
         }
-        return 0;
-      });
-      return { success: true, error: null, data: sortedListings };
+          return 0;
+        });
+        return { success: true, error: null, data: sortedListings };
+      }
+      return { success: true, error: null, data: listings };
     } catch (error) {
       return this.handleError(error);
     }
