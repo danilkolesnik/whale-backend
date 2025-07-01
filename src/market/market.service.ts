@@ -149,7 +149,7 @@ export class MarketService {
     }
   }
 
-  async getUserListings(telegramId: string) {
+  async getUserListings(telegramId?: string) {
     try {
       const listings = await this.prisma.marketListing.findMany({ where: { sellerId: telegramId }, orderBy: { createdAt: 'desc' } });
       return { success: true, error: null, data: listings };
