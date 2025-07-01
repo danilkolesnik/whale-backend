@@ -189,15 +189,9 @@ export class MarketService {
     try {
       const orders = await this.prisma.buyOrder.findMany({ orderBy: { createdAt: 'desc' } });
       if (telegramId) {
-        const sortedOrders = orders.sort((a, b) => {
-          if (a.buyerId === telegramId && b.buyerId !== telegramId) {
-            return -1;
-          }
-          if (a.buyerId !== telegramId && b.buyerId === telegramId) {
-            return 1;
-          }
-          return 0;
-        });
+        const userOrders = orders.filter(order => order.buyerId === telegramId);
+        const otherOrders = orders.filter(order => order.buyerId !== telegramId);
+        const sortedOrders = [...userOrders, ...otherOrders];
         return { success: true, error: null, data: sortedOrders };
       }
       return { success: true, error: null, data: orders };
