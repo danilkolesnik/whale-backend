@@ -19,9 +19,7 @@ export class TransactionService {
       throw new Error('User or balance not found.');
     }
 
-    const balance = typeof user.balance === 'string'
-      ? JSON.parse(user.balance)
-      : user.balance;
+    const balance = user.balance as { money: number; shield: number; tools: number, usdt: number };
 
     if (typeof balance !== 'object' || balance === null || !('money' in balance)) {
       throw new Error('Invalid balance format');
@@ -32,7 +30,12 @@ export class TransactionService {
     await this.prisma.user.update({
       where: { telegramId: data.user.connect.telegramId },
       data: {
-        balance: { money: newBalance, shield: balance.shield },
+        balance: { 
+          money: newBalance, 
+          shield: balance.shield,
+          tools: balance.tools,
+          usdt: balance.usdt,
+        },
       },
     });
 

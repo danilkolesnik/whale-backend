@@ -131,10 +131,19 @@ export class MarketService {
     }
   }
 
-  async getListings() {
+  async getListings(telegramId: string) {
     try {
       const listings = await this.prisma.marketListing.findMany({ orderBy: { createdAt: 'desc' } });
-      return { success: true, error: null, data: listings };
+      const sortedListings = listings.sort((a, b) => {
+        if (a.sellerId === telegramId && b.sellerId !== telegramId) {
+          return -1;
+        }
+        if (a.sellerId !== telegramId && b.sellerId === telegramId) {
+          return 1; 
+        }
+        return 0;
+      });
+      return { success: true, error: null, data: sortedListings };
     } catch (error) {
       return this.handleError(error);
     }
@@ -177,9 +186,16 @@ export class MarketService {
     try {
       const orders = await this.prisma.buyOrder.findMany({ orderBy: { createdAt: 'desc' } });
       if (telegramId) {
-        const userOrders = orders.filter(order => order.buyerId === telegramId);
-        const otherOrders = orders.filter(order => order.buyerId !== telegramId);
-        return { success: true, error: null, data: [...userOrders, ...otherOrders] };
+        const sortedOrders = orders.sort((a, b) => {
+          if (a.buyerId === telegramId && b.buyerId !== telegramId) {
+            return -1;
+          }
+          if (a.buyerId !== telegramId && b.buyerId === telegramId) {
+            return 1;
+          }
+          return 0;
+        });
+        return { success: true, error: null, data: sortedOrders };
       }
       return { success: true, error: null, data: orders };
     } catch (error) {

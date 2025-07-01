@@ -47,7 +47,6 @@ export class AuthService {
         }
       });
 
-      // Обновляем друзей реферера
       if (startParam && startParam !== telegramId) {
         const refUser = await this.prisma.user.findUnique({
           where: { telegramId: startParam }

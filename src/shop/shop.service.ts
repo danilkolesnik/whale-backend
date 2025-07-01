@@ -108,7 +108,14 @@ export class ShopService {
       throw new NotFoundException('User not found');
     }
 
-    const balance = JSON.parse(user.balance as string) as { money: number; usdt: number; shield: number; tools: number };
+    const balance = user.balance as { money: number; shield: number; tools: number, usdt: number };
+
+    if(usdtQuantity > balance.usdt) {
+      return{
+        code: 400,
+        message: 'Not enough USDT',
+      }
+    }
 
     await this.prisma.user.update({
       where: { telegramId },
@@ -123,7 +130,7 @@ export class ShopService {
     });
 
     return{
-      data: user,
+      code: 200,
       message: 'Money bought successfully',
     }
   }
@@ -137,7 +144,14 @@ export class ShopService {
       throw new NotFoundException('User not found');
     }
 
-    const balance = JSON.parse(user.balance as string) as { money: number; usdt: number; shield: number; tools: number };
+    const balance = user.balance as { money: number; shield: number; tools: number, usdt: number };
+
+    if(moneyQuantity > balance.money) {
+      return{
+        code: 400,
+        message: 'Not enough money',
+      }
+    }
     
     await this.prisma.user.update({
       where: { telegramId },
@@ -150,5 +164,10 @@ export class ShopService {
         },
       },
     });
+
+    return{
+      code: 200,
+      message: 'Money bought successfully',
+    }
   }
 } 

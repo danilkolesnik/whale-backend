@@ -50,14 +50,18 @@ export class RatingService {
     const users = topUsers.map(user => {
       let shield = 0;
       let tools = 0;
+      let usdt = 0;
       try {
-        const balance = JSON.parse(user.balance as string);
+        const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
         if (balance && typeof balance === 'object') {
           if ('shield' in balance && typeof balance.shield === 'number') {
             shield = balance.shield;
           }
           if ('tools' in balance && typeof balance.tools === 'number') {
             tools = balance.tools;
+          }
+          if ('usdt' in balance && typeof balance.usdt === 'number') {
+            usdt = balance.usdt;
           }
         }
       } catch (error) {
@@ -67,7 +71,8 @@ export class RatingService {
         displayName: user.displayName,
         telegramId: user.telegramId,
         shield,
-        tools
+        tools,
+        usdt
       };
     });
 
@@ -92,7 +97,7 @@ export class RatingService {
 
       let money = 0;
       try {
-        const balance = JSON.parse(topUsers[i].balance as string);
+        const balance = topUsers[i].balance as { money: number; shield: number; tools: number, usdt: number };
         if (balance && typeof balance === 'object' && 'money' in balance) {
           money = balance.money;
         }
@@ -106,7 +111,8 @@ export class RatingService {
           balance: {
             money: money + reward,
             tools: top100Users[i].tools,
-            shield: top100Users[i].shield
+            shield: top100Users[i].shield,
+            usdt: top100Users[i].usdt
           }
         }
       });

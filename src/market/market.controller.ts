@@ -252,8 +252,10 @@ export class MarketController {
       }]
     }
   })
-  async getListings() {
-    return this.marketService.getListings();
+  async getListings(
+    @Body() body: { telegramId: string }
+  ) {
+    return this.marketService.getListings(body.telegramId);
   }
 
   @Get('listings/user')
