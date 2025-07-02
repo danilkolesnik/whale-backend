@@ -111,13 +111,23 @@ export class AuthService {
       }
       const updatedUserTasks = await this.dailyTasksService.getUserTasks(user.telegramId);
 
+      const friends = user.friends as string[];
+      const referrals = await this.prisma.user.findMany({
+        where: {
+          telegramId: {
+            in: friends
+          }
+        }
+      });
+
       return {
         ...user,
         inventory: user.inventory as unknown as InventoryItem[],
         balance: user.balance as unknown as Balance,
         usdtAddressBEP20: usdtAddressBEP20.data.address_in,
         usdtAddressTRC20: usdtAddressTRC20.data.address_in,
-        tasks: updatedUserTasks.data
+        tasks: updatedUserTasks.data,
+        friends: referrals
       };
     } catch {
       throw new UnauthorizedException('Invalid token');
