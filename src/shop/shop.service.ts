@@ -47,10 +47,10 @@ export class ShopService {
 
     const inventory = user.inventory as any[];
 
-    const randonId = Math.floor(Math.random() * 100000);
+    // const randonId = Math.floor(Math.random() * 100000);
 
     inventory.push({
-      id: randonId,
+      id: item.id,
       name: item.name,
       level: item.level,
       shield: item.shield,
