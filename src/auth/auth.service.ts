@@ -19,6 +19,8 @@ export class AuthService {
       throw new UnauthorizedException('Invalid webAppData: missing user data');
     }
 
+    console.log(body.webAppData);
+
     const userData = body.webAppData.user;
     const telegramId: string = userData.id.toString();
 
