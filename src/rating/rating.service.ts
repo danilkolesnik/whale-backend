@@ -135,7 +135,6 @@ export class RatingService {
         if (user) {
           let shield = 0;
           let tools = 0;
-          console.log('Using balance for user:', user.telegramId, 'Balance data:', user.balance);
           const balance = user.balance;
           if (balance && typeof balance === 'object') {
             if ('shield' in balance && typeof balance.shield === 'number') {

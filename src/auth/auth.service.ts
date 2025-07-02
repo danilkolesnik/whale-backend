@@ -52,8 +52,6 @@ export class AuthService {
           where: { telegramId: startParam }
         });
 
-        console.log(refUser);
-
         if (refUser) {
           const refUserFriends = JSON.parse(refUser.friends as string || '[]') as string[];
           if (!refUserFriends.includes(telegramId)) {
