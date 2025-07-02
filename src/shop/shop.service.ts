@@ -31,23 +31,26 @@ export class ShopService {
     ]);
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      return { success: false, message: 'User not found', code: 404 };
     }
 
     if (!item) {
-      throw new NotFoundException('Item not found');
+      return { success: false, message: 'Item not found', code: 404 };
     }
 
-    // Assuming user.balance is already an object
     const balance = user.balance as { money: number; shield: number; tools: number };
 
     if (balance.money < item.price) {
-      throw new BadRequestException('Not enough money');
+      return { success: false, message: 'Not enough money', code: 400 };
     }
 
     const inventory = user.inventory as any[];
 
-    // const randonId = Math.floor(Math.random() * 100000);
+    // Check if the item is already in the inventory
+    const itemExists = inventory.some(invItem => invItem.id === itemId);
+    if (itemExists) {
+      return { success: false, message: 'Item already purchased', code: 400 };
+    }
 
     inventory.push({
       id: item.id,
@@ -59,7 +62,7 @@ export class ShopService {
       isActive: false,
     });
 
-    return await this.prisma.user.update({
+    await this.prisma.user.update({
       where: { telegramId },
       data: {
         balance: {
@@ -69,6 +72,8 @@ export class ShopService {
         inventory: inventory,
       },
     });
+
+    return { success: true, message: 'Item purchased successfully', code: 200 };
   }
 
   async buyTool(telegramId: string, toolQuantity: number) { 
