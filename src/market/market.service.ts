@@ -200,52 +200,58 @@ export class MarketService {
     }
   }
 
-  async fulfillBuyOrder(sellerTelegramId: string, orderId: number, itemId: number) {
+  async fulfillBuyOrder(sellerTelegramId: string, orderId: number, currency: string) {
     try {
       const order = await this.prisma.buyOrder.findUnique({ where: { id: orderId } });
-      if (!order) return { success: false, error: 'Order not found', data: null };
+      if (!order) return { success: false, error: 'Order not found', data: null, code: 404 };
 
       const seller = await this.findUser(sellerTelegramId);
-      if (!seller) return { success: false, error: 'Seller not found', data: null };
+      if (!seller) return { success: false, error: 'Seller not found', data: null, code: 404 };
 
       const sellerInventory = seller.inventory as any[];
-      const item = sellerInventory.find(i => i.id === itemId && i.type === order.itemType && i.level === order.level);
-      if (!item) return { success: false, error: 'Item not found in inventory', data: null };
+      const item = sellerInventory.find(i => i.type === order.itemType && i.level === order.level);
+      if (!item) return { success: false, error: 'Item not found in inventory', data: null, code: 404 };
 
       const buyer = await this.findUser(order.buyerId);
-      if (!buyer) return { success: false, error: 'Buyer not found', data: null };
+      if (!buyer) return { success: false, error: 'Buyer not found', data: null, code: 404 };
 
       const buyerBalance = buyer.balance as any;
-      if (buyerBalance.money < order.price) return { success: false, error: 'Buyer does not have enough money', data: null };
+      const price = order.price;
 
-      const itemIndex = sellerInventory.findIndex(i => i.id === itemId);
-      if (itemIndex === -1) return { success: false, error: 'Item not found', data: null };
+      if (currency === 'USDT' && buyerBalance.usdt < price) {
+        return { success: false, error: 'Not enough USDT', data: null, code: 400 };
+      } else if (currency === 'COINS' && buyerBalance.money < price) {
+        return { success: false, error: 'Not enough COINS', data: null, code: 400 };
+      }
+
+      const itemIndex = sellerInventory.findIndex(i => i.id === item.id);
+      if (itemIndex === -1) return { success: false, error: 'Item not found', data: null, code: 404 };
       sellerInventory.splice(itemIndex, 1);
 
       const buyerInventory = buyer.inventory as any[];
       buyerInventory.push({ ...item, isActive: false });
 
+      const buyerBalanceUpdate = {
+        usdt: currency === 'USDT' ? buyerBalance.usdt - price : buyerBalance.usdt,
+        money: currency === 'COINS' ? buyerBalance.money - price : buyerBalance.money,
+        shield: buyerBalance.shield,
+        tools: buyerBalance.tools
+      };
+
+      const sellerBalanceUpdate = {
+        usdt: currency === 'USDT' ? (seller.balance as any).usdt + price : (seller.balance as any).usdt,
+        money: currency === 'COINS' ? (seller.balance as any).money + price : (seller.balance as any).money,
+        shield: (seller.balance as any).shield,
+        tools: (seller.balance as any).tools
+      };
+
       await Promise.all([
-        this.updateUserInventoryAndBalance(sellerTelegramId, sellerInventory, 
-          { 
-            money: (seller.balance as any).money + order.price, 
-            shield: (seller.balance as any).shield,
-            usdt: (seller.balance as any).usdt,
-            tools: (seller.balance as any).tools,
-          }
-        ),
-        this.updateUserInventoryAndBalance(order.buyerId, buyerInventory, 
-          { 
-            money: buyerBalance.money - order.price, 
-            shield: buyerBalance.shield,
-            usdt: buyerBalance.usdt,
-            tools: buyerBalance.tools,
-          }
-        ),
+        this.updateUserInventoryAndBalance(sellerTelegramId, sellerInventory, sellerBalanceUpdate),
+        this.updateUserInventoryAndBalance(order.buyerId, buyerInventory, buyerBalanceUpdate),
         this.prisma.buyOrder.delete({ where: { id: orderId } }),
       ]);
 
-      return { success: true, error: null, data: { message: 'Order fulfilled successfully' } };
+      return { success: true, error: null, data: { message: 'Order fulfilled successfully' }, code: 200 };
     } catch (error) {
       return this.handleError(error);
     }

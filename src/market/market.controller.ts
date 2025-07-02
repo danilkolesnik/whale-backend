@@ -400,9 +400,9 @@ export class MarketController {
           type: 'string',
           example: '123456789'
         },
-        itemId: {
-          type: 'number',
-          example: 1
+        currency: {
+          type: 'string',
+          example: 'USDT'
         }
       }
     }
@@ -438,9 +438,9 @@ export class MarketController {
   })
   async fulfillBuyOrder(
     @Param('id') id: string,
-    @Body() body: { telegramId: string, itemId: number }
+    @Body() body: { telegramId: string, currency: string }
   ) {
-    return this.marketService.fulfillBuyOrder(body.telegramId, parseInt(id), body.itemId);
+    return this.marketService.fulfillBuyOrder(body.telegramId, parseInt(id), body.currency);
   }
 
   @Post('buy-orders/:id/update')
