@@ -19,8 +19,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid webAppData: missing user data');
     }
 
-    console.log(body.webAppData);
-
     const userData = body.webAppData.user;
     const telegramId: string = userData.id.toString();
 
@@ -54,13 +52,23 @@ export class AuthService {
           where: { telegramId: startParam }
         });
 
+        console.log(refUser);
+
         if (refUser) {
           const refUserFriends = JSON.parse(refUser.friends as string || '[]') as string[];
           if (!refUserFriends.includes(telegramId)) {
             refUserFriends.push(telegramId);
             await this.prisma.user.update({
               where: { telegramId: startParam },
-              data: { friends: JSON.stringify(refUserFriends) }
+              data: { 
+                friends: JSON.stringify(refUserFriends),
+                balance: {
+                  money: (refUser.balance as unknown as Balance).money + 1000,
+                  shield: (refUser.balance as unknown as Balance).shield,
+                  tools: (refUser.balance as unknown as Balance).tools,
+                  usdt: (refUser.balance as unknown as Balance).usdt
+                }
+              }
             });
           }
         }
@@ -75,10 +83,11 @@ export class AuthService {
         telegramId: user.telegramId,
         displayName: user.displayName,
         isNewUser: user.isNewUser,
-        balance: user.balance
+        balance: user.balance as unknown as Balance
       }
     };
-}
+  }
+
   async verifyUser(token: string) {
     try {
       const payload = this.jwtService.verify(token);

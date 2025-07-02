@@ -7,5 +7,7 @@ export interface InventoryItem {
 
 export interface Balance {
   money: number;
-  exp: number;
+  shield: number;
+  tools: number;
+  usdt: number;
 } 
