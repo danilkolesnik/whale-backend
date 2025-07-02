@@ -53,13 +53,13 @@ export class AuthService {
         });
 
         if (refUser) {
-          const refUserFriends = JSON.parse(refUser.friends as string || '[]') as string[];
+          const refUserFriends = refUser.friends as string[];
           if (!refUserFriends.includes(telegramId)) {
             refUserFriends.push(telegramId);
             await this.prisma.user.update({
               where: { telegramId: startParam },
               data: { 
-                friends: JSON.stringify(refUserFriends),
+                friends: refUserFriends,
                 balance: {
                   money: (refUser.balance as unknown as Balance).money + 1000,
                   shield: (refUser.balance as unknown as Balance).shield,
