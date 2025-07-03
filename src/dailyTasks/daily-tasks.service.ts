@@ -228,7 +228,14 @@ export class DailyTasksService {
   
       else if (task.type === 'invite') {
         const friends = Array.isArray(user.friends) ? user.friends : [];
-        const newFriends = friends.filter((friend: any) => friend.isNewUser);
+        const newFriends = await Promise.all(
+          friends.map(async (telegramId: string) => {
+            const friend = await this.prisma.user.findUnique({
+              where: { telegramId },
+            });
+            return friend && friend.isNewUser ? friend : null;
+          })
+        ).then(results => results.filter(friend => friend !== null));
   
         const friendsCount = newFriends.length;
         const requiredCount = 0;
@@ -236,7 +243,7 @@ export class DailyTasksService {
         if (friendsCount < requiredCount) {
           return {
             success: false,
-            error: 'Not enough friends added'
+            error: 'Not enough new friends added'
           };
         }
       }
