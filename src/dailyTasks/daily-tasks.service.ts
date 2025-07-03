@@ -188,18 +188,18 @@ export class DailyTasksService {
         };
       }
 
-      console.log(user.tasks);
+      const task = user.tasks.find(t => t.id === taskId);
+      console.log(task);
+      console.log(taskId);
       
 
-      const task = user.tasks.find(t => t.id === taskId);
-  
       if (!task) {
         return {
           success: false,
           error: 'Task not found for user'
         };
       }
-  
+
       if (task.status === 'completed') {
         return {
           success: false,
