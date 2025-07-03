@@ -102,7 +102,17 @@ export class DailyTasksService {
 
       const taskIdInt = parseInt(taskId, 10);
       const task = await this.prisma.task.findUnique({
-        where: { id: taskIdInt }
+        where: { id: taskIdInt },
+        select: {
+          id: true,
+          type: true,
+          coin: true,
+          status: true,
+          requiredFriends: true,
+          chatId: true,
+          channelLink: true,
+          title: true
+        }
       });
 
       if (!task) {
@@ -111,13 +121,6 @@ export class DailyTasksService {
           error: 'Task not found'
         };
       }
-
-      // if (task.status !== 'available') {
-      //   return {
-      //     success: false,
-      //     error: 'Task is not available'
-      //   };
-      // }
 
       const existingTask = user.tasks.find(t => t.id === taskIdInt);
       if (existingTask) {
@@ -136,8 +139,6 @@ export class DailyTasksService {
           }
         }
       });
-
-      // Update the user's tasks array to include the new task
       await this.prisma.user.update({
         where: { telegramId },
         data: {
@@ -241,7 +242,7 @@ export class DailyTasksService {
         ).then(results => results.filter(friend => friend !== null));
   
         const friendsCount = newFriends.length;
-        const requiredCount = 0;
+        const requiredCount = task.requiredFriends;
   
         if (friendsCount < requiredCount) {
           return {
@@ -249,14 +250,9 @@ export class DailyTasksService {
             error: 'Not enough new friends added'
           };
         }
+
+        console.log(`Number of new friends added: ${friendsCount}`);
       }
-  
-      // else {
-      //   return {
-      //     success: false,
-      //     error: 'Invalid task type'
-      //   };
-      // }
   
       if (!user.balance) {
         return {
