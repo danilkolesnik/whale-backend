@@ -34,7 +34,8 @@ export class DailyTasksService {
         data: {
           ...task,
           type: task.type as TaskType,
-          status: task.status as 'available' | 'in_progress' | 'completed'
+          status: task.status as 'available' | 'in_progress' | 'completed',
+          taskId: task.id
         }
       };
     } catch (error) {
@@ -71,7 +72,8 @@ export class DailyTasksService {
         data: user.tasks.map(task => ({
           ...task,
           type: task.type as TaskType,
-          status: task.status as 'available' | 'in_progress' | 'completed'
+          status: task.status as 'available' | 'in_progress' | 'completed',
+          taskId: task.id
         }))
       };
     } catch (error) {
@@ -140,7 +142,8 @@ export class DailyTasksService {
         data: {
           ...task,
           type: task.type as TaskType,
-          status: userTask.status as 'available' | 'in_progress' | 'completed'
+          status: userTask.status as 'available' | 'in_progress' | 'completed',
+          taskId: task.id
         }
       };
     } catch (error) {
@@ -314,7 +317,8 @@ export class DailyTasksService {
           task: {
             ...userTask.task,
             status: 'completed',
-            type: userTask.task.type as TaskType
+            type: userTask.task.type as TaskType,
+            taskId: userTask.task.id
           },
           reward: userTask.task.coin
         }
@@ -341,7 +345,8 @@ export class DailyTasksService {
         data: tasks.map(task => ({
           ...task,
           type: task.type as TaskType,
-          status: task.status as 'available' | 'in_progress' | 'completed'
+          status: task.status as 'available' | 'in_progress' | 'completed',
+          taskId: task.id
         }))
       };
     } catch (error) {
