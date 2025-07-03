@@ -134,7 +134,7 @@ export class DailyTasksService {
         where: { id: taskIdInt },
         data: {
           status: 'in_progress' as const,
-          user: {
+          users: {
             connect: { telegramId }
           }
         }
