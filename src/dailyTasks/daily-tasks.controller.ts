@@ -43,7 +43,7 @@ export class DailyTasksController {
   @ApiResponse({ status: 200, description: 'Task completed successfully' })
   @ApiResponse({ status: 404, description: 'User or task not found' })
   async completeTask(@Param('taskId') taskId: number, @Body('telegramId') telegramId: string) {
-    return this.dailyTasksService.checkAndCompleteTask(telegramId, taskId);
+    return this.dailyTasksService.checkAndCompleteTask(parseInt(telegramId, 10), taskId);
   }
 
   @Get('all')
