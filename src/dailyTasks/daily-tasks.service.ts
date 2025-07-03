@@ -249,10 +249,17 @@ export class DailyTasksService {
 
         console.log(`Number of new friends added: ${friendsCount}`);
 
-        await this.prisma.task.update({
-          where: { id: taskIdInt },
+        await this.prisma.userTask.update({
+          where: {
+            userId_taskId: {
+              userId: user.id,
+              taskId: taskIdInt
+            }
+          },
           data: {
-            requiredSubscribers: friendsCount
+            friendsCount: friendsCount,
+            status: 'completed',
+            completedAt: new Date()
           }
         });
       }
@@ -269,15 +276,6 @@ export class DailyTasksService {
       await this.prisma.user.update({
         where: { telegramId },
         data: {
-          tasks: {
-            update: {
-              where: { id: taskIdInt },
-              data: {
-                status: 'completed',
-                completedAt: new Date()
-              }
-            }
-          },
           balance: {
             money: balance.money,
             shield: balance.shield,
