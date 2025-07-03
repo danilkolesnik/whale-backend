@@ -177,26 +177,35 @@ export class DailyTasksService {
 
       
       const taskIdInt = parseInt(taskId.toString(), 10);
-      const task = user.tasks.find(t => t.id === taskIdInt);
+      const userTask = await this.prisma.userTask.findUnique({
+        where: {
+          userId_taskId: {
+            userId: user.id,
+            taskId: taskIdInt
+          }
+        },
+        include: {
+          task: true
+        }
+      });
 
-      if (!task) {
-        console.log('Task not found for user');
+      if (!userTask) {
         return {
           success: false,
           error: 'Task not found for user'
         };
       }
 
-      if (task.status === 'completed') {
+      if (userTask.status === 'completed') {
         return {
           success: false,
           error: 'Task already completed'
         };
       }
   
-      if (task.type === 'subscription') {
-        if (task.chatId) {
-          const chatIdNumber = parseInt(task.chatId, 10);
+      if (userTask.task.type === 'subscription') {
+        if (userTask.task.chatId) {
+          const chatIdNumber = parseInt(userTask.task.chatId, 10);
           const subscriptionResult = await this.telegramSubService.checkSubscription(
             chatIdNumber,
             parseInt(telegramId, 10)
@@ -216,7 +225,7 @@ export class DailyTasksService {
         }
       }
   
-      else if (task.type === 'invite') {
+      else if (userTask.task.type === 'invite') {
         const friends = Array.isArray(user.friends) ? user.friends : [];
         const newFriends = await Promise.all(
           friends.map(async (telegramId: string) => {
@@ -228,7 +237,7 @@ export class DailyTasksService {
         ).then(results => results.filter(friend => friend !== null));
   
         const friendsCount = newFriends.length;
-        const requiredCount = task.requiredFriends ?? 0;
+        const requiredCount = userTask.task.requiredFriends ?? 0;
   
         if (friendsCount < requiredCount) {
           return {
@@ -254,7 +263,7 @@ export class DailyTasksService {
         };
       }
       const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
-      balance.money += task.coin;
+      balance.money += userTask.task.coin;
   
       await this.prisma.user.update({
         where: { telegramId },
@@ -281,11 +290,11 @@ export class DailyTasksService {
         success: true,
         data: {
           task: {
-            ...task,
+            ...userTask.task,
             status: 'completed',
-            type: task.type as TaskType
+            type: userTask.task.type as TaskType
           },
-          reward: task.coin
+          reward: userTask.task.coin
         }
       };
     } catch (error: unknown) {
