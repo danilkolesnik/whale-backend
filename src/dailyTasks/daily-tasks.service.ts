@@ -25,7 +25,6 @@ export class DailyTasksService {
           status: 'available' as const,
           chatId: createTaskDto.chatId ? String(createTaskDto.chatId) : null,
           channelLink: createTaskDto.channelLink,
-          requiredFriends: createTaskDto.requiredFriends || null,
           title: createTaskDto.title
         }
       });
@@ -228,13 +227,11 @@ export class DailyTasksService {
       }
   
       else if (task.type === 'invite') {
-        const friends = typeof user.friends === 'string'
-          ? JSON.parse(user.friends)
-          : (user.friends || []);
+        const friends = Array.isArray(user.friends) ? user.friends : [];
         const newFriends = friends.filter((friend: any) => friend.isNewUser);
   
         const friendsCount = newFriends.length;
-        const requiredCount = task.requiredFriends ?? 0;
+        const requiredCount = 0;
   
         if (friendsCount < requiredCount) {
           return {
@@ -251,6 +248,15 @@ export class DailyTasksService {
         };
       }
   
+      if (!user.balance) {
+        return {
+          success: false,
+          error: 'User balance not found'
+        };
+      }
+      const balance = user.balance as { money: number; shield: number };
+      balance.money += task.coin;
+  
       await this.prisma.user.update({
         where: { telegramId },
         data: {
@@ -265,8 +271,8 @@ export class DailyTasksService {
           },
           balance: {
             set: {
-              money: (user.balance as any).money + task.coin,
-              shield: (user.balance as any).shield
+              money: balance.money,
+              shield: balance.shield
             }
           }
         }
@@ -278,7 +284,7 @@ export class DailyTasksService {
           task: {
             ...task,
             status: 'completed',
-            type: task.type as 'invite' | 'subscription'
+            type: task.type as TaskType
           },
           reward: task.coin
         }
