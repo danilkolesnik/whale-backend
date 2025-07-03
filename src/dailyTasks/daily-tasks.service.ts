@@ -116,7 +116,7 @@ export class DailyTasksService {
       const existingUserTask = await this.prisma.userTask.findUnique({
         where: {
           userId_taskId: {
-            userId: parseInt(user.telegramId, 10),
+            userId: user.telegramId,
             taskId: taskIdInt
           }
         }
@@ -131,7 +131,7 @@ export class DailyTasksService {
 
       const userTask = await this.prisma.userTask.create({
         data: {
-          userId: parseInt(user.telegramId, 10),
+          userId: user.telegramId,
           taskId: taskIdInt,
           status: 'in_progress' as const
         }
@@ -182,7 +182,7 @@ export class DailyTasksService {
       const userTask = await this.prisma.userTask.findUnique({
         where: {
           userId_taskId: {
-            userId: parseInt(user.telegramId, 10),
+            userId: user.telegramId,
             taskId: taskIdInt
           }
         },
