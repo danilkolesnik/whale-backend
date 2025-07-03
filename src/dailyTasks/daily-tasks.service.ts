@@ -168,7 +168,7 @@ export class DailyTasksService {
   }> {
     try {
       const user = await this.prisma.user.findUnique({
-        where: { id: userId },
+        where: { telegramId: userId.toString() },
         include: { tasks: true }
       });
   
@@ -299,7 +299,7 @@ export class DailyTasksService {
       balance.money += userTask.task.coin;
   
       await this.prisma.user.update({
-        where: { id: userId },
+        where: { telegramId: userId.toString() },
         data: {
           balance: {
             money: balance.money,
