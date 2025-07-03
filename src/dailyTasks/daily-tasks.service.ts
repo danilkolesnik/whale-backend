@@ -242,7 +242,7 @@ export class DailyTasksService {
         ).then(results => results.filter(friend => friend !== null));
   
         const friendsCount = newFriends.length;
-        const requiredCount = task.requiredFriends;
+        const requiredCount = task.requiredFriends ?? 0;
   
         if (friendsCount < requiredCount) {
           return {
