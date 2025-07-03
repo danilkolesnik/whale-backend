@@ -253,6 +253,13 @@ export class DailyTasksService {
         }
 
         console.log(`Number of new friends added: ${friendsCount}`);
+
+        await this.prisma.task.update({
+          where: { id: taskIdInt },
+          data: {
+            requiredSubscribers: friendsCount
+          }
+        });
       }
   
       if (!user.balance) {
