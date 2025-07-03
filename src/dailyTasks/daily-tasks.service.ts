@@ -139,6 +139,7 @@ export class DailyTasksService {
         success: true,
         data: {
           ...task,
+          type: task.type as TaskType,
           status: userTask.status as 'available' | 'in_progress' | 'completed'
         }
       };
