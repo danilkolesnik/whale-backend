@@ -188,8 +188,6 @@ export class DailyTasksService {
         }
       });
 
-      console.log(userTask);
-
       if (!userTask) {
         return {
           success: false,
