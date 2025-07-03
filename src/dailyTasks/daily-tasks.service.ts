@@ -251,12 +251,12 @@ export class DailyTasksService {
         }
       }
   
-      else {
-        return {
-          success: false,
-          error: 'Invalid task type'
-        };
-      }
+      // else {
+      //   return {
+      //     success: false,
+      //     error: 'Invalid task type'
+      //   };
+      // }
   
       if (!user.balance) {
         return {
