@@ -203,7 +203,7 @@ export class DailyTasksService {
           error: 'Task already completed'
         };
       }
-  
+      console.log(userTask.task.type)
       if (userTask.task.type === 'subscription') {
         if (userTask.task.chatId) {
           const chatIdNumber = parseInt(userTask.task.chatId, 10);
@@ -225,7 +225,6 @@ export class DailyTasksService {
           };
         }
       }
-  
       else if (userTask.task.type === 'invite') {
         const friends = Array.isArray(user.friends) ? user.friends : [];
         const newFriends = await Promise.all(
