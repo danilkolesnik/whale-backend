@@ -209,7 +209,7 @@ export class DailyTasksService {
           const chatIdNumber = parseInt(userTask.task.chatId, 10);
           const subscriptionResult = await this.telegramSubService.checkSubscription(
             chatIdNumber,
-            user.telegramId
+            parseInt(user.telegramId, 10)
           );
   
           if (!subscriptionResult.success || !subscriptionResult.data?.isSubscribed) {
