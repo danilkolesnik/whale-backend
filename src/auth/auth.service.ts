@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { CryptAPIService } from '../utils/cryptoServei';
-import { verifyTelegramWebAppData } from '../utils/checker';
+// import { verifyTelegramWebAppData } from '../utils/checker';
 import { InventoryItem, Balance } from '../types/inventory.types';
 import { DailyTasksService } from '../dailyTasks/daily-tasks.service';
 

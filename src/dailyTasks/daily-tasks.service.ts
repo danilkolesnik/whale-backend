@@ -187,7 +187,10 @@ export class DailyTasksService {
           error: 'User not found'
         };
       }
-  
+
+      console.log(user.tasks);
+      
+
       const task = user.tasks.find(t => t.id === taskId);
   
       if (!task) {
