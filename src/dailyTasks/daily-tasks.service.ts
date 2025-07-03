@@ -90,7 +90,6 @@ export class DailyTasksService {
     try {
       const user = await this.prisma.user.findUnique({
         where: { telegramId },
-        include: { tasks: true }
       });
 
       if (!user) {
@@ -103,16 +102,6 @@ export class DailyTasksService {
       const taskIdInt = parseInt(taskId, 10);
       const task = await this.prisma.task.findUnique({
         where: { id: taskIdInt },
-        select: {
-          id: true,
-          type: true,
-          coin: true,
-          status: true,
-          requiredFriends: true,
-          chatId: true,
-          channelLink: true,
-          title: true
-        }
       });
 
       if (!task) {
@@ -122,39 +111,35 @@ export class DailyTasksService {
         };
       }
 
-      const existingTask = user.tasks.find(t => t.id === taskIdInt);
-      if (existingTask) {
+      const existingUserTask = await this.prisma.userTask.findUnique({
+        where: {
+          userId_taskId: {
+            userId: user.id,
+            taskId: taskIdInt
+          }
+        }
+      });
+
+      if (existingUserTask) {
         return {
           success: false,
           error: 'Task already taken by the user'
         };
       }
 
-      const updatedTask = await this.prisma.task.update({
-        where: { id: taskIdInt },
+      const userTask = await this.prisma.userTask.create({
         data: {
-          status: 'in_progress' as const,
-          users: {
-            connect: { telegramId }
-          }
-        }
-      });
-      
-      await this.prisma.user.update({
-        where: { telegramId },
-        data: {
-          tasks: {
-            connect: { id: taskIdInt }
-          }
+          userId: user.id,
+          taskId: taskIdInt,
+          status: 'in_progress' as const
         }
       });
 
       return {
         success: true,
         data: {
-          ...updatedTask,
-          type: updatedTask.type as TaskType,
-          status: updatedTask.status as 'available' | 'in_progress' | 'completed'
+          ...task,
+          status: userTask.status as 'available' | 'in_progress' | 'completed'
         }
       };
     } catch (error) {

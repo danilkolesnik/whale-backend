@@ -22,7 +22,7 @@ model User {
   equipment     Json     @default("[]")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  tasks         Task[]   @relation("UserTasks")
+  tasks         UserTask[]
   transactions  Transaction[]
   friends       Json     @default("[]")
   walletAddress String?
@@ -65,7 +65,7 @@ model Task {
   channelLink    String?
   requiredFriends Int? 
   requiredSubscribers Int?
-  users          User[]   @relation("UserTasks")
+  tasks          UserTask[]
   @@index([userId])
 }
 
@@ -121,4 +121,19 @@ model UpgradeSettings {
   currentIndex Int      @default(0) // Текущий индекс в последовательности
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model UserTask {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  taskId    Int
+  status    String   // 'available', 'in_progress', 'completed'
+  completedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id])
+  task      Task     @relation(fields: [taskId], references: [id])
+
+  @@unique([userId, taskId])
 }
