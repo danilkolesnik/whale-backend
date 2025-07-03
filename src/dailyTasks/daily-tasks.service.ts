@@ -175,9 +175,6 @@ export class DailyTasksService {
           error: 'User not found'
         };
       }
-
-      console.log(user);
-      
       const taskIdInt = parseInt(taskId.toString(), 10);
       const userTask = await this.prisma.userTask.findUnique({
         where: {
@@ -191,6 +188,8 @@ export class DailyTasksService {
         }
       });
 
+      console.log(userTask);
+
       if (!userTask) {
         return {
           success: false,
@@ -198,13 +197,13 @@ export class DailyTasksService {
         };
       }
 
+
       if (userTask.status === 'completed') {
         return {
           success: false,
           error: 'Task already completed'
         };
       }
-      console.log(userTask.task.type)
       if (userTask.task.type === 'subscription') {
         if (userTask.task.chatId) {
           const chatIdNumber = parseInt(userTask.task.chatId, 10);
