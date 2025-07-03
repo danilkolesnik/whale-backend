@@ -191,6 +191,8 @@ export class DailyTasksService {
         }
       });
 
+      console.log(userTask, taskIdInt);
+
       if (!userTask) {
         return {
           success: false,
