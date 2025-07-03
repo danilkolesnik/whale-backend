@@ -262,6 +262,19 @@ export class DailyTasksService {
             completedAt: new Date()
           }
         });
+      } else if (userTask.task.type === 'external_sub') {
+        await this.prisma.userTask.update({
+          where: {
+            userId_taskId: {
+              userId: user.id,
+              taskId: taskIdInt
+            }
+          },
+          data: {
+            status: 'completed',
+            completedAt: new Date()
+          }
+        });
       }
   
       if (!user.balance) {
