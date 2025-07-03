@@ -362,35 +362,4 @@ export class DailyTasksService {
     }
   }
 
-  // async createInviteTask(telegramId: string, requiredFriends: number): Promise<{ success: boolean; error?: string; data?: Task }> {
-  //   try {
-  //     const task = await this.prisma.task.create({
-  //       data: {
-  //         type: 'invite',
-  //         coin: 0, // Set the reward for completing the task
-  //         status: 'available',
-  //         user: {
-  //           connect: { telegramId }
-  //         },
-  //         channelLink: null,
-  //         chatId: null
-  //       }
-  //     });
-
-  //     return {
-  //       success: true,
-  //       data: {
-  //         ...task,
-  //         type: task.type as TaskType,
-  //         status: task.status as 'available' | 'in_progress' | 'completed'
-  //       }
-  //     };
-  //   } catch (error: any) {
-  //     console.log(error);
-  //     return {
-  //       success: false,
-  //       error: 'Failed to create invite task'
-  //     };
-  //   }
-  // }
 } 
