@@ -116,7 +116,7 @@ export class DailyTasksService {
       const existingUserTask = await this.prisma.userTask.findUnique({
         where: {
           userId_taskId: {
-            userId: user.id,
+            userId: user.telegramId,
             taskId: taskIdInt
           }
         }
@@ -131,7 +131,7 @@ export class DailyTasksService {
 
       const userTask = await this.prisma.userTask.create({
         data: {
-          userId: user.id,
+          userId: user.telegramId,
           taskId: taskIdInt,
           status: 'in_progress' as const
         }
@@ -259,8 +259,6 @@ export class DailyTasksService {
             error: 'Not enough new friends added'
           };
         }
-  
-        console.log(`Number of new friends added: ${friendsCount}`);
   
         await this.prisma.userTask.update({
           where: {
