@@ -139,6 +139,7 @@ export class DailyTasksService {
           }
         }
       });
+      
       await this.prisma.user.update({
         where: { telegramId },
         data: {
