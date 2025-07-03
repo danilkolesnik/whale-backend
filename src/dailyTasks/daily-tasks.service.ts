@@ -272,7 +272,7 @@ export class DailyTasksService {
         data: {
           tasks: {
             update: {
-              where: { id: taskId },
+              where: { id: taskIdInt },
               data: {
                 status: 'completed',
                 completedAt: new Date()
