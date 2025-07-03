@@ -176,6 +176,7 @@ export class DailyTasksService {
         };
       }
 
+      console.log(user);
       
       const taskIdInt = parseInt(taskId.toString(), 10);
       const userTask = await this.prisma.userTask.findUnique({
@@ -239,15 +240,6 @@ export class DailyTasksService {
         const friendsCount = newFriends.length;
         const requiredCount = userTask.task.requiredFriends ?? 0;
   
-        if (friendsCount < requiredCount) {
-          return {
-            success: false,
-            error: 'Not enough new friends added'
-          };
-        }
-
-        console.log(`Number of new friends added: ${friendsCount}`);
-
         await this.prisma.userTask.update({
           where: {
             userId_taskId: {
@@ -257,6 +249,28 @@ export class DailyTasksService {
           },
           data: {
             friendsCount: friendsCount,
+            status: 'in_progress',
+            completedAt: null
+          }
+        });
+  
+        if (friendsCount < requiredCount) {
+          return {
+            success: false,
+            error: 'Not enough new friends added'
+          };
+        }
+  
+        console.log(`Number of new friends added: ${friendsCount}`);
+  
+        await this.prisma.userTask.update({
+          where: {
+            userId_taskId: {
+              userId: user.id,
+              taskId: taskIdInt
+            }
+          },
+          data: {
             status: 'completed',
             completedAt: new Date()
           }
