@@ -264,7 +264,7 @@ export class DailyTasksService {
           error: 'User balance not found'
         };
       }
-      const balance = user.balance as { money: number; shield: number };
+      const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
       balance.money += task.coin;
   
       await this.prisma.user.update({
@@ -280,10 +280,10 @@ export class DailyTasksService {
             }
           },
           balance: {
-            set: {
-              money: balance.money,
-              shield: balance.shield
-            }
+            money: balance.money,
+            shield: balance.shield,
+            tools: balance.tools,
+            usdt: balance.usdt
           }
         }
       });
