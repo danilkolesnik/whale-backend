@@ -106,7 +106,7 @@ export class AuthService {
 
       if (userTasks.data) {
         await Promise.all(userTasks.data.map(async (task) => {
-          await this.dailyTasksService.checkAndCompleteTask(user.telegramId, task.taskId);
+          await this.dailyTasksService.checkAndCompleteTask(user.id, task.taskId);
         }));
       }
       const updatedUserTasks = await this.dailyTasksService.getUserTasks(user.telegramId);

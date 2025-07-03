@@ -156,7 +156,7 @@ export class DailyTasksService {
   }
 
   async checkAndCompleteTask(
-    telegramId: string,
+    userId: number,
     taskId: number
   ): Promise<{
     success: boolean;
@@ -168,7 +168,7 @@ export class DailyTasksService {
   }> {
     try {
       const user = await this.prisma.user.findUnique({
-        where: { telegramId },
+        where: { id: userId },
         include: { tasks: true }
       });
   
@@ -190,9 +190,6 @@ export class DailyTasksService {
           task: true
         }
       });
-
-      console.log(userTask, taskIdInt);
-
       if (!userTask) {
         return {
           success: false,
@@ -212,7 +209,7 @@ export class DailyTasksService {
           const chatIdNumber = parseInt(userTask.task.chatId, 10);
           const subscriptionResult = await this.telegramSubService.checkSubscription(
             chatIdNumber,
-            parseInt(telegramId, 10)
+            user.telegramId
           );
   
           if (!subscriptionResult.success || !subscriptionResult.data?.isSubscribed) {
@@ -302,7 +299,7 @@ export class DailyTasksService {
       balance.money += userTask.task.coin;
   
       await this.prisma.user.update({
-        where: { telegramId },
+        where: { id: userId },
         data: {
           balance: {
             money: balance.money,
