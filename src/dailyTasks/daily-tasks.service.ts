@@ -188,12 +188,12 @@ export class DailyTasksService {
         };
       }
 
-      const task = user.tasks.find(t => t.id === taskId);
-      console.log(task);
-      console.log(taskId);
       
+      const taskIdInt = parseInt(taskId.toString(), 10);
+      const task = user.tasks.find(t => t.id === taskIdInt);
 
       if (!task) {
+        console.log('Task not found for user');
         return {
           success: false,
           error: 'Task not found for user'
