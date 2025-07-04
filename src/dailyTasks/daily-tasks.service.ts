@@ -315,7 +315,7 @@ export class DailyTasksService {
             ...userTask.task,
             status: 'completed',
             type: userTask.task.type as TaskType,
-            taskId: userTask.task.id
+            taskId: userTask.task.taskId
           },
           reward: userTask.task.coin
         }
