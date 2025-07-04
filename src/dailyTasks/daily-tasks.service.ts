@@ -215,7 +215,7 @@ export class DailyTasksService {
             parseInt(user.telegramId, 10)
           );
   
-          if (subscriptionResult.success && subscriptionResult.data?.isSubscribed) {
+          if (userTask.status === 'in_progress' && subscriptionResult.success && subscriptionResult.data?.isSubscribed) {
             await this.prisma.userTask.update({
               where: {
                 userId_taskId: {
@@ -231,7 +231,7 @@ export class DailyTasksService {
           } else {
             return {
               success: false,
-              error: 'User is not subscribed'
+              error: 'Task is not in progress or user is not subscribed'
             };
           }
         } else {
