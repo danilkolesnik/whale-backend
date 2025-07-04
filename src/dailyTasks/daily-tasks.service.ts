@@ -297,7 +297,7 @@ export class DailyTasksService {
       const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
       balance.money += userTask.task.coin;
   
-      await this.prisma.user.update({
+      const updatedUser = await this.prisma.user.update({
         where: { telegramId: userId.toString() },
         data: {
           balance: {
@@ -318,7 +318,8 @@ export class DailyTasksService {
             type: userTask.task.type as TaskType,
             taskId: userTask.task.taskId
           },
-          reward: userTask.task.coin
+          reward: userTask.task.coin,
+          user: updatedUser
         }
       };
     } catch (error: unknown) {
