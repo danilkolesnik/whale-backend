@@ -276,7 +276,7 @@ export class DailyTasksService {
         await this.prisma.userTask.update({
           where: {
             userId_taskId: {
-              userId: user.id,
+              userId: user.telegramId,
               taskId: taskIdInt
             }
           },
