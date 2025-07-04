@@ -36,7 +36,7 @@ export class DailyTasksService {
           ...task,
           type: task.type as TaskType,
           status: task.status as 'available' | 'in_progress' | 'completed',
-          taskId: task.taskId
+          taskId: task.id
         }
       };
     } catch (error) {
@@ -74,7 +74,7 @@ export class DailyTasksService {
           ...task,
           type: task.type as TaskType,
           status: task.status as 'available' | 'in_progress' | 'completed',
-          taskId: task.id
+          taskId: task.taskId
         }))
       };
     } catch (error) {
