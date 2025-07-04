@@ -74,6 +74,7 @@ export class UserService {
           shield: totalShield,
           money: (user.balance as any).money,
           tools: (user.balance as any).tools,
+          usdt: (user.balance as any).usdt,
         }
       },
     });
@@ -115,6 +116,7 @@ export class UserService {
           shield: totalShield,
           money: (user.balance as any).money,
           tools: (user.balance as any).tools,
+          usdt: (user.balance as any).usdt,
         }
       },
     });
