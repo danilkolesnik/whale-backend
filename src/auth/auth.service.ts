@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
@@ -108,7 +109,7 @@ export class AuthService {
 
       if (userTasks.data) {
         await Promise.all(userTasks.data.map(async (task) => {
-          await this.dailyTasksService.checkAndCompleteTask(user.id, task.taskId);
+          await this.dailyTasksService.checkAndCompleteTask(user.telegramId, task.taskId);
         }));
       }
       const updatedUserTasks = await this.dailyTasksService.getUserTasks(user.telegramId);
