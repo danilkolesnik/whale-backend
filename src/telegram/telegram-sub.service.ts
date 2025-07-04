@@ -17,7 +17,6 @@ export class TelegramSubService {
       isSubscribed: boolean;
     };
   }> {
-    console.log(chatId, userId);
     try {
       const response = await axios.get(
         `https://api.telegram.org/bot${this.botToken}/getChatMember`,

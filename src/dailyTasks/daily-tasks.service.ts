@@ -215,7 +215,20 @@ export class DailyTasksService {
             parseInt(user.telegramId, 10)
           );
   
-          if (!subscriptionResult.success || !subscriptionResult.data?.isSubscribed) {
+          if (subscriptionResult.success && subscriptionResult.data?.isSubscribed) {
+            await this.prisma.userTask.update({
+              where: {
+                userId_taskId: {
+                  userId: user.telegramId,
+                  taskId: taskIdInt
+                }
+              },
+              data: {
+                status: 'completed',
+                completedAt: new Date()
+              }
+            });
+          } else {
             return {
               success: false,
               error: 'User is not subscribed'
