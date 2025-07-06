@@ -52,7 +52,7 @@ export class ShopService {
     //   return { success: false, message: 'Item already purchased', code: 400 };
     // }
 
-    const randomId = Math.floor(Math.random() * 100);
+    const randomId = Math.floor(Math.random() * 1000);
 
     inventory.push({
       id: randomId,
