@@ -46,14 +46,16 @@ export class ShopService {
 
     const inventory = user.inventory as any[];
 
-    // Check if the item is already in the inventory
-    const itemExists = inventory.some(invItem => invItem.id === itemId);
-    if (itemExists) {
-      return { success: false, message: 'Item already purchased', code: 400 };
-    }
+
+    // const itemExists = inventory.some(invItem => invItem.id === itemId);
+    // if (itemExists) {
+    //   return { success: false, message: 'Item already purchased', code: 400 };
+    // }
+
+    const randomId = Math.floor(Math.random() * 10);
 
     inventory.push({
-      id: item.id,
+      id: randomId,
       name: item.name,
       level: item.level,
       shield: item.shield,

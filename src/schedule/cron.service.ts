@@ -11,21 +11,21 @@ export class CronService {
     private readonly ratingService: RatingService
   ) {}
 
-  // @Cron('* * * * *')
-  // async handleCron() {
-  //   console.log('Running TON transaction check');
-  //   await this.tonCheckService.checkTonTransactions();
-  // }
+  @Cron('* * * * *')
+  async handleCron() {
+    console.log('Running TON transaction check');
+    await this.tonCheckService.checkTonTransactions();
+  }
 
-  // @Cron('* * * * *')
-  // async handleTransactionCron() {
-  //   console.log('Running transaction check');
-  //   await listenToRecentTransactions();
-  // }
-
-  // @Cron('*/5 * * * *')
-  // async resetWeeklyRating() {
-  //   console.log('Resetting weekly rating');
-  //   await this.ratingService.resetWeeklyRating();
-  // }
+  @Cron('* * * * *')
+  async handleTransactionCron() {
+    console.log('Running transaction check');
+    await listenToRecentTransactions();
+  }
+  
+  @Cron('0 0 * * 0')
+  async resetWeeklyRating() {
+    console.log('Resetting weekly rating');
+    await this.ratingService.resetWeeklyRating();
+  }
 } 
