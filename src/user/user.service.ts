@@ -208,7 +208,8 @@ export class UserService {
           balance: {
             shield: totalShield,
             money: balance.money,
-            tools: balance.tools - upgradeSettings.toolsCost
+            tools: balance.tools - upgradeSettings.toolsCost,
+            usdt: balance.usdt
           }
         },
       });
@@ -221,7 +222,8 @@ export class UserService {
           balance: {
             shield: totalShield,
             money: balance.money,
-            tools: balance.tools - upgradeSettings.toolsCost
+            tools: balance.tools - upgradeSettings.toolsCost,
+            usdt: balance.usdt
           }
         }
       };
