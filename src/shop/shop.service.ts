@@ -38,7 +38,7 @@ export class ShopService {
       return { success: false, message: 'Item not found', code: 404 };
     }
 
-    const balance = user.balance as { money: number; shield: number; tools: number };
+    const balance = user.balance as { money: number; shield: number; tools: number, usdt: number };
 
     if (balance.money < item.price) {
       return { success: false, message: 'Not enough money', code: 400 };
