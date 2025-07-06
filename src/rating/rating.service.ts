@@ -78,7 +78,7 @@ export class RatingService {
 
     users.sort((a, b) => b.shield - a.shield);
 
-    const top100Users = users.slice(0, 100);
+    const top100Users = users.slice(0, 50);
 
     await this.prisma.rating.create({
       data: {
