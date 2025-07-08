@@ -51,36 +51,6 @@ export class ShopController {
   buyItem(@Param('itemId') itemId: string, @Body() body: { telegramId: string }) {
     return this.shopService.buyItem(body.telegramId, parseInt(itemId));
   }
-
-  @Post('buy/tools')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Buy tools' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        telegramId: {
-          type: 'string',
-          description: 'Telegram ID of the user',
-          example: '123456789'
-        },
-        toolQuantity: {
-          type: 'number',
-          description: 'Quantity of tools to buy',
-          example: 1
-        } 
-      },
-      required: ['telegramId', 'toolQuantity']
-    }
-  })
-  @ApiResponse({ status: 200, description: 'Tools bought successfully' })
-  @ApiResponse({ status: 400, description: 'Not enough money' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  buyTools(@Body() body: { telegramId: string, toolQuantity: number }) {   
-    return this.shopService.buyTool(body.telegramId, body.toolQuantity);
-  }
-
   @Post('conversion/coin')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Conversion coin' })
@@ -138,4 +108,33 @@ export class ShopController {
   conversionUsdt(@Body() body: { telegramId: string, moneyQuantity: number }) {
     return this.shopService.conversionUsdt(body.telegramId, body.moneyQuantity);
   } 
+
+  @Post('tools')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Buy tools' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        telegramId: {
+          type: 'string',
+          description: 'Telegram ID of the user',
+          example: '123456789'
+        },
+        toolQuantity: {
+          type: 'number',
+          description: 'Quantity of tools to buy',
+          example: 1
+        } 
+      },
+      required: ['telegramId', 'toolQuantity']
+    }
+  })
+  @ApiResponse({ status: 200, description: 'Tools bought successfully' })
+  @ApiResponse({ status: 400, description: 'Not enough money' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  buyTools(@Body() body: { telegramId: string, toolQuantity: number }) {   
+    return this.shopService.buyTool(body.telegramId, body.toolQuantity);
+  }
 } 

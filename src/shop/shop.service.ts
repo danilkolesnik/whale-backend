@@ -78,43 +78,6 @@ export class ShopService {
     return { success: true, message: 'Item purchased successfully', code: 200 };
   }
 
-  async buyTool(telegramId: string, toolQuantity: number) { 
-    const user = await this.prisma.user.findUnique({
-      where: { telegramId },
-    });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    const balance = user.balance as { money: number; shield: number; tools: number, usdt: number };
-
-    if(toolQuantity > balance.money) {
-      return{
-        code: 400,
-        message: 'Not enough USDT',
-      }
-    }
-
-    await this.prisma.user.update({
-      where: { telegramId },
-      data: {
-        balance: {
-          money: balance.money - toolQuantity,
-          usdt: balance.usdt,
-          shield: balance.shield,
-          tools: balance.tools + toolQuantity,
-        },
-      },
-    });
-
-    return{
-      code: 200,
-      message: 'Money bought successfully',
-    }
-    
-  }
-
   async conversionCoin(telegramId: string, usdtQuantity: number) {
     const user = await this.prisma.user.findUnique({
       where: { telegramId },
@@ -186,4 +149,42 @@ export class ShopService {
       message: 'Money bought successfully',
     }
   }
+
+  async buyTool(telegramId: string, toolQuantity: number) { 
+    const user = await this.prisma.user.findUnique({
+      where: { telegramId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const balance = user.balance as { money: number; shield: number; tools: number, usdt: number };
+
+    if(toolQuantity > balance.money) {
+      return{
+        code: 400,
+        message: 'Not enough USDT',
+      }
+    }
+
+    await this.prisma.user.update({
+      where: { telegramId },
+      data: {
+        balance: {
+          money: balance.money - toolQuantity,
+          usdt: balance.usdt,
+          shield: balance.shield,
+          tools: balance.tools + toolQuantity,
+        },
+      },
+    });
+
+    return{
+      code: 200,
+      message: 'Money bought successfully',
+    }
+    
+  }
+
 } 
