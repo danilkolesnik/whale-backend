@@ -87,13 +87,22 @@ export class ShopService {
       throw new NotFoundException('User not found');
     }
 
-    const balance = JSON.parse(user.balance as string) as { money: number; shield: number; tools: number };
+    const balance = user.balance as { money: number; shield: number; tools: number, usdt: number };
+
+    if(toolQuantity > balance.tools) {
+      return{
+        code: 400,
+        message: 'Not enough tools',
+      }
+    }
 
     await this.prisma.user.update({
       where: { telegramId },
       data: {
         balance: {
-          ...balance,
+          money: balance.money - toolQuantity,
+          shield: balance.shield,
+          usdt: balance.usdt,
           tools: balance.tools + toolQuantity,
         },
       },
