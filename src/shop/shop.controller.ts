@@ -77,7 +77,7 @@ export class ShopController {
   @ApiResponse({ status: 400, description: 'Not enough money' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  buyTools(@Body() body: { telegramId: string, toolQuantity: number }) {  
+  buyTools(@Body() body: { telegramId: string, toolQuantity: number }) {   
     return this.shopService.buyTool(body.telegramId, body.toolQuantity);
   }
 

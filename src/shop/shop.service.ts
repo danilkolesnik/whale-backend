@@ -89,10 +89,10 @@ export class ShopService {
 
     const balance = user.balance as { money: number; shield: number; tools: number, usdt: number };
 
-    if(toolQuantity > balance.tools) {
+    if(toolQuantity > balance.money) {
       return{
         code: 400,
-        message: 'Not enough tools',
+        message: 'Not enough USDT',
       }
     }
 
@@ -101,16 +101,16 @@ export class ShopService {
       data: {
         balance: {
           money: balance.money - toolQuantity,
-          shield: balance.shield,
           usdt: balance.usdt,
+          shield: balance.shield,
           tools: balance.tools + toolQuantity,
         },
       },
     });
 
     return{
-      data: user,
-      message: 'Tools bought successfully',
+      code: 200,
+      message: 'Money bought successfully',
     }
     
   }
