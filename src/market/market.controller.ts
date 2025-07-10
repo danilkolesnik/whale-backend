@@ -505,4 +505,98 @@ export class MarketController {
   ) {
     return this.marketService.changePriceOrder(parseInt(id), body.newPrice, body.newLevel);
   }
+
+  @Post('buy-orders/:id/delete')
+  @ApiOperation({ 
+    summary: 'Delete a buy order',
+    description: 'Delete an existing buy order'
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Buy order ID',
+    type: 'number', 
+    example: 1
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Order deleted successfully',
+    schema: {
+      example: {
+        message: "Order deleted successfully"
+      }
+    }
+  })
+  @ApiResponse({ 
+    status: 400, 
+    description: 'Invalid request or not your order',
+    schema: {
+      example: {
+        statusCode: 400,  
+        message: "You can only delete your own orders"
+      }
+    }
+  })
+  @ApiResponse({ 
+    status: 404, 
+    description: 'Order not found',
+    schema: {
+      example: {  
+        statusCode: 404,
+        message: "Order not found"
+      }
+    }
+  })
+  async deleteBuyOrder(
+    @Param('id') id: string,
+    @Body() body: { telegramId: string }
+  ) { 
+    return this.marketService.deleteBuyOrder(body.telegramId, parseInt(id));
+  }
+
+  @Post('listings/:id/delete')
+  @ApiOperation({ 
+    summary: 'Delete a listing',
+    description: 'Delete an existing listing'
+  })  
+  @ApiParam({
+    name: 'id',
+    description: 'Listing ID',
+    type: 'number',
+    example: 1
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Listing deleted successfully',  
+    schema: {
+      example: {
+        message: "Listing deleted successfully"
+      }
+    }
+  })
+  @ApiResponse({ 
+    status: 400,  
+    description: 'Invalid request or not your listing',
+    schema: {
+      example: {
+        statusCode: 400,
+        message: "You can only delete your own listings"
+      }
+    }
+  })
+  @ApiResponse({    
+    status: 404, 
+    description: 'Listing not found',
+    schema: {
+      example: {
+        statusCode: 404,
+        message: "Listing not found"
+      }
+    }
+  })
+  async deleteListing(
+    @Param('id') id: string,
+    @Body() body: { telegramId: string }
+  ) {
+    return this.marketService.deleteListing(body.telegramId, parseInt(id));
+  }
 } 

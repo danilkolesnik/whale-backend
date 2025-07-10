@@ -268,4 +268,67 @@ export class MarketService {
       return this.handleError(error);
     }
   }
+
+  async deleteBuyOrder(telegramId: string, orderId: number) {
+    try {
+      const user = await this.findUser(telegramId);
+
+      if (!user) return { 
+        success: false, 
+        error: 'User not found', 
+        data: null,
+        code: 404
+      };
+
+      const order = await this.prisma.buyOrder.findUnique({ where: { id: orderId } });
+
+      if (!order) return { 
+        success: false, 
+        error: 'Order not found', 
+        data: null,
+        code: 404
+      };
+
+      await this.prisma.buyOrder.delete({ where: { id: orderId } });
+
+      return { 
+        success: true, 
+        error: null, 
+        data: { message: 'Order deleted successfully' },
+        code: 200
+      };
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async deleteListing(telegramId: string, listingId: number) {
+    try {
+      const user = await this.findUser(telegramId);
+
+      if (!user) return { 
+        success: false, 
+        error: 'User not found', 
+        data: null, 
+        code: 404 
+      };
+
+      const listing = await this.prisma.marketListing.findUnique({ where: { id: listingId } });
+      if (!listing) return { success: false, error: 'Listing not found', data: null, code: 404 };
+
+      await this.prisma.marketListing.delete({ 
+        where: { id: listingId } 
+      });
+
+      return { 
+        success: true, 
+        error: null, 
+        data: { 
+          message: 'Listing deleted successfully' 
+        }, 
+        code: 200 };
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
 }
