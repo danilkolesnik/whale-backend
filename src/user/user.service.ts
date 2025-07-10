@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { generateReferralLink } from '../utils/generateReferralLink';
+import { UPGRADE_SHIELD, UPGRADE_CHANCES_ITEMS } from '../utils/constant';
 
 @Injectable()
 export class UserService {
@@ -157,38 +158,14 @@ export class UserService {
 
     const currentLevel = item.level || 0;
 
-    const upgradeSettings = await this.getUpgradeSettingsForLevel(currentLevel);
-    
-    if (!upgradeSettings) {
-      throw new BadRequestException('Maximum level reached or no upgrade settings found');
-    }
-
-    // Check if user has enough tools
-    if (balance.tools < upgradeSettings.toolsCost) {
-      throw new BadRequestException(`Not enough tools for upgrade. Required: ${upgradeSettings.toolsCost}`);
-    }
-
-    // Determine upgrade success
-    let isSuccessful: boolean;
-    
-    if (upgradeSettings.useSequence && upgradeSettings.sequence) {
-      // Use programmed sequence
-      const sequence = upgradeSettings.sequence as boolean[];
-      isSuccessful = sequence[upgradeSettings.currentIndex % sequence.length];
-      
-      // Update sequence index for next attempt
-      await this.prisma.upgradeSettings.update({
-        where: { id: upgradeSettings.id },
-        data: { currentIndex: upgradeSettings.currentIndex + 1 }
-      });
-    } else {
-      // Use random chance
-      isSuccessful = Math.random() < upgradeSettings.successRate;
-    }
+    // Test sequence for levels 13-15 of 'armor' and 'helmet'
+    const testSequence = [false, false, false, false, true];
+    const sequenceIndex = currentLevel - 13; // Adjust index based on level
+    const isSuccessful = testSequence[sequenceIndex % testSequence.length];
 
     if (isSuccessful) {
       item.level = currentLevel + 1;
-      item.shield = (item.shield || 0) + 4;
+      item.shield = (item.shield || 0) + UPGRADE_SHIELD[item.type][currentLevel + 1] || 0;
 
       if (item.isActive) {
         const equippedItem = equipment.find(e => e.id === itemId);
@@ -208,7 +185,7 @@ export class UserService {
           balance: {
             shield: totalShield,
             money: balance.money,
-            tools: balance.tools - upgradeSettings.toolsCost,
+            tools: balance.tools - 1,
             usdt: balance.usdt
           }
         },
@@ -222,25 +199,22 @@ export class UserService {
           balance: {
             shield: totalShield,
             money: balance.money,
-            tools: balance.tools - upgradeSettings.toolsCost,
+            tools: balance.tools - 1,
             usdt: balance.usdt
           }
         }
       };
     } else {
-      // Failed upgrade - remove item completely
       const inventoryIndex = inventory.findIndex(i => i.id === itemId);
       if (inventoryIndex !== -1) {
         inventory.splice(inventoryIndex, 1);
       }
 
-      // Remove from equipment if equipped
       const equipmentIndex = equipment.findIndex(i => i.id === itemId);
       if (equipmentIndex !== -1) {
         equipment.splice(equipmentIndex, 1);
       }
 
-      // Recalculate total shield
       const totalShield = equipment.reduce((sum, item) => sum + item.shield, 0);
 
       await this.prisma.user.update({
@@ -251,7 +225,7 @@ export class UserService {
           balance: {
             shield: totalShield,
             money: balance.money,
-            tools: balance.tools - upgradeSettings.toolsCost
+            tools: balance.tools - 1
           }
         },
       });
@@ -264,7 +238,7 @@ export class UserService {
           balance: {
             shield: totalShield,
             money: balance.money,
-            tools: balance.tools - upgradeSettings.toolsCost
+            tools: balance.tools - 1
           }
         }
       };
