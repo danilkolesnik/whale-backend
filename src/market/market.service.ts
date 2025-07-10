@@ -280,7 +280,12 @@ export class MarketService {
         code: 404
       };
 
-      const order = await this.prisma.buyOrder.findUnique({ where: { id: orderId } });
+      const order = await this.prisma.buyOrder.findUnique({ 
+        where: { 
+          id: orderId ,
+          buyerId: telegramId
+        } 
+      });
 
       if (!order) return { 
         success: false, 
@@ -298,6 +303,7 @@ export class MarketService {
         code: 200
       };
     } catch (error) {
+      console.log(error);
       return this.handleError(error);
     }
   }
