@@ -34,7 +34,7 @@ model Item {
   level     Int
   shield    Int
   type      String
-  price     Int
+  price     Float    // изменено с Int на Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
