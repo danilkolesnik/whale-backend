@@ -225,6 +225,7 @@ export class UserService {
           balance: {
             shield: totalShield,
             money: balance.money,
+            usdt: balance.usdt,
             tools: balance.tools - 1
           }
         },
@@ -238,6 +239,7 @@ export class UserService {
           balance: {
             shield: totalShield,
             money: balance.money,
+            usdt: balance.usdt,
             tools: balance.tools - 1
           }
         }
