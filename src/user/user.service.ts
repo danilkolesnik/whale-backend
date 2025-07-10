@@ -158,17 +158,21 @@ export class UserService {
 
     const currentLevel = item.level || 0;
 
+    // Initialize or increment attempt counter
+    item.attempts = (item.attempts || 0) + 1;
+
     // Test sequence for levels 13-15 of 'armor' and 'helmet'
     const testSequence = [false, false, false, false, true];
-    const sequenceIndex = currentLevel - 13; // Adjust index based on level
+    const sequenceIndex = (item.attempts - 1) % testSequence.length; // Use attempts to determine index
 
     // Apply test sequence only for levels 13-15
     const isTestLevel = currentLevel >= 13 && currentLevel <= 15;
-    const isSuccessful = isTestLevel ? testSequence[sequenceIndex % testSequence.length] : Math.random() < UPGRADE_CHANCES_ITEMS[item.type][currentLevel + 1] || 0;
+    const isSuccessful = isTestLevel ? testSequence[sequenceIndex] : Math.random() < UPGRADE_CHANCES_ITEMS[item.type][currentLevel + 1] || 0;
 
     if (isSuccessful) {
       item.level = currentLevel + 1;
       item.shield = (item.shield || 0) + UPGRADE_SHIELD[item.type][currentLevel + 1] || 0;
+      item.attempts = 0; // Reset attempts on success
 
       if (item.isActive) {
         const equippedItem = equipment.find(e => e.id === itemId);
