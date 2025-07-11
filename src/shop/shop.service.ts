@@ -172,7 +172,7 @@ export class ShopService {
       where: { telegramId },
       data: {
         balance: {
-          money: balance.money - toolQuantity,
+          money: balance.money - (toolQuantity * 0.01),
           usdt: balance.usdt,
           shield: balance.shield,
           tools: balance.tools + toolQuantity,
