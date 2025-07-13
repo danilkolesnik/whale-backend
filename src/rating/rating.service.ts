@@ -82,7 +82,7 @@ export class RatingService {
 
     await this.prisma.rating.create({
       data: {
-        users: top100Users,
+        users: [],
         roundCreatedAt: new Date()
       }
     });
