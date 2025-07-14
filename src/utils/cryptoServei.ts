@@ -4,10 +4,10 @@ export class CryptAPIService {
   async createBEP20Payment(telegramId: string, net: string) {
     try {
 
-      const usdtTrc20 = 'TXxxFvYx95Vuo3n7x7fMGJrsP16pqpnZHd'
-      const usdtBep20 = '0x6e342eb244356e494c997b223bf42aef778af218'
+      const usdtTrc20 = 'THvBH4uKu9vv2uNPQ7kGT2xWEwemJY9Fro'
+      const usdtBep20 = '0x8f7bca519352a18775c79e08676b9a619572f3ce'
 
-      const apiUrl = 'http://45.66.11.45:3000'
+      const apiUrl = 'https://neriumtest1.website'
       const CallbackUrl = `${apiUrl}/usdt-check?userId=${telegramId}`;
       let url = '';
       if (net === 'trc20') {  

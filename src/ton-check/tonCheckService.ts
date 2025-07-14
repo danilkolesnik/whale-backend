@@ -15,7 +15,7 @@ export class TonCheckService {
         'https://toncenter.com/api/v2/getTransactions',
         {
           params: {
-            address: 'UQBw6lUBqynFhrJJdZ-2G_RfgvnQgVT72xpmj2-7-idaF46N',
+            address: 'UQCy8waDo2sgEz-pTLe5qFx_RB4KB8J57_FQnTYCnQlpHwrk',
             limit: 100,
             archival: true,
           },
