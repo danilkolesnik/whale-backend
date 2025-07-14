@@ -6,8 +6,10 @@ export class UsdtCheckController {
   constructor(private readonly usdtCheckService: UsdtCheckService) {}
 
   @Post()
-  async checkUsdtTransactions(@Request() req: any, @Query() userId: string) {
+  async checkUsdtTransactions(@Request() req: any, @Query('telegramId') telegramId: string) {
     const { value_coin } = req.body;
-    return this.usdtCheckService.checkUsdtTransactions(userId, value_coin);
+    console.log(req.body);
+    
+    return this.usdtCheckService.checkUsdtTransactions(telegramId, value_coin);
   }
 } 

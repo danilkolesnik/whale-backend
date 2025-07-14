@@ -11,10 +11,10 @@ export class UsdtCheckService {
     });
   }
 
-  async checkUsdtTransactions(userId: string, valueCoin: any) {
+  async checkUsdtTransactions(telegramId: string, valueCoin: any) {
     try {
-      console.log(userId, valueCoin);
-      const user = await this.findUser(userId);
+      console.log(telegramId, valueCoin);
+      const user = await this.findUser(telegramId);
 
       if (!user) {
         throw new Error('User not found');
@@ -23,7 +23,7 @@ export class UsdtCheckService {
       const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
       
       await this.prisma.user.update({
-        where: { telegramId: userId },
+        where: { telegramId },
         data: { 
           balance: {
             money: balance.money,
@@ -35,7 +35,7 @@ export class UsdtCheckService {
 
       await this.prisma.rechargeHistory.create({
         data: {
-          userId: userId,
+          userId: telegramId,
           valueCoin: valueCoin,
           amount: valueCoin,
           date: new Date().toISOString(),
@@ -44,7 +44,7 @@ export class UsdtCheckService {
 
       return { 
         message: 'Balance updated successfully', 
-        userId: userId, 
+        userId: telegramId, 
         valueCoin: valueCoin 
       };
     } catch (error) {
