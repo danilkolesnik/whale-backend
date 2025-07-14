@@ -27,7 +27,7 @@ export class UsdtCheckService {
         data: { 
           balance: {
             money: balance.money,
-            usdt: balance.usdt + valueCoin,
+            usdt: balance.usdt + Number(valueCoin),
             shield: balance.shield,
             tools: balance.tools,
         } },
@@ -36,8 +36,8 @@ export class UsdtCheckService {
       await this.prisma.rechargeHistory.create({
         data: {
           userId: telegramId,
-          valueCoin: valueCoin,
-          amount: valueCoin,
+          valueCoin: Number(valueCoin),
+          amount: Number(valueCoin),
           date: new Date().toISOString(),
         },
       });
