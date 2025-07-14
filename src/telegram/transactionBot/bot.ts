@@ -7,7 +7,6 @@ const token = process.env.TRANSACTION_BOT_TOKEN;
 if (!token) {
   throw new Error('TRANSACTION_BOT_TOKEN is not defined');
 }
-
 const bot = new Bot(token);
 
 export async function listenToRecentTransactions() {
@@ -55,13 +54,6 @@ export async function listenToRecentTransactions() {
   }
 }
 
-bot.start({
-  onStart: (botInfo) => {
-    console.log(`Bot started as @${botInfo.username}`);
-  },
-}).catch((err) => {
-  console.error('Error starting bot:', err);
-}); 
 
 bot.on('callback_query:data', async (ctx) => {
   const [action, transactionId] = ctx.callbackQuery.data.split('_');
@@ -118,4 +110,10 @@ bot.command('start', async (ctx) => {
   await ctx.reply('Привет! Я бот для транзакций.');
 });
 
-export default bot;
+bot.start({
+  onStart: (botInfo) => {
+    console.log(`Bot started as @${botInfo.username}`);
+  },
+}).catch((err) => {
+  console.error('Error starting bot:', err);
+}); 
