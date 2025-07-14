@@ -171,8 +171,8 @@ export class UserService {
 
     if (isSuccessful) {
       item.level = currentLevel + 1;
-      item.shield = (item.shield || 0) + UPGRADE_SHIELD[item.type][currentLevel + 1] || 0;
-      item.attempts = 0; // Reset attempts on success
+      item.shield = UPGRADE_SHIELD[item.type][currentLevel + 1] || 0;
+      item.attempts = 0;
 
       if (item.isActive) {
         const equippedItem = equipment.find(e => e.id === itemId);
