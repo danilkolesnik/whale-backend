@@ -219,10 +219,10 @@ export class UserService {
       // }
 
       // Remove from equipment if equipped
-      const equipmentIndex = equipment.findIndex(i => i.id === itemId);
-      if (equipmentIndex !== -1) {
-        equipment.splice(equipmentIndex, 1);
-      }
+      // const equipmentIndex = equipment.findIndex(i => i.id === itemId);
+      // if (equipmentIndex !== -1) {
+      //   equipment.splice(equipmentIndex, 1);
+      // }
 
       // Recalculate total shield
       const totalShield = equipment.reduce((sum, item) => sum + item.shield, 0);
