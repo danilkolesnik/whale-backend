@@ -117,3 +117,5 @@ bot.start({
 }).catch((err) => {
   console.error('Error starting bot:', err);
 }); 
+
+export default bot; 

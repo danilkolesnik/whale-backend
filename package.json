@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "dev": "docker-compose up postgres -d && prisma generate && npm run start:dev",
     "start:bot": "ts-node src/telegram/bot.ts",
-    "start:bot-transaction": "ts-node src/telegram/transactionBot/bot.ts"
+    "start:transaction-bot": "ts-node src/telegram/transactionBot/bot.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
