@@ -5,11 +5,15 @@ import { PrismaService } from '../prisma/prisma.service';
 export class UsdtCheckService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private async findUser(telegramId: string) {
+    return this.prisma.user.findUnique({
+      where: { telegramId }
+    });
+  }
+
   async checkUsdtTransactions(userId: string, valueCoin: any) {
     try {
-      const user = await this.prisma.user.findUnique({
-        where: { telegramId: userId },
-      });
+      const user = await this.findUser(userId);
 
       if (!user) {
         throw new Error('User not found');
