@@ -8,10 +8,14 @@ export class CryptAPIService {
       const usdtBep20 = '0x8f7bca519352a18775c79e08676b9a619572f3ce'
 
       const apiUrl = 'https://neriumtest1.website'
+      console.log('Telegram ID:', telegramId);
       const CallbackUrl = `${apiUrl}/usdt-check?telegramId=${telegramId}`;
+      console.log('Callback URL:', CallbackUrl);
       let url = '';
       if (net === 'trc20') {  
          url = `https://api.cryptapi.io/${net}/usdt/create/?address=${usdtTrc20}&callback=${encodeURIComponent(CallbackUrl)}&json=1`;
+         console.log('URL:', url);
+         
       } else {
          url = `https://api.cryptapi.io/${net}/usdt/create/?address=${usdtBep20}&callback=${encodeURIComponent(CallbackUrl)}&json=1`;
       }
