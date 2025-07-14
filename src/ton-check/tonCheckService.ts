@@ -51,7 +51,7 @@ export class TonCheckService {
             continue;
           }
 
-          const balance = JSON.parse(user.balance as string) as { money: number; usdt: number; shield: number; tools: number };
+          const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
 
           await this.prisma.user.update({
             where: { telegramId },

@@ -15,14 +15,16 @@ export class UsdtCheckService {
         throw new Error('User not found');
       }
 
-      const balance = typeof user.balance === 'string' ? JSON.parse(user.balance) : user.balance;
+      const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
+      
       await this.prisma.user.update({
         where: { telegramId: userId },
-        data: { balance: { ...balance, 
-          money: balance.money,
-          usdt: balance.usdt + valueCoin,
-          shield: balance.shield,
-          tools: balance.tools,
+        data: { 
+          balance: {
+            money: balance.money,
+            usdt: balance.usdt + valueCoin,
+            shield: balance.shield,
+            tools: balance.tools,
         } },
       });
 
