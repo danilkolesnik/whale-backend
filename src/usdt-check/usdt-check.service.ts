@@ -13,6 +13,7 @@ export class UsdtCheckService {
 
   async checkUsdtTransactions(userId: string, valueCoin: any) {
     try {
+      console.log(userId, valueCoin);
       const user = await this.findUser(userId);
 
       if (!user) {
@@ -36,7 +37,7 @@ export class UsdtCheckService {
         data: {
           userId: userId,
           valueCoin: valueCoin,
-          amount: valueCoin * 100,
+          amount: valueCoin,
           date: new Date().toISOString(),
         },
       });
