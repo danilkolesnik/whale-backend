@@ -42,7 +42,7 @@ export class TransactionService {
     return this.prisma.transaction.create({
       data: {
         ...data,
-        amount: data.amount / 100,
+        amount: data.amount,
       },
     });
   }
