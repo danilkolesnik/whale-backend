@@ -25,16 +25,16 @@ export class TransactionService {
       throw new Error('Invalid balance format');
     }
 
-    const newBalance = balance.money - data.amount;
+    const newBalance = balance.usdt - data.amount;
 
     await this.prisma.user.update({
       where: { telegramId: data.user.connect.telegramId },
       data: {
         balance: { 
-          money: newBalance, 
+          money: balance.money, 
           shield: balance.shield,
           tools: balance.tools,
-          usdt: balance.usdt,
+          usdt: newBalance,
         },
       },
     });
