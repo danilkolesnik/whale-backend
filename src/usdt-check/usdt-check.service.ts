@@ -11,7 +11,7 @@ export class UsdtCheckService {
     });
   }
 
-  async checkUsdtTransactions(telegramId: string, valueCoin: any) {
+  async checkUsdtTransactions(telegramId: string, valueCoin: any, txid_in: any) {
     try {
       console.log(telegramId, valueCoin);
       const user = await this.findUser(telegramId);
@@ -38,6 +38,7 @@ export class UsdtCheckService {
           userId: telegramId,
           valueCoin: Number(valueCoin),
           amount: Number(valueCoin),
+          txidIn: txid_in,
           date: new Date().toISOString(),
         },
       });

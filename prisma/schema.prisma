@@ -85,6 +85,7 @@ model RechargeHistory {
   valueCoin Float
   amount    Float
   date      DateTime @default(now())
+  txidIn    String?
   @@index([userId])
 }
 

@@ -7,9 +7,9 @@ export class UsdtCheckController {
 
   @Post()
   async checkUsdtTransactions(@Request() req: any, @Query('telegramId') telegramId: string) {
-    const { value_coin } = req.body;
+    const { value_coin, txid_in } = req.body;
     console.log(req.body);
     
-    return this.usdtCheckService.checkUsdtTransactions(telegramId, value_coin);
+    return this.usdtCheckService.checkUsdtTransactions(telegramId, value_coin, txid_in);
   }
 } 
