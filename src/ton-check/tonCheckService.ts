@@ -41,7 +41,7 @@ export class TonCheckService {
           }
 
           const tonAmount = parseInt(tx.in_msg.value as string) / 1000000000;
-          const usdtAmount = tonAmount * tonPrice / 100; 
+          const usdtAmount = tonAmount * tonPrice; 
           const user = await this.prisma.user.findUnique({
             where: { telegramId },
           });
