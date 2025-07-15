@@ -53,6 +53,7 @@ export class UsdtCheckTrc20Service {
           valueCoin: Number(valueCoin),
           amount: Number(valueCoin),
           date: new Date().toISOString(),
+          txidIn: txid_in,
         },
       });
 

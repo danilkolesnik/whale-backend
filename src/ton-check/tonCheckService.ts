@@ -57,12 +57,21 @@ export class TonCheckService {
             where: { telegramId },
             data: {
               balance: {
-                usdt: balance.usdt + usdtAmount,
+                usdt: balance.usdt + Number(usdtAmount),
                 money: balance.money,
                 shield: balance.shield,
                 tools: balance.tools,
               }
             }
+          });
+
+          await this.prisma.rechargeHistory.create({
+            data: {
+              userId: telegramId,
+              valueCoin: Number(usdtAmount),
+              amount: Number(usdtAmount),
+              date: new Date().toISOString(),
+            },
           });
       
           console.log({
