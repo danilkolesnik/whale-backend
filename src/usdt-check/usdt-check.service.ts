@@ -27,7 +27,7 @@ export class UsdtCheckService {
         data: { 
           balance: {
             money: balance.money,
-            usdt: balance.usdt + valueCoin,
+            usdt: balance.usdt + Number(valueCoin),
             shield: balance.shield,
             tools: balance.tools,
         } },
