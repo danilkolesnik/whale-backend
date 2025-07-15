@@ -12,6 +12,7 @@ import configuration from './config/configuration';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronService } from './schedule/cron.service';
 import { UsdtCheckModule } from './usdt-check/usdt-check.module';
+import { UsdtCheckTrc20Module } from './usdt-checkTrc20/usdt-checkTrc20.module';
 import { TonCheckModule } from './ton-check/ton-check.module';
 import { DailyTasksModule } from './dailyTasks/daily-tasks.module';
 import { RatingModule } from './rating/rating.module';
@@ -30,6 +31,7 @@ import { TransactionModule } from './transaction/transaction.module';
     UserModule,
     MarketModule,
     UsdtCheckModule,
+    UsdtCheckTrc20Module,
     TonCheckModule,
     DailyTasksModule,
     ScheduleModule.forRoot(),
