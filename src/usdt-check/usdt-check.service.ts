@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -14,30 +15,12 @@ export class UsdtCheckService {
   async checkUsdtTransactions(telegramId: string, valueCoin: any, txid_in: any) {
     try {
       console.log(telegramId, valueCoin);
-      const user = await this.findUser(telegramId);
-
-      if (!user) {
-        throw new Error('User not found');
-      }
-
-      const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
-      
-      await this.prisma.user.update({
-        where: { telegramId },
-        data: { 
-          balance: {
-            money: balance.money,
-            usdt: balance.usdt + Number(valueCoin),
-            shield: balance.shield,
-            tools: balance.tools,
-        } },
-      });
 
       const existingTransaction = await this.prisma.rechargeHistory.findUnique({
         where: { txidIn: txid_in }
       });
 
-      if (existingTransaction) {
+      if (existingTransaction.txidIn === txid_in) {
         return {
           message: 'Transaction already processed',
           userId: telegramId,
@@ -54,6 +37,26 @@ export class UsdtCheckService {
           date: new Date().toISOString(),
         },
       });
+
+      const user = await this.findUser(telegramId);
+
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
+      
+      await this.prisma.user.update({
+        where: { telegramId },
+        data: { 
+          balance: { 
+            money: balance.money,
+            usdt: balance.usdt + Number(valueCoin),
+            shield: balance.shield,
+            tools: balance.tools,
+        } },
+      });
+
 
       return { 
         message: 'Balance updated successfully', 

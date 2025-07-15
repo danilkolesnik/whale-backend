@@ -11,14 +11,27 @@ export class UsdtCheckTrc20Service {
     });
   }
 
-  async checkUsdtTransactionsTrc20(telegramId: string, valueCoin: any) {
+  async checkUsdtTransactionsTrc20(telegramId: string, valueCoin: any, txid_in: any) {
     try {
       console.log(telegramId, valueCoin);
+
+      const existingTransaction = await this.prisma.rechargeHistory.findUnique({
+        where: { txidIn: txid_in }
+      });
+
+      if (existingTransaction.txidIn === txid_in) {
+        return {
+          message: 'Transaction already processed',
+          userId: telegramId,
+          valueCoin: valueCoin
+        };
+      }
       const user = await this.findUser(telegramId);
 
       if (!user) {
         throw new Error('User not found');
-      }
+      } 
+      
 
       const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
       
