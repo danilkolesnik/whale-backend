@@ -87,6 +87,7 @@ model RechargeHistory {
   date      DateTime @default(now())
   txidIn    String?
   @@index([userId])
+  @@unique([txidIn])
 }
 
 model Rating {

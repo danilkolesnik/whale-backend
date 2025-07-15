@@ -33,6 +33,18 @@ export class UsdtCheckService {
         } },
       });
 
+      const existingTransaction = await this.prisma.rechargeHistory.findUnique({
+        where: { txidIn: txid_in }
+      });
+
+      if (existingTransaction) {
+        return {
+          message: 'Transaction already processed',
+          userId: telegramId,
+          valueCoin: valueCoin
+        };
+      }
+
       await this.prisma.rechargeHistory.create({
         data: {
           userId: telegramId,
