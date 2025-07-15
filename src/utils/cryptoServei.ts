@@ -15,9 +15,9 @@ export class CryptAPIService {
       if (net === 'trc20') {  
          url = `https://api.cryptapi.io/${net}/usdt/create/?address=${usdtTrc20}&callback=${encodeURIComponent(CallbackUrl)}&json=1`;
          console.log('URL:', url);
-         
       } else {
          url = `https://api.cryptapi.io/${net}/usdt/create/?address=${usdtBep20}&callback=${encodeURIComponent(CallbackUrl)}&json=1`;
+         console.log('URL:', url);
       }
       const response = await axios.get(url);
       return response;
