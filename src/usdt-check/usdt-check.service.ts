@@ -14,13 +14,13 @@ export class UsdtCheckService {
 
   async checkUsdtTransactions(telegramId: string, valueCoin: any, txid_in: any) {
     try {
-      console.log(telegramId, valueCoin);
+      console.log(telegramId, valueCoin,txid_in);
 
       const existingTransaction = await this.prisma.rechargeHistory.findUnique({
         where: { txidIn: txid_in }
       });
 
-      if (existingTransaction.txidIn === txid_in) {
+      if (existingTransaction) {
         return {
           message: 'Transaction already processed',
           userId: telegramId,
