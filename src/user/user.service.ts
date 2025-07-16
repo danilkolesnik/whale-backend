@@ -212,19 +212,14 @@ export class UserService {
         }
       };
     } else {
-      // Commented out item removal for testing purposes
-      // const inventoryIndex = inventory.findIndex(i => i.id === itemId);
-      // if (inventoryIndex !== -1) {
-      //   inventory.splice(inventoryIndex, 1);
-      // }
-
-      // Remove from equipment if equipped
-      // const equipmentIndex = equipment.findIndex(i => i.id === itemId);
-      // if (equipmentIndex !== -1) {
-      //   equipment.splice(equipmentIndex, 1);
-      // }
-
-      // Recalculate total shield
+      const inventoryIndex = inventory.findIndex(i => i.id === itemId);
+      if (inventoryIndex !== -1) {
+        inventory.splice(inventoryIndex, 1);
+      }
+      const equipmentIndex = equipment.findIndex(i => i.id === itemId);
+      if (equipmentIndex !== -1) {
+        equipment.splice(equipmentIndex, 1);
+      }
       const totalShield = equipment.reduce((sum, item) => sum + item.shield, 0);
 
       await this.prisma.user.update({
