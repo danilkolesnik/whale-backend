@@ -262,9 +262,13 @@ export class MarketService {
         sellerEquipment.splice(sellerEquipmentIndex, 1);
       }
 
+      const buyerEquipment = buyer.equipment as any[];
+      const buyerEquipmentIndex = buyerEquipment.findIndex(e => e.id === item.id);
+      if (buyerEquipmentIndex !== -1) buyerEquipment.splice(buyerEquipmentIndex, 1);
+
       await Promise.all([
-        this.updateUserInventoryAndBalance(sellerTelegramId, sellerInventory, sellerBalanceUpdate),
-        this.updateUserInventoryAndBalance(order.buyerId, buyerInventory, buyerBalanceUpdate),
+        this.updateUserInventoryAndBalance(sellerTelegramId, sellerInventory, sellerEquipment, sellerBalanceUpdate),
+        this.updateUserInventoryAndBalance(order.buyerId, buyerInventory, buyerEquipment, buyerBalanceUpdate),
         this.prisma.buyOrder.delete({ where: { id: orderId } }),
       ]);
 
