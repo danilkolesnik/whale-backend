@@ -106,6 +106,13 @@ export class MarketService {
       const itemIndex = sellerInventory.findIndex(i => i.id === (listing.item as any).id);
       if (itemIndex !== -1) sellerInventory.splice(itemIndex, 1);
 
+       // Remove from seller's equipment if equipped
+       const sellerEquipment = seller.equipment as any[];
+       const sellerEquipmentIndex = sellerEquipment.findIndex(e => e.id === (listing.item as any).id);
+       if (sellerEquipmentIndex !== -1) {
+         sellerEquipment.splice(sellerEquipmentIndex, 1);
+       }
+
       const buyerBalanceUpdate = {
         usdt: currencyType === 'USDT' ? balance.usdt - price : balance.usdt,
         money: currencyType === 'COINS' ? balance.money - price : balance.money,
@@ -249,6 +256,13 @@ export class MarketService {
         shield: (seller.balance as any).shield,
         tools: (seller.balance as any).tools
       };
+
+      // Remove from seller's equipment if equipped
+      const sellerEquipment = seller.equipment as any[];
+      const sellerEquipmentIndex = sellerEquipment.findIndex(e => e.id === item.id);
+      if (sellerEquipmentIndex !== -1) {
+        sellerEquipment.splice(sellerEquipmentIndex, 1);
+      }
 
       await Promise.all([
         this.updateUserInventoryAndBalance(sellerTelegramId, sellerInventory, sellerBalanceUpdate),
