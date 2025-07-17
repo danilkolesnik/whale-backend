@@ -219,7 +219,6 @@ export class MarketService {
       if (!seller) return { success: false, error: 'Seller not found', data: null, code: 404 };
 
       const sellerInventory = seller.inventory as any[];
-      console.log(sellerInventory);
       
       const item = sellerInventory.find(i => i.type === order.itemType && i.level === order.level);
       if (!item) return { success: false, error: 'Item not found in inventory', data: null, code: 404 };
