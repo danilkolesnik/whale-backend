@@ -16,10 +16,10 @@ export class MarketService {
     return this.prisma.user.findUnique({ where: { telegramId } });
   }
 
-  private async updateUserInventoryAndBalance(telegramId: string, inventory: any[], balance: any) {
+  private async updateUserInventoryAndBalance(telegramId: string, inventory: any[], equipment: any[], balance: any) {
     return this.prisma.user.update({
       where: { telegramId },
-      data: { inventory, balance },
+      data: { inventory, equipment, balance },
     });
   }
 
@@ -130,8 +130,8 @@ export class MarketService {
       if (equipmentIndex !== -1) buyerEquipment.splice(equipmentIndex, 1);
 
       await Promise.all([
-        this.updateUserInventoryAndBalance(telegramId, buyerInventory, { ...buyerBalanceUpdate, shield: balance.shield, equipment: buyerEquipment }),
-        this.updateUserInventoryAndBalance(listing.sellerId, sellerInventory, { ...sellerBalanceUpdate, shield: (seller.balance as any).shield, equipment: sellerEquipment }),
+        this.updateUserInventoryAndBalance(telegramId, buyerInventory, buyerEquipment, { ...buyerBalanceUpdate, shield: balance.shield }),
+        this.updateUserInventoryAndBalance(listing.sellerId, sellerInventory, sellerEquipment, { ...sellerBalanceUpdate, shield: (seller.balance as any).shield }),
         this.prisma.marketListing.delete({ where: { id: listingId } }),
       ]);
 
