@@ -106,12 +106,10 @@ export class MarketService {
       const itemIndex = sellerInventory.findIndex(i => i.id === (listing.item as any).id);
       if (itemIndex !== -1) sellerInventory.splice(itemIndex, 1);
 
-       // Remove from seller's equipment if equipped
-       const sellerEquipment = seller.equipment as any[];
-       const sellerEquipmentIndex = sellerEquipment.findIndex(e => e.id === (listing.item as any).id);
-       if (sellerEquipmentIndex !== -1) {
-         sellerEquipment.splice(sellerEquipmentIndex, 1);
-       }
+      const sellerEquipment = seller.equipment as any[];
+      const sellerEquipmentIndex = sellerEquipment.findIndex(e => e.id === (listing.item as any).id);
+      if (sellerEquipmentIndex !== -1) sellerEquipment.splice(sellerEquipmentIndex, 1);
+       
 
       const buyerBalanceUpdate = {
         usdt: currencyType === 'USDT' ? balance.usdt - price : balance.usdt,
@@ -133,7 +131,7 @@ export class MarketService {
 
       await Promise.all([
         this.updateUserInventoryAndBalance(telegramId, buyerInventory, { ...buyerBalanceUpdate, shield: balance.shield, equipment: buyerEquipment }),
-        this.updateUserInventoryAndBalance(listing.sellerId, sellerInventory, { ...sellerBalanceUpdate, shield: (seller.balance as any).shield }),
+        this.updateUserInventoryAndBalance(listing.sellerId, sellerInventory, { ...sellerBalanceUpdate, shield: (seller.balance as any).shield, equipment: sellerEquipment }),
         this.prisma.marketListing.delete({ where: { id: listingId } }),
       ]);
 
