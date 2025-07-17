@@ -38,21 +38,24 @@ export class ShopService {
       return { success: false, message: 'Item not found', code: 404 };
     }
 
+    const inventory = user.inventory as any[];
+
+    if(inventory.length >= 50) {
+      return { success: false, message: 'Inventory is full', code: 400 };
+    }
+
     const balance = user.balance as { money: number; shield: number; tools: number, usdt: number };
 
     if (balance.money < item.price) {
       return { success: false, message: 'Not enough money', code: 400 };
     }
 
-    const inventory = user.inventory as any[];
-
-
     // const itemExists = inventory.some(invItem => invItem.id === itemId);
     // if (itemExists) {
     //   return { success: false, message: 'Item already purchased', code: 400 };
     // }
 
-    const randomId = Math.floor(Math.random() * 1000);
+    const randomId = Math.floor(Math.random() * 1000000);
 
     inventory.push({
       id: randomId,
