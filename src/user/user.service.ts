@@ -7,18 +7,18 @@ import { UPGRADE_SHIELD, UPGRADE_CHANCES_ITEMS } from '../utils/constant';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  private async getUpgradeSettingsForLevel(level: number) {
-    const upgradeSettings = await this.prisma.upgradeSettings.findMany();
+  // private async getUpgradeSettingsForLevel(level: number) {
+  //   const upgradeSettings = await this.prisma.upgradeSettings.findMany();
 
-    for (const setting of upgradeSettings) {
-      const [minLevel, maxLevel] = setting.levelRange.split('-').map(Number);
-      if (level >= minLevel && level <= maxLevel) {
-        return setting;
-      }
-    }
+  //   for (const setting of upgradeSettings) {
+  //     const [minLevel, maxLevel] = setting.levelRange.split('-').map(Number);
+  //     if (level >= minLevel && level <= maxLevel) {
+  //       return setting;
+  //     }
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 
   async setUserName(telegramId: string, name: string) {
     const user = await this.prisma.user.findUnique({
@@ -161,13 +161,8 @@ export class UserService {
     // Initialize or increment attempt counter
     item.attempts = (item.attempts || 0) + 1;
 
-    // Test sequence for levels 13-15 of 'armor' and 'helmet'
-    const testSequence = [false, false, false, false, true];
-    const sequenceIndex = (item.attempts - 1) % testSequence.length; // Use attempts to determine index
-
-    // Apply test sequence only for levels 13-15
-    const isTestLevel = currentLevel >= 13 && currentLevel <= 15;
-    const isSuccessful = isTestLevel ? testSequence[sequenceIndex] : Math.random() < UPGRADE_CHANCES_ITEMS[item.type][currentLevel + 1] || 0;
+    // Remove the testSequence logic
+    const isSuccessful = Math.random() < UPGRADE_CHANCES_ITEMS[item.type][currentLevel + 1] || 0;
 
     if (isSuccessful) {
       item.level = currentLevel + 1;
