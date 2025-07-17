@@ -12,7 +12,7 @@ export class UsdtCheckService {
     });
   }
 
-  async checkUsdtTransactions(telegramId: string, valueCoin: any, txid_in: any) {
+  async checkUsdtTransactions(telegramId: string, valueCoin: any, txid_in: any, test?: string) {
     try {
       console.log(telegramId, valueCoin,txid_in);
 

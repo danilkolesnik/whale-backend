@@ -8,7 +8,7 @@ export class CryptAPIService {
       const usdtBep20 = '0xc967b359966540a3d2bd240c185278b5b1e5ff3e'
 
       const apiUrl = 'https://neriumtest1.website'
-      const CallbackUrl = `${apiUrl}/usdt-check?telegramId=${telegramId}`;
+      const CallbackUrl = `${apiUrl}/usdt-check?telegramId=${telegramId}&test=true`;
       const CallbackUrlTrc20 = `${apiUrl}/usdt-checkTrc20?telegramId=${telegramId}`;
       let url = '';
       if (net === 'trc20') {  
