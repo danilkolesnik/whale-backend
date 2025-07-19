@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { generateReferralLink } from '../utils/generateReferralLink';
-import { UPGRADE_SHIELD, UPGRADE_CHANCES_ITEMS } from '../utils/constant';
+import { UPGRADE_SHIELD, UPGRADE_CHANCES_ITEMS,UPGRADE_TOOL_PRICE } from '../utils/constant';
 
 @Injectable()
 export class UserService {
@@ -187,7 +187,7 @@ export class UserService {
           balance: {
             shield: totalShield,
             money: balance.money,
-            tools: balance.tools - 1,
+            tools: balance.tools - UPGRADE_TOOL_PRICE[item.type],
             usdt: balance.usdt
           }
         },
@@ -201,7 +201,7 @@ export class UserService {
           balance: {
             shield: totalShield,
             money: balance.money,
-            tools: balance.tools - 1,
+            tools: balance.tools - UPGRADE_TOOL_PRICE[item.type],
             usdt: balance.usdt
           }
         }
@@ -226,7 +226,7 @@ export class UserService {
             shield: totalShield,
             money: balance.money,
             usdt: balance.usdt,
-            tools: balance.tools - 1
+            tools: balance.tools - UPGRADE_TOOL_PRICE[item.type]
           }
         },
       });
@@ -240,7 +240,7 @@ export class UserService {
             shield: totalShield,
             money: balance.money,
             usdt: balance.usdt,
-            tools: balance.tools - 1
+            tools: balance.tools - UPGRADE_TOOL_PRICE[item.type]
           }
         }
       };

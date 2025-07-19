@@ -109,3 +109,9 @@ export const UPGRADE_CHANCES_ITEMS = {
     15: 0.50,
   }
 }
+
+export const UPGRADE_TOOL_PRICE = {
+ "helmet":30,
+ "armor":30,
+ "leg":1
+}
