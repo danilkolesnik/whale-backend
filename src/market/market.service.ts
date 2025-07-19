@@ -144,19 +144,30 @@ export class MarketService {
   async getListings(telegramId?: string) {
     try {
       const listings = await this.prisma.marketListing.findMany({ orderBy: { createdAt: 'desc' } });
+      const validListings: typeof listings = [];
+      for (const listing of listings) {
+        const seller = await this.findUser(listing.sellerId);
+        const inventory = (seller?.inventory || []) as any[];
+        const hasItem = inventory.some(i => i.id === (listing.item as any).id);
+        if (!hasItem) {
+          await this.prisma.marketListing.delete({ where: { id: listing.id } });
+        } else {
+          validListings.push(listing);
+        }
+      }
       if (telegramId) {
-      const sortedListings = listings.sort((a, b) => {
-        if (a.sellerId === telegramId && b.sellerId !== telegramId) {
-          return -1;
-        }
-        if (a.sellerId !== telegramId && b.sellerId === telegramId) {
-          return 1; 
-        }
+        const sortedListings = validListings.sort((a, b) => {
+          if (a.sellerId === telegramId && b.sellerId !== telegramId) {
+            return -1;
+          }
+          if (a.sellerId !== telegramId && b.sellerId === telegramId) {
+            return 1; 
+          }
           return 0;
         });
         return { success: true, error: null, data: sortedListings };
       }
-      return { success: true, error: null, data: listings };
+      return { success: true, error: null, data: validListings };
     } catch (error) {
       return this.handleError(error);
     }
@@ -202,7 +213,17 @@ export class MarketService {
         const userOrders = orders.filter(order => order.buyerId === telegramId);
         const otherOrders = orders.filter(order => order.buyerId !== telegramId);
         const sortedOrders = [...userOrders, ...otherOrders];
-        return { success: true, error: null, data: sortedOrders };
+        // Получаем баланс пользователя
+        const user = await this.findUser(telegramId);
+        let buyerBalance: any = undefined;
+        if (user && user.balance) {
+          const balance = user.balance as any;
+          buyerBalance = {
+            usdt: typeof balance.usdt === 'number' ? balance.usdt : 0,
+            money: typeof balance.money === 'number' ? balance.money : 0
+          };
+        }
+        return { success: true, error: null, data: sortedOrders, buyerBalance };
       }
       return { success: true, error: null, data: orders };
     } catch (error) {
