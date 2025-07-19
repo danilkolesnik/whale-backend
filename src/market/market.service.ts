@@ -209,23 +209,27 @@ export class MarketService {
   async getBuyOrders(telegramId?: string) {
     try {
       const orders = await this.prisma.buyOrder.findMany({ orderBy: { createdAt: 'desc' } });
-      if (telegramId) {
-        const userOrders = orders.filter(order => order.buyerId === telegramId);
-        const otherOrders = orders.filter(order => order.buyerId !== telegramId);
-        const sortedOrders = [...userOrders, ...otherOrders];
-        // Получаем баланс пользователя
-        const user = await this.findUser(telegramId);
-        let buyerBalance: any = undefined;
-        if (user && user.balance) {
-          const balance = user.balance as any;
-          buyerBalance = {
-            usdt: typeof balance.usdt === 'number' ? balance.usdt : 0,
-            money: typeof balance.money === 'number' ? balance.money : 0
-          };
-        }
-        return { success: true, error: null, data: sortedOrders, buyerBalance };
+      const buyerIds = Array.from(new Set(orders.map(order => order.buyerId)));
+      const users = await this.prisma.user.findMany({ where: { telegramId: { in: buyerIds } } });
+      const balanceMap = new Map<string, { usdt: number; money: number }>();
+      for (const user of users) {
+        const balance = user.balance as any;
+        balanceMap.set(user.telegramId, {
+          usdt: typeof balance.usdt === 'number' ? balance.usdt : 0,
+          money: typeof balance.money === 'number' ? balance.money : 0
+        });
       }
-      return { success: true, error: null, data: orders };
+      const ordersWithBalance = orders.map(order => ({
+        ...order,
+        buyerBalance: balanceMap.get(order.buyerId) || { usdt: 0, money: 0 }
+      }));
+      if (telegramId) {
+        const userOrders = ordersWithBalance.filter(order => order.buyerId === telegramId);
+        const otherOrders = ordersWithBalance.filter(order => order.buyerId !== telegramId);
+        const sortedOrders = [...userOrders, ...otherOrders];
+        return { success: true, error: null, data: sortedOrders };
+      }
+      return { success: true, error: null, data: ordersWithBalance };
     } catch (error) {
       return this.handleError(error);
     }
