@@ -78,7 +78,7 @@ export class RatingService {
 
     users.sort((a, b) => b.shield - a.shield);
 
-    const top100Users = users.slice(0, 50);
+    const top100Users = users.slice(0, 9);
 
     await this.prisma.rating.create({
       data: {
@@ -88,12 +88,17 @@ export class RatingService {
     });
 
     for (let i = 0; i < top100Users.length; i++) {
-      let reward = 10;
-      if (i === 0) reward = 1000;
-      else if (i === 1) reward = 500;
-      else if (i === 2) reward = 300;
-      else if (i === 3) reward = 200;
-      else if (i === 4) reward = 100;
+      let reward = 0;
+      if (i === 0) reward = 10000;
+      else if (i === 1) reward = 9000;
+      else if (i === 2) reward = 8000;
+      else if (i === 3) reward = 7000;
+      else if (i === 4) reward = 6000;
+      else if (i === 5) reward = 5000;
+      else if (i === 6) reward = 4000;
+      else if (i === 7) reward = 3000;
+      else if (i === 8) reward = 2000;
+      else if (i === 9) reward = 1000;
 
       let money = 0;
       try {
