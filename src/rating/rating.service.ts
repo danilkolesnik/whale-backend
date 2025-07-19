@@ -47,7 +47,7 @@ export class RatingService {
 
     let topUsers: any[] = [];
     if (existingRound && Array.isArray(existingRound.users)) {
-      const telegramIds = existingRound.users.map((u: any) => u.telegramId);
+      const telegramIds = (existingRound.users as (string | null | undefined)[]).filter((id): id is string => typeof id === 'string');
       topUsers = await this.prisma.user.findMany({ where: { telegramId: { in: telegramIds } } });
     }
 
