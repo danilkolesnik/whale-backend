@@ -45,7 +45,11 @@ export class RatingService {
       await this.prisma.rating.deleteMany();
     }
 
-    const topUsers = await this.prisma.user.findMany();
+    let topUsers: any[] = [];
+    if (existingRound && Array.isArray(existingRound.users)) {
+      const telegramIds = existingRound.users.map((u: any) => u.telegramId);
+      topUsers = await this.prisma.user.findMany({ where: { telegramId: { in: telegramIds } } });
+    }
 
     const users = topUsers.map(user => {
       let shield = 0;
