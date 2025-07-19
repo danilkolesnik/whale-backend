@@ -51,6 +51,7 @@ export class RatingService {
       let shield = 0;
       let tools = 0;
       let usdt = 0;
+      const balanceObj = user.balance as { money: number; shield: number; tools: number; usdt: number };
       try {
         const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
         if (balance && typeof balance === 'object') {
@@ -72,7 +73,8 @@ export class RatingService {
         telegramId: user.telegramId,
         shield,
         tools,
-        usdt
+        usdt,
+        balance: balanceObj // добавляем поле balance
       };
     });
 
@@ -86,6 +88,9 @@ export class RatingService {
         roundCreatedAt: new Date()
       }
     });
+
+    console.log(top100Users);
+    
 
     for (let i = 0; i < top100Users.length; i++) {
       let reward = 0;
@@ -102,7 +107,7 @@ export class RatingService {
 
       let money = 0;
       try {
-        const balance = topUsers[i].balance as { money: number; shield: number; tools: number, usdt: number };
+        const balance = top100Users[i].balance as { money: number; shield: number; tools: number, usdt: number };
         if (balance && typeof balance === 'object' && 'money' in balance) {
           money = balance.money;
         }
