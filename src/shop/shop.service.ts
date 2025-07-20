@@ -92,7 +92,7 @@ export class ShopService {
 
     const balance = user.balance as { money: number; shield: number; tools: number, usdt: number };
 
-    if(usdtQuantity > balance.usdt) {
+    if((usdtQuantity / 100) > balance.usdt) {
       return{
         code: 400,
         message: 'Not enough USDT',
@@ -104,7 +104,7 @@ export class ShopService {
       data: {
         balance: {
           money: balance.money + usdtQuantity,
-          usdt: balance.usdt - usdtQuantity,
+          usdt: balance.usdt - (usdtQuantity / 100),
           shield: balance.shield,
           tools: balance.tools,
         },
