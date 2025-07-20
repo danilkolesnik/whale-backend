@@ -30,9 +30,9 @@ export class MarketService {
 
       const item = (user.inventory as any[]).find(i => i.id === createListingDto.itemId);
       if (!item) return { success: false, error: 'Item not found in inventory', data: null };
-      if (item.level < 8) return { 
+      if (item.level < 1) return { 
         success: false, 
-        error: 'Item level must be at least 8 to sell', 
+        error: 'Item level must be at least 1 to sell', 
         data: null,
         code: 400
       };
