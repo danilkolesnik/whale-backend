@@ -113,14 +113,14 @@ export class MarketService {
 
       const buyerBalanceUpdate = {
         usdt: currencyType === 'USDT' ? balance.usdt - price : balance.usdt,
-        money: currencyType === 'COINS' ? balance.money - price : balance.money,
+        money: currencyType === 'COINS' ? balance.money - (price * 100) : balance.money,
         shield: balance.shield,
         tools: balance.tools
       };
 
       const sellerBalanceUpdate = {
         usdt: currencyType === 'USDT' ? (seller.balance as any).usdt + price : (seller.balance as any).usdt,
-        money: currencyType === 'COINS' ? (seller.balance as any).money + price : (seller.balance as any).money,
+        money: currencyType === 'COINS' ? (seller.balance as any).money + (price * 100) : (seller.balance as any).money,
         shield: (seller.balance as any).shield,
         tools: (seller.balance as any).tools
       };
@@ -269,14 +269,14 @@ export class MarketService {
 
       const buyerBalanceUpdate = {
         usdt: currency === 'USDT' ? buyerBalance.usdt - price : buyerBalance.usdt,
-        money: currency === 'COINS' ? buyerBalance.money - price : buyerBalance.money,
+        money: currency === 'COINS' ? buyerBalance.money - (price * 100) : buyerBalance.money,
         shield: buyerBalance.shield,
         tools: buyerBalance.tools
       };
 
       const sellerBalanceUpdate = {
         usdt: currency === 'USDT' ? (seller.balance as any).usdt + price : (seller.balance as any).usdt,
-        money: currency === 'COINS' ? (seller.balance as any).money + price : (seller.balance as any).money,
+        money: currency === 'COINS' ? (seller.balance as any).money + (price * 100) : (seller.balance as any).money,
         shield: (seller.balance as any).shield,
         tools: (seller.balance as any).tools
       };
