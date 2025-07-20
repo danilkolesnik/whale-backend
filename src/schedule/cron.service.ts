@@ -23,8 +23,8 @@ export class CronService {
     await listenToRecentTransactions();
   }
   
-  // @Cron('0 0 * * 0')
-  @Cron('* * * * *')
+  // @Cron('* * * * *')
+  @Cron('0 0 * * 0')
   async resetWeeklyRating() {
     console.log('Resetting weekly rating');
     await this.ratingService.resetWeeklyRating();
