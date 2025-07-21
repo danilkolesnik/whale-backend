@@ -333,6 +333,8 @@ export class UserService {
       where: { telegramId },
       data: {
         balance: {
+          usdt: (user.balance as any).usdt,
+          tools: (user.balance as any).tools,
           money: updateData.money !== undefined ? updateData.money : (user.balance as any).money,
           shield: updateData.shield !== undefined ? updateData.shield : (user.balance as any).shield,
         },
@@ -396,6 +398,7 @@ export class UserService {
           shield: totalShield,
           money: (user.balance as any).money,
           tools: (user.balance as any).tools,
+          usdt: (user.balance as any).usdt,
         }
       },
     });
@@ -438,6 +441,7 @@ export class UserService {
           shield: totalShield,
           money: (user.balance as any).money,
           tools: (user.balance as any).tools,
+          usdt: (user.balance as any).usdt,
         }
       },
     });

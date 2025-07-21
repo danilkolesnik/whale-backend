@@ -117,6 +117,28 @@ export async function handleGetAllUsers(ctx: BotContext) {
   }
 }
 
+export async function handleUpdateUserMoney(ctx: BotContext) {
+  ctx.session.waitingForMoney = true;
+  await ctx.editMessageText('Введіть Telegram ID користувача, якому потрібно оновити гроші:', {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+      ]
+    }
+  });
+}
+
+export async function handleUpdateUserShield(ctx: BotContext) {
+  ctx.session.waitingForShield = true;
+  await ctx.editMessageText('Введіть Telegram ID користувача, якому потрібно оновити щит:', {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+      ]
+    }
+  });
+}
+
 export async function handleUserInput(ctx: BotContext) {
   const telegramId = ctx.message?.text;
   if (!telegramId) {
@@ -160,6 +182,75 @@ ${index + 1}. Назва: ${item.name}
     });
   }
   delete ctx.session.waitingForTelegramId;
+}
+
+export async function handleUserTextInput(ctx: BotContext) {
+  // Обновление денег
+  if (ctx.session.waitingForMoney) {
+    const telegramId = ctx.message?.text;
+    if (!telegramId) {
+      await ctx.reply('Будь ласка, введіть коректний Telegram ID.');
+      return;
+    }
+    ctx.session.updateMoneyTelegramId = telegramId;
+    ctx.session.waitingForMoney = false;
+    ctx.session.waitingForMoneyValue = true;
+    await ctx.reply('Введіть нову суму грошей:');
+    return;
+  }
+  if (ctx.session.waitingForMoneyValue) {
+    const money = Number(ctx.message?.text);
+    if (isNaN(money)) {
+      await ctx.reply('Будь ласка, введіть коректну суму.');
+      return;
+    }
+    const telegramId = ctx.session.updateMoneyTelegramId;
+    try {
+      await axios.post(`${API_URL}/user/update-parameters`, {
+        telegramId,
+        money
+      });
+      await ctx.reply('Гроші оновлено!');
+    } catch (e) {
+      await ctx.reply('Помилка при оновленні грошей.');
+    }
+    ctx.session.waitingForMoneyValue = false;
+    ctx.session.updateMoneyTelegramId = undefined;
+    return;
+  }
+  // Обновление щита
+  if (ctx.session.waitingForShield) {
+    const telegramId = ctx.message?.text;
+    if (!telegramId) {
+      await ctx.reply('Будь ласка, введіть коректний Telegram ID.');
+      return;
+    }
+    ctx.session.updateShieldTelegramId = telegramId;
+    ctx.session.waitingForShield = false;
+    ctx.session.waitingForShieldValue = true;
+    await ctx.reply('Введіть новий щит:');
+    return;
+  }
+  if (ctx.session.waitingForShieldValue) {
+    const shield = Number(ctx.message?.text);
+    if (isNaN(shield)) {
+      await ctx.reply('Будь ласка, введіть коректне число.');
+      return;
+    }
+    const telegramId = ctx.session.updateShieldTelegramId;
+    try {
+      await axios.post(`${API_URL}/user/update-parameters`, {
+        telegramId,
+        shield
+      });
+      await ctx.reply('Щит оновлено!');
+    } catch (e) {
+      await ctx.reply('Помилка при оновленні щита.');
+    }
+    ctx.session.waitingForShieldValue = false;
+    ctx.session.updateShieldTelegramId = undefined;
+    return;
+  }
 }
 
 async function fetchUsers() {

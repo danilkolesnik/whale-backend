@@ -13,6 +13,13 @@ export interface SessionData {
   itemShield?: number;
   itemLevel?: number;
   itemPrice?: number;
+  // === Добавлено для обновления денег и щита ===
+  waitingForMoney?: boolean;
+  waitingForMoneyValue?: boolean;
+  updateMoneyTelegramId?: string;
+  waitingForShield?: boolean;
+  waitingForShieldValue?: boolean;
+  updateShieldTelegramId?: string;
 }
 
 export type BotContext = Context & {
