@@ -189,19 +189,37 @@ export async function handleUserTextInput(ctx: BotContext) {
   if (ctx.session.waitingForMoney) {
     const telegramId = ctx.message?.text;
     if (!telegramId) {
-      await ctx.reply('Будь ласка, введіть коректний Telegram ID.');
+      await ctx.reply('Будь ласка, введіть коректний Telegram ID.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
       return;
     }
     ctx.session.updateMoneyTelegramId = telegramId;
     ctx.session.waitingForMoney = false;
     ctx.session.waitingForMoneyValue = true;
-    await ctx.reply('Введіть нову суму грошей:');
+    await ctx.reply('Введіть нову суму грошей:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+        ]
+      }
+    });
     return;
   }
   if (ctx.session.waitingForMoneyValue) {
     const money = Number(ctx.message?.text);
     if (isNaN(money)) {
-      await ctx.reply('Будь ласка, введіть коректну суму.');
+      await ctx.reply('Будь ласка, введіть коректну суму.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
       return;
     }
     const telegramId = ctx.session.updateMoneyTelegramId;
@@ -210,9 +228,21 @@ export async function handleUserTextInput(ctx: BotContext) {
         telegramId,
         money
       });
-      await ctx.reply('Гроші оновлено!');
+      await ctx.reply('Гроші оновлено!', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
     } catch (e) {
-      await ctx.reply('Помилка при оновленні грошей.');
+      await ctx.reply('Помилка при оновленні грошей.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
     }
     ctx.session.waitingForMoneyValue = false;
     ctx.session.updateMoneyTelegramId = undefined;
@@ -222,19 +252,37 @@ export async function handleUserTextInput(ctx: BotContext) {
   if (ctx.session.waitingForShield) {
     const telegramId = ctx.message?.text;
     if (!telegramId) {
-      await ctx.reply('Будь ласка, введіть коректний Telegram ID.');
+      await ctx.reply('Будь ласка, введіть коректний Telegram ID.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
       return;
     }
     ctx.session.updateShieldTelegramId = telegramId;
     ctx.session.waitingForShield = false;
     ctx.session.waitingForShieldValue = true;
-    await ctx.reply('Введіть новий щит:');
+    await ctx.reply('Введіть новий щит:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+        ]
+      }
+    });
     return;
   }
   if (ctx.session.waitingForShieldValue) {
     const shield = Number(ctx.message?.text);
     if (isNaN(shield)) {
-      await ctx.reply('Будь ласка, введіть коректне число.');
+      await ctx.reply('Будь ласка, введіть коректне число.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
       return;
     }
     const telegramId = ctx.session.updateShieldTelegramId;
@@ -243,9 +291,21 @@ export async function handleUserTextInput(ctx: BotContext) {
         telegramId,
         shield
       });
-      await ctx.reply('Щит оновлено!');
+      await ctx.reply('Щит оновлено!', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
     } catch (e) {
-      await ctx.reply('Помилка при оновленні щита.');
+      await ctx.reply('Помилка при оновленні щита.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
     }
     ctx.session.waitingForShieldValue = false;
     ctx.session.updateShieldTelegramId = undefined;
