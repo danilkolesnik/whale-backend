@@ -1,6 +1,6 @@
 import { Bot, session } from 'grammy';
 import { BotContext } from './handlers/types';
-import { handleUsersMenu, handleViewUserMenu, handleUpdateUserMenu, handleGetAllUsers, handleUserInput, handleUpdateUserMoney, handleUpdateUserShield } from './handlers/users/users.handler';
+import { handleUsersMenu, handleViewUserMenu, handleUpdateUserMenu, handleGetAllUsers, handleUserInput, handleUpdateUserMoney, handleUpdateUserShield, handleUserTextInput } from './handlers/users/users.handler';
 import { handleShopMenu, handleGetShopItems, handleCreateShopItem, handleShopItemInput } from './handlers/shop/shop.handler';
 import { handleTasksMenu, handleCreateTaskMenu, handleCreateTaskSubscription, handleCreateTaskInvite, handleCreateTaskExternalSub, handleGetAllTasks, handleTaskInput } from './handlers/tasks/tasks.handler';
 import { handleUpgradeMenu, handleViewUpgradeSettings, handleCreateUpgradeSettings, handleEditUpgradeSettings, handleResetSequenceMenu, handleUpgradeInput, handleResetSequence } from './handlers/upgrade/upgrade.handler';
@@ -127,13 +127,21 @@ bot.on('callback_query', async (ctx) => {
 
 // Handle text messages
 bot.on('message:text', async (ctx) => {
-  if (ctx.session.waitingForTelegramId) {
-    await handleUserInput(ctx);
-  } else if (ctx.session.itemType) {
+  const session: any = ctx.session;
+  if (session.waitingForMoney || session.waitingForMoneyValue || session.waitingForShield || session.waitingForShieldValue) {
+    await handleUserTextInput(ctx);
+    return;
+  }
+  if (session.waitingForTelegramId) {
+    // Не вызывать handleUserInput, если сейчас обновляются деньги или щит
+    if (!(session.waitingForMoney || session.waitingForMoneyValue || session.waitingForShield || session.waitingForShieldValue)) {
+      await handleUserInput(ctx);
+    }
+  } else if (session.itemType) {
     await handleShopItemInput(ctx);
-  } else if (ctx.session.taskType) {
+  } else if (session.taskType) {
     await handleTaskInput(ctx);
-  } else if (ctx.session.upgradeAction) {
+  } else if (session.upgradeAction) {
     await handleUpgradeInput(ctx);
   }
 });
