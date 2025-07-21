@@ -1,6 +1,6 @@
 import { Bot, session } from 'grammy';
 import { BotContext } from './handlers/types';
-import { handleUsersMenu, handleViewUserMenu, handleUpdateUserMenu, handleGetAllUsers, handleUserInput } from './handlers/users/users.handler';
+import { handleUsersMenu, handleViewUserMenu, handleUpdateUserMenu, handleGetAllUsers, handleUserInput, handleUpdateUserMoney, handleUpdateUserShield } from './handlers/users/users.handler';
 import { handleShopMenu, handleGetShopItems, handleCreateShopItem, handleShopItemInput } from './handlers/shop/shop.handler';
 import { handleTasksMenu, handleCreateTaskMenu, handleCreateTaskSubscription, handleCreateTaskInvite, handleCreateTaskExternalSub, handleGetAllTasks, handleTaskInput } from './handlers/tasks/tasks.handler';
 import { handleUpgradeMenu, handleViewUpgradeSettings, handleCreateUpgradeSettings, handleEditUpgradeSettings, handleResetSequenceMenu, handleUpgradeInput, handleResetSequence } from './handlers/upgrade/upgrade.handler';
@@ -53,6 +53,11 @@ bot.on('callback_query', async (ctx) => {
     await handleUpdateUserMenu(ctx);
   } else if (callbackData === 'get_all_users') {
     await handleGetAllUsers(ctx);
+  }
+  else if (callbackData === 'update_user_money') {
+    await handleUpdateUserMoney(ctx);
+  } else if (callbackData === 'update_user_shield') {
+    await handleUpdateUserShield(ctx);
   }
 
   // Shop menu
