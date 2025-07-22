@@ -2,7 +2,7 @@ import { useAuthStore } from "@/store/useUserStore";
 import axios from "axios"
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: "https://apayukita.com/api",
     headers: {
         "Content-Type": "application/json",
     },
