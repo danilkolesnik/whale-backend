@@ -1,0 +1,190 @@
+{
+  "welcome": "Welcome",
+  "description": "This is an example description.",
+  "modalSettings": {
+    "language": {
+      "english": "English",
+      "russian": "Russian",
+      "ukrainian": "Ukrainian"
+    },
+    "settings": "Settings",
+    "changeLanguage": "Change language",
+    "aboutUs": "About us",
+    "contactSupport": "Contact support",
+    "vibration": "Vibration",
+    "vibrationDescription": "Make vibration while tapping on menu",
+    "on": "On",
+    "off": "Off"
+  },
+  "whaleComponent": {
+    "title": "Nautarion",
+    "inventory": "Inventory",
+    "level": "Level",
+    "shield": "Shield",
+    "putOn": "Put On",
+    "upgrade": "Upgrade",
+    "mainItemImprovements": "Main {{itemType}} Improvements",
+    "upgradeSuccess": "Item upgraded successfully",
+    "upgradeFailed": "Item upgrade failed",
+    "pointsOfDefense": "Points of defense",
+    "coinPurchase": "Coin Purchase",
+    "usdtPurchase": "USDT Purchase",
+    "purchaseSuccess": "Coins purchased successfully",
+    "currentCoinExchangeRate": "Current coin exchange rate",
+    "convertValueAtCurrentRate": "Convert value at current exchange rate",
+    "insufficientFunds": "Insufficient funds to complete the transaction",
+    "purchase": "Purchase",
+    "putOnSuccess": "Item put on successfully",
+    "itemCanImproveOrBreak":"Item can improve characteristic with success upgrade or can be broken!"
+  },
+  "itemType":{
+    "helmet": "Helmet",
+    "armor": "Armor",
+    "leg": "Legs"
+  },
+  "shop": {
+    "title": "Shop",
+    "buy": "Buy",
+    "buySuccess": "Item bought successfully",
+    "buyFailed": "Not enough money",
+    "limit":"You have reached the maximum number of items"
+  },
+  "wallet": {
+    "makeContribution": "Make a contribution",
+    "withdrawal": "Withdrawal",
+    "deposit": "Deposit",
+    "outputNetworkAddress": "Output is only possible to the network address {{network}}",
+    "outputAddress": "Output address",
+    "balanceAndCommission": "Balance {{balance}}. Commission {{commission}}.",
+    "continue": "Continue",
+    "sendOnly": "Send only a {{asset}} to this address! Other assets will be irretrievably lost.",
+    "tonTopUpAddress": "TON top-up address",
+    "commissionAndMinDeposit": "Commission {{commission}}. Min. deposit {{minDeposit}}",
+    "specifyMemo": "Specify MEMO comments when paying",
+    "copyAddress": "Copy the address",
+    "amountUSDT": "Amount USDT"
+  },
+  "footer": {
+    "market": "Market",
+    "earn": "Earn",
+    "home": "Home",
+    "rating": "Rating"
+  },
+  "inviteTelegram": {
+    "inviteFriends": "Invite friends",
+    "getBonus":"and get bonuses",
+    "invitePremiumFriends": "Invite premium friends",
+    "reward": "+{{amount}} $MSOL",
+    "share":"Share with friends"
+  },
+  "myFriends": {
+    "title": "My friends",
+    "inviteMore": "Invite more friends to get more rewards",
+    "reward": "+{{amount}} $MSOL"
+  },
+  "dailyTasks": {
+    "title": "Daily Tasks",
+    "completeTasks": "Complete tasks to get more rewards",
+    "taskCompleted": "Task completed successfully",
+    "taskTaken": "Task taken successfully"
+  },
+  "market": {
+    "title": "Market",
+    "description": "The open armour marketplace is all you need to win",
+    "buy": "Buy",
+    "sell": "Sell",
+    "level": "Level",
+    "typeOfArmour": "Type of armour",
+    "price": "Price",
+    "orderUpdated": "Order updated successfully",
+    "priceInUsdt": "Price in USDT",
+    "priceInCoins": "Price in Coins",
+    "itemDeleted": "Item deleted successfully",
+    "itemUpdated": "Item updated successfully",
+    "purchase": "Purchase",
+    "change": "Change",
+    "million": "m",
+    "thousand": "к"
+  },
+  "purchase": {
+    "itemSold": "Item bought successfully",
+    "itemMissing":"Item is missing from inventory",
+    "orderBought": "Order bought successfully",
+    "orderSold": "Sell order successfully",
+    "coins": "coins",
+    "objectPurchase": "Object Purchase",
+    "objectSell": "Object Sell",
+    "armor": "Armor",
+    "priceInUsdt": "Price in USDT",
+    "commission": "Commission 0.01 BNB. Min. deposit 1 USDT",
+    "objectValue": "Object value",
+    "pay": "Pay",
+    "sell": "Sell",
+    "priceInCoins": "Price in Coins",
+    "noExchange": "The item cannot be exchanged or returned!"
+  },
+  "marketOrderBuy": {
+    "errorPriceLevel": "Price and level must be greater than 0 and not empty",
+    "levelLimit":"Item level must be at least 8 to sell",
+    "orderCreated": "Order created successfully",
+    "placeOrder": "Coming soon",
+    "createOrder": "Create an order - control the market.",
+    "selectItem": "Select your item",
+    "placeOrderConfirm": "You are placing a sell order, please make sure you are really sure of your choice",
+    "insufficientFunds": "Insufficient funds to place a buy order",
+    "all": "All"
+  },
+  "rating": {
+    "exitPageRanking": "exit page ranking",
+    "nextDraw": "The next Draw will start in",
+    "dontMissChance": "Don't miss your chance to win prizes!",
+    "joinNow": "Join now",
+    "levelLimit":"The minimum shield level should be 10",
+    "drawing":"You participate in the drawing"
+  },
+  "ratingInfo": {
+    "aboutRating": "About Rating",
+    "allClear": "All clear!",
+    "description": "To participate in the weekly leaderboard, you need to click the 'Join' button. Once you do, you’ll be added to the ranking and can compete for rewards that are distributed after the timer ends. This competition takes place every week."
+  },
+  "ratingList": {
+    "rating": "Rating",
+    "leaderboard": "Leaderboard",
+    "price": "Prize",
+    "topPlayers": "The top 10 players will receive prizes at the end of the draw!"
+  },
+  "registrationForm": {
+    "welcome": "Welcome, {{name}}",
+    "enterName": "Enter the name your character",
+    "nameOnce": "The name is entered once and cannot be changed. Choose carefully.",
+    "namePlaceholder": "Name...",
+    "notNecessary": "It is not necessary to enter a name",
+    "continueWithName": "Continue with a new name",
+    "or": "Or",
+    "continueAs": "Continue as {{name}}"
+  },
+  "buyTools": {
+    "title": "Purchase an item",
+    "description": "Purchase an item",
+    "armorUpgradeTools": "armor upgrade tool",
+    "quantity": "Quantity",
+    "quantityPlaceholder": "Quantity...",
+    "quantitySelection": "Quantity selection",
+    "quantitySelectionPlaceholder": "You can use this tool to improve items to the next level.",  
+    "buy": "Buy",
+    "enterDesiredQuantity": "Enter the desired quantity:",
+    "finalPrice": "Final price:",
+    "items": "items"
+  },
+  "editObject": {
+    "editTitle": "Edit An Object",
+    "deleteObject": "Delete",
+    "deleteObjectDescription": "You can permanently delete this object",
+    "deleteWarning": "This item and data cannot be restored after deletion.",
+    "saveChanges": "Save changes",
+    "armor": "Armor",
+    "namePlaceholder": "The name of the selected item",
+    "priceInUsdt": "Price in USDT",
+    "priceInCoins": "Price in Coins"
+  }
+} 

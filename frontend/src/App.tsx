@@ -1,0 +1,24 @@
+import { Route, Routes } from "react-router-dom"
+import Earn from "./pages/Earn"
+import Market from "./pages/Market"
+import Rating from "./pages/Rating"
+import Main from "./pages/Main"
+import i18n from "./i18n"
+
+function App() {
+  const lang = localStorage.getItem('lang') || 'en';
+  i18n.changeLanguage(lang);
+  return (
+    <Routes>
+      <Route path="/" element={<Main />}/>
+      <Route path="/earn" element={<Earn />}/>
+      <Route path="/market" element={<Market />}/>
+        <Route path="/rating" element={<Rating />}/>
+      </Routes>
+  )
+}
+
+export default App
+
+
+

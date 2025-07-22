@@ -1,0 +1,142 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  telegramId    String   @unique
+  displayName   String?
+  firstName     String?
+  lastName      String?
+  isNewUser     Boolean  @default(true)
+  balance       Json     @default("{\"money\": 0,\"usdt\": 0,\"shield\": 0, \"tools\": 0}")
+  inventory     Json     @default("[]")
+  equipment     Json     @default("[]")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  tasks         UserTask[]
+  transactions  Transaction[]
+  friends       Json     @default("[]")
+  walletAddress String?
+}
+
+model Item {
+  id        Int      @id @default(autoincrement())
+  name      String
+  level     Int
+  shield    Int
+  type      String
+  price     Float    // изменено с Int на Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MarketListing {
+  id        Int      @id @default(autoincrement())
+  sellerId  String
+  item      Json
+  price     Float
+  currency  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sellerId])
+}
+
+model Task {
+  id             Int      @id @default(autoincrement())
+  title          String?
+  type           String   // 'subscription' или 'invite'
+  coin           Int
+  status         String   // 'available', 'in_progress', 'completed'
+  completedAt    DateTime?
+  chatId         String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  userId         Int?
+  channelLink    String?
+  requiredFriends Int? 
+  requiredSubscribers Int?
+  tasks          UserTask[]
+  @@index([userId])
+}
+
+model BuyOrder {
+  id        Int      @id @default(autoincrement())
+  buyerId   String
+  itemType  String?
+  level     Int
+  price     Int
+  currency  String?
+  createdAt DateTime @default(now())
+}
+
+model RechargeHistory {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  valueCoin Float
+  amount    Float
+  date      DateTime @default(now())
+  txidIn    String?
+  @@index([userId])
+  @@unique([txidIn])
+}
+
+model Rating {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  users       Json     @default("[]")
+  roundCreatedAt DateTime @default(now())
+}
+
+model Transaction {
+  id            Int      @id @default(autoincrement())
+  telegramId    String
+  displayName   String
+  amount        Float
+  walletNumber  String
+  status        String   // 'pending', 'completed', 'failed'
+  messageId     Int?
+  date          DateTime @default(now())
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@index([telegramId])
+}
+
+model UpgradeSettings {
+  id           Int      @id @default(autoincrement())
+  levelRange   String   @unique // '1-5', '6-10', '16-20', etc.
+  toolsCost    Int      // Стоимость в инструментах
+  successRate  Float    // Шанс успеха (0.0 - 1.0)
+  useSequence  Boolean  @default(false) // Использовать программируемую последовательность
+  sequence     Json?    // Массив boolean значений [true, false, true, false] - только если useSequence = true
+  currentIndex Int      @default(0) // Текущий индекс в последовательности
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model UserTask {
+  id           Int      @id @default(autoincrement())
+  userId   String
+  taskId       Int
+  status       String   // 'available', 'in_progress', 'completed'
+  completedAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  friendsCount Int?     // Optional field for invite tasks
+
+  user         User     @relation(fields: [userId], references: [telegramId])
+  task         Task     @relation(fields: [taskId], references: [id])
+
+  @@unique([userId, taskId])
+}

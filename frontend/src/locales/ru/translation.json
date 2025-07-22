@@ -1,0 +1,190 @@
+{
+  "welcome": "Добро пожаловать",
+  "description": "Это пример описания.",
+  "modalSettings": {
+    "language": {
+      "english": "Английский",
+      "russian": "Русский",
+      "ukrainian": "Украинский"
+    },
+    "settings": "Настройки",
+    "changeLanguage": "Сменить язык",
+    "aboutUs": "О нас",
+    "contactSupport": "Поддержка",
+    "vibration": "Вибрация",
+    "vibrationDescription": "Вибрация при нажатии на меню",
+    "on": "Вкл",
+    "off": "Выкл"
+  },
+  "whaleComponent": {
+    "title": "Наутарион",
+    "inventory": "Инвентарь",
+    "level": "Уровень",
+    "shield": "Щит",
+    "putOn": "Надеть",
+    "upgrade": "Улучшить",
+    "mainItemImprovements": "Основные улучшения {{itemType}}",
+    "upgradeSuccess": "Предмет успешно улучшен",
+    "upgradeFailed": "Не удалось улучшить предмет",
+    "pointsOfDefense": "Очки защиты",
+    "coinPurchase": "Покупка монет",
+    "usdtPurchase": "Покупка USDT", 
+    "purchaseSuccess": "Монеты успешно куплены",
+    "currentCoinExchangeRate": "Текущий курс обмена монет",
+    "convertValueAtCurrentRate": "Конвертировать по текущему курсу",
+    "insufficientFunds": "Недостаточно средств для завершения транзакции",
+    "purchase": "Покупка",
+    "putOnSuccess": "Предмет успешно надет",
+    "itemCanImproveOrBreak":"Предмет может улучшить характеристики с успешным улучшением или может быть сломан!"
+  },
+  "itemType":{
+    "helmet": "Шлем",
+    "armor": "Броня",
+    "leg": "Ноги"
+  },
+  "shop": {
+    "title": "Магазин",
+    "buy": "Купить",
+    "buySuccess": "Предмет успешно куплен",
+    "buyFailed": "Недостаточно средств",
+    "limit":"Вы достигли максимального кол-ва предметов"
+  },
+  "wallet": {
+    "makeContribution": "Сделать вклад",
+    "withdrawal": "Вывод",
+    "deposit": "Депозит",
+    "outputNetworkAddress": "Вывод возможен только на сетевой адрес {{network}}",
+    "outputAddress": "Адрес вывода",
+    "balanceAndCommission": "Баланс {{balance}}. Комиссия {{commission}}.",
+    "continue": "Продолжить",
+    "sendOnly": "Отправляйте только {{asset}} на этот адрес! Другие активы будут безвозвратно потеряны.",
+    "tonTopUpAddress": "Адрес пополнения TON",
+    "commissionAndMinDeposit": "Комиссия {{commission}}. Мин. депозит {{minDeposit}}",
+    "specifyMemo": "Укажите комментарии MEMO при оплате",
+    "copyAddress": "Скопировать адрес",
+    "amountUSDT": "Количество USDT"
+  },
+  "footer": {
+    "market": "Рынок",
+    "earn": "Заработок",
+    "home": "Главная",
+    "rating": "Рейтинг"
+  },
+  "inviteTelegram": {
+    "inviteFriends": "Пригласить друзей",
+    "getBonus":"и получай бонусы",
+    "invitePremiumFriends": "Пригласить премиум друзей",
+    "reward": "+{{amount}} $MSOL",
+     "share":"Поделиться с друзьями"
+  },
+  "myFriends": {
+    "title": "Мои друзья",
+    "inviteMore": "Пригласите больше друзей, чтобы получить больше наград",
+    "reward": "+{{amount}} $MSOL"
+  },
+  "dailyTasks": {
+    "title": "Ежедневные задачи",
+    "completeTasks": "Выполняйте задачи, чтобы получить больше наград",
+    "taskCompleted": "Задача успешно выполнена",
+    "taskTaken": "Задача успешно взята"
+  },
+  "market": {
+    "title": "Рынок",
+    "description": "Открытый рынок брони - это все, что вам нужно, чтобы победить",
+    "buy": "Купить",
+    "sell": "Продать",
+    "level": "Уровень",
+    "typeOfArmour": "Тип брони",
+    "price": "Цена",
+    "orderUpdated": "Заказ успешно обновлен",
+    "priceInUsdt": "Цена в USDT",
+    "priceInCoins": "Цена в монетах",
+    "itemDeleted": "Предмет успешно удален",
+    "itemUpdated": "Предмет успешно обновлен",
+    "purchase": "Покупка",
+    "change": "Изменить",
+    "million": "млн",
+    "thousand": "к"
+  },
+  "purchase": {
+    "itemSold": "Предмет успешно куплен",
+    "itemMissing":"Товар отсутствует в инвентаре",
+    "orderBought": "Заказ успешно куплен",
+    "orderSold": "Заказ успешно продан",
+    "coins": "монеты",
+    "objectPurchase": "Покупка предмета",
+    "objectSell": "Продажа предмета",
+    "armor": "Броня",
+    "priceInUsdt": "Цена в USDT",
+    "commission": "Комиссия 0.01 BNB. Мин. депозит 1 USDT",
+    "objectValue": "Стоимость объекта",
+    "pay": "Оплатить",
+    "sell": "Продать",
+    "priceInCoins": "Цена в монетах",
+    "noExchange": "Предмет не подлежит обмену или возврату!"
+  },
+  "marketOrderBuy": {
+    "errorPriceLevel": "Цена и уровень должны быть больше 0 и не пустыми",
+    "levelLimit":"Для продажи уровень предмета должен быть не ниже 8",
+    "orderCreated": "Заказ успешно создан",
+    "placeOrder": "Вскоре",
+    "createOrder": "Создайте заказ - контролируйте рынок.",
+    "selectItem": "Выберите ваш предмет",
+    "placeOrderConfirm": "Вы размещаете заказ на продажу, пожалуйста, убедитесь, что вы действительно уверены в своем выборе",
+    "insufficientFunds": "Недостаточно средств для размещения заказа на покупку",
+    "all": "Все"
+  },
+  "rating": {
+    "exitPageRanking": "выйти из рейтинга",
+    "nextDraw": "Следующий розыгрыш начнется через",
+    "dontMissChance": "Не упустите свой шанс выиграть призы!",
+    "joinNow": "Присоединяйтесь сейчас",
+     "levelLimit":"Минимальный уровень щита должен быть 10",
+     "drawing":"Вы участвуйте в розыгрыше!"
+  },
+  "ratingInfo": {
+    "aboutRating": "О рейтинге",
+    "allClear": "Все понятно!",
+    "description": "Чтобы принять участие в недельном рейтинге, вам нужно нажать кнопку 'Присоединиться'. После этого вы будете добавлены в рейтинг и сможете соревноваться за призы, которые будут распределены после окончания таймера. Это соревнование проводится каждую неделю."
+  },
+  "ratingList": {
+    "rating": "Рейтинг",
+    "leaderboard": "Таблица лидеров",
+    "price": "Призы",
+    "topPlayers": "Топ 10 игроков получат призы в конце розыгрыша!"
+  },
+  "registrationForm": {
+    "welcome": "Добро пожаловать, {{name}}",
+    "enterName": "Введите имя вашего персонажа",
+    "nameOnce": "Имя вводится один раз и не может быть изменено. Выбирайте внимательно.",
+    "namePlaceholder": "Имя...",
+    "notNecessary": "Не обязательно вводить имя",
+    "continueWithName": "Продолжить с новым именем",
+    "or": "Или",
+    "continueAs": "Продолжить как {{name}}"
+  },
+  "buyTools": {
+    "title": "Покупка предмета",
+    "description": "Покупка предмета",
+    "armorUpgradeTools": "Инструменты улучшения брони",
+    "quantity": "Количество",
+    "quantityPlaceholder": "Количество...",
+    "quantitySelection": "Выбор количества",
+    "quantitySelectionPlaceholder": "Вы можете использовать этот инструмент для улучшения предметов до следующего уровня.",
+    "buy": "Купить",
+    "enterDesiredQuantity": "Введите желаемое количество:",
+    "finalPrice": "Итоговая цена:",
+    "items": "предметов"
+  },
+  "editObject": {
+    "editTitle": "Редактировать",
+    "deleteObject": "Удалить",
+    "deleteObjectDescription": "Вы можете навсегда удалить этот объект",
+    "deleteWarning": "Этот предмет и данные не могут быть восстановлены после удаления.",
+    "saveChanges": "Сохранить",
+    "armor": "Броня",
+    "namePlaceholder": "Имя выбранного предмета",
+    "priceInUsdt": "Цена в USDT",
+    "priceInCoins": "Цена в монетах"
+  }
+} 
