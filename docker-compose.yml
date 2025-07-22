@@ -131,7 +131,7 @@ services:
       dockerfile: Dockerfile
     container_name: whale-frontend
     ports:
-      - "8080:8080"
+      - "8080:80"
     environment:
       - VITE_API_URL="https://apayukita.com/api"
       - VITE_NODE_ENV=prod
