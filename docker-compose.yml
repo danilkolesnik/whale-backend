@@ -94,7 +94,7 @@ services:
       - BOT_NAME=apayukita_bot
       - NODE_ENV=development
     volumes:
-      - .:/app
+      - ./backend:/app
       - /app/node_modules
     depends_on:
       postgres:
@@ -109,7 +109,7 @@ services:
       - TELEGRAM_BOT_TOKEN=8036987446:AAFiY_q4TVpZKm2sQB32JJbIpKpzxsL0aZs
       - NODE_ENV=development
     volumes:
-      - .:/app
+      - ./backend:/app
       - /app/node_modules
     command: sh -c "npm install && nodemon --legacy-watch --watch src --ext ts,json --exec 'npm run start:bot'"
 
@@ -122,7 +122,7 @@ services:
       - TRANSACTION_BOT_TOKEN=7610443390:AAH1WJkif38kYru8GhcA5jICgO4nfgYXocI
       - NODE_ENV=development
     volumes:
-      - .:/app
+      - ./backend:/app
       - /app/node_modules
     command: sh -c "npm install && nodemon --legacy-watch --watch src --ext ts,json --exec 'npm run start:transaction-bot'"
   frontend:
