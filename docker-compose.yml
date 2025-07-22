@@ -80,7 +80,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: ./backend/Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: whale-backend
     ports:
       - "3000:3000"
@@ -103,7 +103,7 @@ services:
   bot:
     build:
       context: .
-      dockerfile: ./backend/Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: whale-bot
     environment:
       - TELEGRAM_BOT_TOKEN=7738656789:AAFKiGGh_UFLg29NIIBFs7G5PRpbrMpdu7k
@@ -116,7 +116,7 @@ services:
   transaction-bot:
     build:
       context: .
-      dockerfile: ./backend/Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: whale-transaction-bot
     environment:
       - TRANSACTION_BOT_TOKEN=7610443390:AAH1WJkif38kYru8GhcA5jICgO4nfgYXocI
@@ -128,7 +128,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: ./frontend/Dockerfile
+      dockerfile: Dockerfile
     container_name: whale-frontend
     ports:
       - "8080:80"
