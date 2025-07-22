@@ -80,7 +80,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile.dev
+      dockerfile: ./backend/Dockerfile.dev
     container_name: whale-backend
     ports:
       - "3000:3000"
@@ -95,7 +95,7 @@ services:
       - NODE_ENV=development
     volumes:
       - .:/app
-      - /app/node_modules
+      - ./backend/node_modules:/app/node_modules
     depends_on:
       postgres:
         condition: service_healthy
@@ -103,32 +103,32 @@ services:
   bot:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: ./backend/Dockerfile.dev
     container_name: whale-bot
     environment:
       - TELEGRAM_BOT_TOKEN=7738656789:AAFKiGGh_UFLg29NIIBFs7G5PRpbrMpdu7k
       - NODE_ENV=development
     volumes:
       - .:/app
-      - /app/node_modules
+      - ./backend/node_modules:/app/node_modules
     command: sh -c "npm install && nodemon --legacy-watch --watch src --ext ts,json --exec 'npm run start:bot'"
 
   transaction-bot:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: ./backend/Dockerfile.dev
     container_name: whale-transaction-bot
     environment:
       - TRANSACTION_BOT_TOKEN=7610443390:AAH1WJkif38kYru8GhcA5jICgO4nfgYXocI
       - NODE_ENV=development
     volumes:
       - .:/app
-      - /app/node_modules
+      - ./backend/node_modules:/app/node_modules
     command: sh -c "npm install && nodemon --legacy-watch --watch src --ext ts,json --exec 'npm run start:transaction-bot'"
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: ./frontend/Dockerfile
     container_name: whale-frontend
     ports:
       - "8080:80"
