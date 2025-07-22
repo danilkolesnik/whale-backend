@@ -7,7 +7,7 @@ export class CryptAPIService {
       const usdtTrc20 = 'THvBH4uKu9vv2uNPQ7kGT2xWEwemJY9Fro'
       const usdtBep20 = '0xc967b359966540a3d2bd240c185278b5b1e5ff3e'
 
-      const apiUrl = 'https://neriumtest1.website'
+      const apiUrl = 'https://apayukita.com/api'
       const CallbackUrl = `${apiUrl}/usdt-check?telegramId=${telegramId}&test=true`;
       const CallbackUrlTrc20 = `${apiUrl}/usdt-checkTrc20?telegramId=${telegramId}`;
       let url = '';
