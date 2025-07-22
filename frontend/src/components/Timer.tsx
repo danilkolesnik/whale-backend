@@ -13,7 +13,7 @@ type CountdownTimerProps = {
 export const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
   const calculateTimeLeft = () => {
     const targetDateObj = new Date(targetDate);
-    const adjustedTargetDate = new Date(targetDateObj.getTime() + 1 * 60 * 1000); 
+    const adjustedTargetDate = new Date(targetDateObj.getTime() + 168 * 60 * 60 * 1000);
     const difference = +adjustedTargetDate - +new Date();
     if (difference <= 0) {
       return { hours: "000", minutes: "00", seconds: "00" };
