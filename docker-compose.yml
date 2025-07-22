@@ -89,9 +89,9 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/whale?schema=public
       - JWT_SECRET=17d363697c6bb12e7959f239b377e3dc2e71a0a65fc72cec0cf36b3cb2d1af9c14d9379c40b78b2e37fef48b5c166d1ddbcab82a84d95cae69b5c7bca7ef626a
       - TRANSACTION_BOT_TOKEN=7610443390:AAH1WJkif38kYru8GhcA5jICgO4nfgYXocI
-      - TELEGRAM_BOT_TOKEN=7738656789:AAFKiGGh_UFLg29NIIBFs7G5PRpbrMpdu7k
-      - ADMIN_BOT_TOKEN=7907483541:AAGQV6mPdhGKpzDdcCp8t_0d2_V480MxG8Q
-      - BOT_NAME=whaleDev_bot
+      - TELEGRAM_BOT_TOKEN=8036987446:AAFiY_q4TVpZKm2sQB32JJbIpKpzxsL0aZs
+      - ADMIN_BOT_TOKEN=8036987446:AAFiY_q4TVpZKm2sQB32JJbIpKpzxsL0aZs
+      - BOT_NAME=apayukita_bot
       - NODE_ENV=development
     volumes:
       - .:/app
