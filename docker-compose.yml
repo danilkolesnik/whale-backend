@@ -138,16 +138,16 @@ services:
     depends_on:
       - backend
 
-  nginx:
-    build:
-      context: .
-      dockerfile: Dockerfile.nginx
-    container_name: whale-nginx
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-      - frontend
+  # nginx:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.nginx
+  #   container_name: whale-nginx
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - backend
+  #     - frontend
 
 volumes:
   postgres_data:
