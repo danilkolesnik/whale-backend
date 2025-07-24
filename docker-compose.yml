@@ -88,7 +88,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/whale?schema=public
       - JWT_SECRET=17d363697c6bb12e7959f239b377e3dc2e71a0a65fc72cec0cf36b3cb2d1af9c14d9379c40b78b2e37fef48b5c166d1ddbcab82a84d95cae69b5c7bca7ef626a
-      - TRANSACTION_BOT_TOKEN=7610443390:AAH1WJkif38kYru8GhcA5jICgO4nfgYXocI
+      - TRANSACTION_BOT_TOKEN=8468829454:AAH1CHwOjJRQBf_H0m6x7eGdIYKApn3cmeM
       - TELEGRAM_BOT_TOKEN=8036987446:AAFiY_q4TVpZKm2sQB32JJbIpKpzxsL0aZs
       - ADMIN_BOT_TOKEN=8036987446:AAFiY_q4TVpZKm2sQB32JJbIpKpzxsL0aZs
       - BOT_NAME=apayukita_bot
@@ -119,7 +119,7 @@ services:
       dockerfile: Dockerfile
     container_name: whale-transaction-bot
     environment:
-      - TRANSACTION_BOT_TOKEN=7610443390:AAH1WJkif38kYru8GhcA5jICgO4nfgYXocI
+      - TRANSACTION_BOT_TOKEN=8468829454:AAH1CHwOjJRQBf_H0m6x7eGdIYKApn3cmeM
       - NODE_ENV=development
     volumes:
       - ./backend:/app
@@ -137,17 +137,5 @@ services:
       - VITE_NODE_ENV=prod
     depends_on:
       - backend
-
-  # nginx:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.nginx
-  #   container_name: whale-nginx
-  #   ports:
-  #     - "80:80"
-  #   depends_on:
-  #     - backend
-  #     - frontend
-
 volumes:
   postgres_data:
