@@ -13,18 +13,17 @@ export default function RegistrationForm() {
     const displayName = useAuthStore((state) => state.user?.displayName)
     const telegramId = useAuthStore((state) => state.user?.telegramId)
     const isNewUser = useAuthStore((state) => state.user?.isNewUser)
+    const isNewUserFromStorage = localStorage.getItem('new') === "true";
 
     const updateDisplayName = useAuthStore((state) => state.updateDisplayName)
-
-
     const setNewName = async() => {
         try {
             await api.post('/user/set-user-name', {
                 telegramId: telegramId,
                 name: name
             })   
-            updateDisplayName(name)  
             localStorage.setItem('new', "false")
+            updateDisplayName(name)  
             setIsOpen(false)
         } catch (error) {
             console.log('❌ Error setting name:', error);
@@ -32,8 +31,7 @@ export default function RegistrationForm() {
     }
 
     useEffect(() => {
-        const isNewUserFromStorage = localStorage.getItem('new') === "true";
-        if (isNewUserFromStorage || isNewUser) {
+        if (isNewUserFromStorage) {
             setIsOpen(true);
         }
     }, [isNewUser])
@@ -96,7 +94,9 @@ export default function RegistrationForm() {
                             {t('registrationForm.or')}
                         </p>
                         <DialogClose>
-                                <div className="w-full flex justify-center">
+                                <div className="w-full flex justify-center" onClick={() =>{
+                                    localStorage.setItem('new', "false")
+                                }}>
                                     <div className="bg-[#6DA0E1] shadow-[0_0_2px_0_rgba(109,160,225,0.6),0_0_6px_0_rgba(109,160,225,0.6),0_0_16px_0_rgba(109,160,225,0.4)] w-[168px] mb-3 h-8 rounded-[17px] flex items-center justify-center">
                                         <span className="font-encode text-[10px] font-semibold text-[#121318]">{t('registrationForm.continueAs', { name: displayName })}</span>
                                     </div>
