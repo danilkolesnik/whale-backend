@@ -77,6 +77,7 @@ type AuthStore = {
   setAuth: (data: { accessToken: string; user: AuthUser }) => void;
   setUser: (user: AuthUser | User) => void;
   updateDisplayName: (displayName: string) => void;
+  updateUserStatus: (isNewUser : boolean) => void;
   clearAuth: () => void;
   setLoading: (loading: boolean) => void;
   updateInventory: (inventory: Item[]) => void;
@@ -140,7 +141,14 @@ export const useAuthStore = create<AuthStore>((set) => ({
     set((state) => ({
       ...state,
       user: state.user ? { ...state.user, displayName } : null,
-    })),
+  })),
+
+  updateUserStatus: (isNewUser) =>
+    set((state) => ({
+      ...state,
+      user: state.user ? { ...state.user, isNewUser } : null,
+  })),
+    
 
   clearAuth: () =>
     set(() => ({

@@ -1,7 +1,6 @@
 //@ts-nocheck
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { useAuthStore } from '@/store/useUserStore'
-import { useFetchUser } from "@/queries/user";
 import { EditIcon } from '@/assets/icons/icons'
 import { useState, useEffect } from 'react'
 import api from '@/api/axios'
@@ -12,14 +11,14 @@ export default function RegistrationForm() {
     const [isOpen, setIsOpen] = useState(false)
     const [name, setName] = useState('')
 
-    const { data: user } = useFetchUser();
-
     const displayName = useAuthStore((state) => state.user?.displayName)
     const telegramId = useAuthStore((state) => state.user?.telegramId)
-    // const isNewUser = useAuthStore((state) => state.user?.isNewUser)
+    const isNewUser = useAuthStore((state) => state.user?.isNewUser)
     // const isNewUserFromStorage = localStorage.getItem('new') === "true";
 
     const updateDisplayName = useAuthStore((state) => state.updateDisplayName)
+    const updateStatus = useAuthStore((state) => state.updateUserStatus)
+
     const setNewName = async() => {
         try {
             await api.post('/user/set-user-name', {
@@ -28,6 +27,7 @@ export default function RegistrationForm() {
             })   
             localStorage.setItem('new', "false")
             updateDisplayName(name)  
+            updateStatus(false)
             setIsOpen(false)
         } catch (error) {
             console.log('❌ Error setting name:', error);
@@ -35,10 +35,10 @@ export default function RegistrationForm() {
     }
 
     useEffect(() => {
-        if (user && user.isNewUser) { // Check if user is defined
+        if (isNewUser) {
             setIsOpen(true);
         }
-    }, [user])
+    }, [isNewUser])
     
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -99,7 +99,7 @@ export default function RegistrationForm() {
                         </p>
                         <DialogClose>
                                 <div className="w-full flex justify-center" onClick={() =>{
-                                    localStorage.setItem('new', "false")
+                                    updateStatus(false)
                                 }}>
                                     <div className="bg-[#6DA0E1] shadow-[0_0_2px_0_rgba(109,160,225,0.6),0_0_6px_0_rgba(109,160,225,0.6),0_0_16px_0_rgba(109,160,225,0.4)] w-[168px] mb-3 h-8 rounded-[17px] flex items-center justify-center">
                                         <span className="font-encode text-[10px] font-semibold text-[#121318]">{t('registrationForm.continueAs', { name: displayName })}</span>
