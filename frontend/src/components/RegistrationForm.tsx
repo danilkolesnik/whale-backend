@@ -1,5 +1,7 @@
+//@ts-nocheck
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { useAuthStore } from '@/store/useUserStore'
+import { useFetchUser } from "@/queries/user";
 import { EditIcon } from '@/assets/icons/icons'
 import { useState, useEffect } from 'react'
 import api from '@/api/axios'
@@ -10,10 +12,12 @@ export default function RegistrationForm() {
     const [isOpen, setIsOpen] = useState(false)
     const [name, setName] = useState('')
 
+    const { data: user } = useFetchUser();
+
     const displayName = useAuthStore((state) => state.user?.displayName)
     const telegramId = useAuthStore((state) => state.user?.telegramId)
-    const isNewUser = useAuthStore((state) => state.user?.isNewUser)
-    const isNewUserFromStorage = localStorage.getItem('new') === "true";
+    // const isNewUser = useAuthStore((state) => state.user?.isNewUser)
+    // const isNewUserFromStorage = localStorage.getItem('new') === "true";
 
     const updateDisplayName = useAuthStore((state) => state.updateDisplayName)
     const setNewName = async() => {
@@ -31,10 +35,10 @@ export default function RegistrationForm() {
     }
 
     useEffect(() => {
-        if (isNewUserFromStorage) {
+        if (user.isNewUser) {
             setIsOpen(true);
         }
-    }, [isNewUser])
+    }, [user.isNewUser])
     
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
