@@ -55,7 +55,7 @@ export default function RegistrationForm() {
                     <div className='flex flex-col items-center gap-2'>
                         <div className='w-full flex items-center justify-center'>
                             <p className='font-encode font-normal text-[12px] text-[#E4F1FF] text-center w-[110px]'>
-                                {t('registrationForm.enterName')}
+                                {/* {t('registrationForm.enterName')} */}
                             </p>
                         </div>
                         <div className='px-1 py-1.5 w-full max-w-[168px] rounded-[6px] bg-[#5D6E8B40] mb-1'>
