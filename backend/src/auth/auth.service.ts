@@ -140,7 +140,9 @@ export class AuthService {
         tasks: updatedUserTasks.data,
         friends: referrals
       };
-    } catch {
+    } catch(err) {
+      console.log(err);
+      
       throw new UnauthorizedException('Invalid token');
     }
   }
