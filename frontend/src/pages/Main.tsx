@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/useUserStore';
 import { useFetchMarketBuyItemsQuery } from '@/queries/market';
 import { useFetchMarketSellItemsQuery } from '@/queries/market';
 import { useFetchDailyTasks } from '@/queries/daily';
+import RegistrationForm from "../components/RegistrationForm"
 
 import Navbar from '@/components/Navbar'
 import bgImage from "../assets/bg/bgMain.jpg"
@@ -30,6 +31,7 @@ export default function Main() {
 
   return (
     <div className="flex flex-col rounded-0 overflow-hidden items-center w-full bg-cover bg-center p-[20px] pb-[138px] relative " style={{ backgroundImage: `url(${bgImage})` }}>
+        <RegistrationForm />
         <Navbar balance={balance}/>
           <WhaleComponent/>
           <Shop shopItems={shopItems || []} />

@@ -1,7 +1,6 @@
 import React, { useState } from "react"
-import { CoinsToUsdt, UsdtToCoins } from "./CoinPurchase"
+import { UsdtToCoins } from "./CoinPurchase"
 import { DarkerIcon, PlusIcon, ToolsIcon, UsdtIcon, WalletIcon } from "@/assets/icons/icons"
-import RegistrationForm from "./RegistrationForm"
 import DialogCloseButton from "./SettingsButton"
 import WalletButton from "./WalletButton"
 import type { Balance } from "@/store/useUserStore"
@@ -43,8 +42,7 @@ const Navbar = React.memo(({balance}: NavbarProps) => {
                     </div>
                     <PlusIcon />
                 </button>
-            
-            <RegistrationForm />
+        
             <button className="h-[30px] min-w-[30px] flex justify-center items-center gap-1 rounded-[10px] bg-[#30353E] px-1.5 py-[5px] shadow-[inset_0_1px_1px_#AED2FF66,inset_0_-2px_3px_#6DA0E133]">
                         <ToolsIcon />
                         <div className="flex items-end justify-center">

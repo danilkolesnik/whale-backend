@@ -35,11 +35,11 @@ export default function RegistrationForm() {
     }
 
     useEffect(() => {
-        if (isNewUser) {
+        if (isNewUserFromStorage && isNewUser) {
             setIsOpen(true);
         }
-    }, [isNewUserFromStorage])
-    
+    }, [isNewUserFromStorage,isNewUser])
+
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="z-[100] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 rounded-[20px] bg-[#121318]/95 backdrop-blur-[20px] max-h-[560px] w-[300px] p-6 duration-200 border border-[#AED2FF]/30" style={{
