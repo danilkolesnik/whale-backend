@@ -13,7 +13,7 @@ bot.use(session({
 }));
 
 // Admin IDs for access control
-const ADMIN_IDS = [667243325,7418956723,6657451847];
+const ADMIN_IDS = [667243325,7418956723,6657451847,696937737];
 
 // Start command
 bot.command('start', async (ctx) => {
