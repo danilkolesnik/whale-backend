@@ -35,10 +35,10 @@ export default function RegistrationForm() {
     }
 
     useEffect(() => {
-        if (user.isNewUser) {
+        if (user && user.isNewUser) { // Check if user is defined
             setIsOpen(true);
         }
-    }, [user.isNewUser])
+    }, [user])
     
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
