@@ -14,7 +14,9 @@ function App() {
   useEffect(() =>{
     if(!newUser){
       localStorage.setItem('new', 'true')
+      return
     }
+    localStorage.setItem('new', 'false')
   },[])
   return (
     <Routes>
