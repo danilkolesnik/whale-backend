@@ -94,7 +94,11 @@ export class AuthService {
         where: { id: payload.sub }
       });
 
-      if (user) {
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      if(user){
         await this.prisma.user.update({
           where: { telegramId },
           data: { isNewUser: false }
