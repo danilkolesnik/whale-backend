@@ -16,6 +16,7 @@ export default function RegistrationForm() {
 
     const updateDisplayName = useAuthStore((state) => state.updateDisplayName)
 
+
     const setNewName = async() => {
         try {
             await api.post('/user/set-user-name', {
@@ -23,6 +24,7 @@ export default function RegistrationForm() {
                 name: name
             })   
             updateDisplayName(name)  
+            localStorage.setItem('new', "false")
             setIsOpen(false)
         } catch (error) {
             console.log('❌ Error setting name:', error);
@@ -30,8 +32,9 @@ export default function RegistrationForm() {
     }
 
     useEffect(() => {
-        if (isNewUser) {
-            setIsOpen(true)
+        const isNewUserFromStorage = localStorage.getItem('new') === "true";
+        if (isNewUserFromStorage || isNewUser) {
+            setIsOpen(true);
         }
     }, [isNewUser])
     

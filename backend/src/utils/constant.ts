@@ -1,4 +1,4 @@
-export const API_URL = 'http://apayukita.com/api';
+export const API_URL = 'https://apayukita.com/api';
 
 export const SHOP_TYPES = ['helmet', 'armor', 'leg'];
 

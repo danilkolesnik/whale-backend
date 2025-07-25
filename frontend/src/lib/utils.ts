@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function generateReferralLink(referral: string) {
-  return `https://t.me/whaleDev_bot?startapp=${referral}`
+  return `https://t.me/apayukita_bot?startapp=${referral}`
 }
 
 export function generateTelegramShareUrl(referral: string) {
