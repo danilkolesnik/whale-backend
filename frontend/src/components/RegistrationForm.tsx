@@ -35,6 +35,16 @@ export default function RegistrationForm() {
     }
 
     useEffect(() => {
+        if (localStorage.getItem('new') === 'false' || null) {
+            localStorage.setItem('new', 'false');
+        } else {
+            localStorage.setItem('new', 'true');
+        }
+    }, []);
+
+    useEffect(() => {
+        console.log(isNewUser);
+        
         if (isNewUserFromStorage && isNewUser) {
             setIsOpen(true);
         }

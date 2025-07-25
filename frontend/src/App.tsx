@@ -8,16 +8,8 @@ import i18n from "./i18n"
 
 function App() {
   const lang = localStorage.getItem('lang') || 'en';
-  const newUser = localStorage.getItem('new')
   i18n.changeLanguage(lang);
 
-  useEffect(() => {
-    if (newUser === null) {
-        localStorage.setItem('new', 'true'); 
-    } else {
-        localStorage.setItem('new', 'false');
-    }
-}, []);
   return (
     <Routes>
       <Route path="/" element={<Main />}/>
