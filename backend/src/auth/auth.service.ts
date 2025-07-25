@@ -98,12 +98,12 @@ export class AuthService {
         throw new UnauthorizedException('User not found');
       }
 
-      if(user){
-        await this.prisma.user.update({
-          where: { telegramId },
-          data: { isNewUser: false }
-        });
-      }
+      // if(user){
+      //   await this.prisma.user.update({
+      //     where: { telegramId },
+      //     data: { isNewUser: false }
+      //   });
+      // }
 
       const cryptApiService = new CryptAPIService();
 
