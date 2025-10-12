@@ -1,4 +1,4 @@
-export const API_URL = 'https://apayukita.com/api';
+export const API_URL = 'https://neriumtest1.website';
 
 export const SHOP_TYPES = ['helmet', 'armor', 'leg'];
 
