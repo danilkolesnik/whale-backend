@@ -13,6 +13,7 @@ import bg2 from "@/assets/bg/tools/bg2.png"
 import plus from "@/assets/icons/tools/plus.svg"
 import minus from "@/assets/icons/tools/minus.svg"
 import toolsBig from "@/assets/icons/shop/toolsBig.svg"
+import { DarkerIcon, PlusIcon, ToolsIcon, UsdtIcon, WalletIcon } from "@/assets/icons/icons"
 interface Props {
     open: boolean;
     setOpen: (open: boolean) => void;
@@ -79,7 +80,7 @@ export default function BuyTools({ open, setOpen }: Props) {
                                 <span className="font-encode font-semibold text-[12px] text-[#E4F1FF]">Armor upgrade tool</span>
                                 <img src={toolsBig} alt="item" className="w-[120px] object-cover m-auto" />
                             </div>
-                            <div className="w-full relative bg-[#12131866] h-full w-full text-center pt-[11px] mt-[14px] rounded-[8px]">
+                            <div className="relative bg-[#12131866] h-full w-full text-center pt-[11px] mt-[14px] rounded-[8px]">
                                 <span className="font-encode font-semibold text-[10px] text-[#E4F1FF] text-center">{t('buyTools.quantitySelection')}</span>
                             <div className="flex flex-col justify-center items-center rounded-[40px] my-[15px] mx-[15px] relative" 
                             style={
@@ -143,7 +144,7 @@ export default function BuyTools({ open, setOpen }: Props) {
                                     </span>
                                     <span>
                                         {t('buyTools.items')}
-                                    </span>
+                                    </span> 
                                 </div>
 
                                 <img src={equals} alt="equals" className="w-[14px] h-[14px]" />
@@ -152,8 +153,8 @@ export default function BuyTools({ open, setOpen }: Props) {
                                     <span>
                                         {convertedQuantity.toFixed(2)}
                                     </span>
-                                    <span>
-                                        <img src={money} alt="usdt" className="w-[12px] object-cover" />
+                                    <span className="scale-[0.8]">
+                                    <UsdtIcon />
                                     </span>
                                 </div>
                               </div>

@@ -151,7 +151,7 @@ export default function WhaleComponent() {
                         </div>
                     </div>
                     <div className="mt-4 w-[94%] h-[1px] bg-[#6DA0E1] [box-shadow:0_0_0.62px_0_#6DA0E1,0_0_1.24px_0_#6DA0E1,0_0_4.33px_0_#6DA0E1,0_0_14.84px_0_#6DA0E1,0_0_25.97px_0_#6DA0E1]" />
-                    <div className="flex flex-col p-1 items-center gap-4 mt-2">
+                    {/* <div className="flex flex-col p-1 items-center gap-4 mt-2">
                         <div className="w-full flex items-center justify-center h-6">
                             <span className="text-[#E4F1FF] text-[20px] font-encode font-semibold">{t('whaleComponent.inventory')}</span>
                         </div>
@@ -171,7 +171,7 @@ export default function WhaleComponent() {
                                 ))}
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                     {selectedItem ? (
                         <div ref={detailRef} className="w-full bg-[#222930] rounded-[15px] h-[112px] mt-4 max-w-[315px] mx-auto">
                         <div className="flex gap-2 p-[18px]">

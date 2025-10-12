@@ -56,15 +56,15 @@ export default function Footer() {
     <div 
         className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-20 h-10 bg-[#6DA0E1CC] blur-[30px] rounded-full opacity-90"     
       />
-    <ul className="flex justify-center items-center gap-6 font-encode items-center mt-[6px]">
-                <li className={`size-[60px] ${pathname === '/market' ? 'scale-125' : ''} size-[60px]`}>
+    <ul className="flex justify-center gap-6 font-encode items-center mt-[6px]">
+                {/* <li className={`size-[60px] ${pathname === '/market' ? 'scale-125' : ''} size-[60px]`}>
                     <NavLink to="/market" className="flex flex-col items-center" onClick={handleHapticFeedback}>
                         <img src={pathname === '/market' ? market_icon_active : market_icon} className={`object-cover ${pathname === '/market' ? 'w-[80px]' : 'w-[60px]'}`} alt="" />
                         <p className={`text-[8px] font-medium leading-[100%] ${pathname === '/market' ? 'text-[#98C1F5]' : 'text-[#5D6E8B]'}`} style={{filter: 'drop-shadow(0 0 0.7px rgba(93,110,139,0.8)) drop-shadow(0 0 3px rgba(93,110,139,0.8))'}}>
                             {t('footer.market')}
                         </p>
                     </NavLink>
-                </li>
+                </li> */}
                 <li className={`relative ${pathname === '/' ? 'scale-125' : ''} size-[60px]`}>
                     <NavLink to="/" className="flex flex-col items-center" onClick={handleHapticFeedback}>
                         <img src={pathname === '/' ? home_icon_active : home_icon} className={`object-cover`} alt="" />

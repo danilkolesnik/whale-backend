@@ -17,7 +17,6 @@ import GlobalLoading from '@/components/ui/loading/GlobalLoading';
 export default function Main() {
   const { isLoading: isUserLoading } = useFetchUser();
   const { isLoading: isShopLoading, data: shopItems } = useFetchShop();
-
   const balance = useAuthStore((state) => state.user?.balance) || { money: 0, tools: 0, shield: 0, usdt: 0 };
 
   useFetchRating();
@@ -34,7 +33,7 @@ export default function Main() {
         <RegistrationForm />
         <Navbar balance={balance}/>
           <WhaleComponent/>
-          <Shop shopItems={shopItems || []} />
+          {/* <Shop shopItems={shopItems || []} /> */}
         <Footer />
     </div>
   )

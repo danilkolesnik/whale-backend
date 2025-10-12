@@ -1,4 +1,3 @@
-import { useEffect } from "react"
 import { Route, Routes } from "react-router-dom"
 import Earn from "./pages/Earn"
 import Market from "./pages/Market"
