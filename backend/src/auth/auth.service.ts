@@ -40,13 +40,10 @@ export class AuthService {
       if (startParam && startParam !== telegramId) {
         friends.push(startParam);
       }
-
-      const randomId = Math.floor(Math.random() * 1000000);
-
       // Create initial items for new user
       const initialItems = [
         {
-          id: randomId,
+          id: Math.floor(Math.random() * 1000000),
           name: 'Leg',
           level: 1,
           shield: 1,
@@ -55,7 +52,7 @@ export class AuthService {
           isActive: true,
         },
         {
-          id: randomId,
+          id: Math.floor(Math.random() * 1000000),
           name: 'Helmet',
           level: 1,
           shield: 1,
@@ -64,7 +61,7 @@ export class AuthService {
           isActive: true,
         },
         {
-          id: randomId,
+          id: Math.floor(Math.random() * 1000000),
           name: 'Armor',
           level: 1,
           shield: 1,
@@ -143,11 +140,12 @@ export class AuthService {
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const lastLogin = user.lastLogin ? new Date(user.lastLogin.getFullYear(), user.lastLogin.getMonth(), user.lastLogin.getDate()) : null;
+      const registrationDate = new Date(user.createdAt.getFullYear(), user.createdAt.getMonth(), user.createdAt.getDate());
 
       let updatedBalance = user.balance as any;
       
-      // If user hasn't logged in today, give daily bonus
-      if (!lastLogin || lastLogin < today) {
+      // If user hasn't logged in today and at least one day has passed since registration, give daily bonus
+      if ((!lastLogin || lastLogin < today) && today > registrationDate) {
         updatedBalance.tools += 2;
         
         // Update user with new balance and lastLogin

@@ -45,13 +45,22 @@ export class RatingService {
       await this.prisma.rating.deleteMany();
     }
 
+    // Получаем всех пользователей с щитом больше 10
+    const allUsers = await this.prisma.user.findMany();
     let topUsers: any[] = [];
-    if (existingRound && Array.isArray(existingRound.users)) {
-      const telegramIds = (existingRound.users as (string | null | undefined)[]).filter((id): id is string => typeof id === 'string');
-      topUsers = await this.prisma.user.findMany({ where: { telegramId: { in: telegramIds } } });
-    }
 
-    const users = topUsers.map(user => {
+    // Фильтруем пользователей с щитом больше 10
+    const eligibleUsers = allUsers.filter(user => {
+      try {
+        const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
+        return balance && typeof balance === 'object' && 'shield' in balance && balance.shield > 10;
+      } catch (error) {
+        console.error('Invalid balance format for user:', user.telegramId);
+        return false;
+      }
+    });
+
+    const users = eligibleUsers.map(user => {
       let shield = 0;
       let tools = 0;
       let usdt = 0;
@@ -86,14 +95,18 @@ export class RatingService {
 
     const top100Users = users.slice(0, 9);
 
+    // Создаем новый раунд рейтинга со всеми отфильтрованными пользователями
+    const allEligibleUserIds = users.map(user => user.telegramId);
+    
     await this.prisma.rating.create({
       data: {
-        users: [],
+        users: allEligibleUserIds,
         roundCreatedAt: new Date()
       }
     });
 
-    console.log(top100Users);
+    console.log('Top users:', top100Users);
+    console.log('Total eligible users:', allEligibleUserIds.length);
     
 
     for (let i = 0; i < top100Users.length; i++) {
@@ -145,7 +158,7 @@ export class RatingService {
 
     return ratingRounds.map(round => {
       const roundUsers = (round.users as string[]).map(telegramId => {
-        const user = userMap.get(telegramId);
+        const user = userMap.get(telegramId) as any;
         if (user) {
           let shield = 0;
           let tools = 0;
