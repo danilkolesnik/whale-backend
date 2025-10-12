@@ -41,10 +41,51 @@ export class AuthService {
         friends.push(startParam);
       }
 
+      const randomId = Math.floor(Math.random() * 1000000);
+
+      // Create initial items for new user
+      const initialItems = [
+        {
+          id: randomId,
+          name: 'Leg',
+          level: 1,
+          shield: 1,
+          type: 'leg',
+          price: 1,
+          isActive: true,
+        },
+        {
+          id: randomId,
+          name: 'Helmet',
+          level: 1,
+          shield: 1,
+          type: 'helmet',
+          price: 1,
+          isActive: true,
+        },
+        {
+          id: randomId,
+          name: 'Armor',
+          level: 1,
+          shield: 1,
+          type: 'armor',
+          price: 1,
+          isActive: true,
+        }
+      ];
+
       user = await this.prisma.user.create({
         data: {
           telegramId,
           displayName: userData.username || userData.first_name,
+          inventory: initialItems,
+          equipment: initialItems,
+          balance: {
+            money: 0,
+            shield: 3, // 3 items × 1 shield each
+            tools: 100, // Welcome bonus: 100 tools for new users
+            usdt: 0
+          }
         }
       });
 
@@ -62,9 +103,9 @@ export class AuthService {
               data: { 
                 friends: refUserFriends,
                 balance: {
-                  money: (refUser.balance as unknown as Balance).money + 1000,
+                  money: (refUser.balance as unknown as Balance).money,
                   shield: (refUser.balance as unknown as Balance).shield,
-                  tools: (refUser.balance as unknown as Balance).tools,
+                  tools: (refUser.balance as unknown as Balance).tools + 100,
                   usdt: (refUser.balance as unknown as Balance).usdt
                 }
               }
@@ -98,12 +139,26 @@ export class AuthService {
         throw new UnauthorizedException('User not found');
       }
 
-      // if(user){
-      //   await this.prisma.user.update({
-      //     where: { telegramId },
-      //     data: { isNewUser: false }
-      //   });
-      // }
+      // Check for daily login bonus
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const lastLogin = user.lastLogin ? new Date(user.lastLogin.getFullYear(), user.lastLogin.getMonth(), user.lastLogin.getDate()) : null;
+
+      let updatedBalance = user.balance as any;
+      
+      // If user hasn't logged in today, give daily bonus
+      if (!lastLogin || lastLogin < today) {
+        updatedBalance.tools += 2;
+        
+        // Update user with new balance and lastLogin
+        await this.prisma.user.update({
+          where: { id: user.id },
+          data: {
+            balance: updatedBalance,
+            lastLogin: now
+          }
+        });
+      }
 
       const cryptApiService = new CryptAPIService();
 
@@ -132,8 +187,8 @@ export class AuthService {
       });
 
       return {
-        ...user,
-        inventory: user.inventory as unknown as InventoryItem[],
+        ...updatedUser,
+        inventory: updatedUser.inventory as unknown as InventoryItem[],
         balance: updatedUser.balance as unknown as Balance,
         usdtAddressBEP20: usdtAddressBEP20.data.address_in,
         usdtAddressTRC20: usdtAddressTRC20.data.address_in,
@@ -151,13 +206,45 @@ export class AuthService {
 
     const randomNumber = Math.floor(Math.random() * 1000000);
 
+    // Create initial items for test user
+    const initialItems = [
+      {
+        id: Math.floor(Math.random() * 1000000),
+        name: 'Leg',
+        level: 1,
+        shield: 1,
+        type: 'leg',
+        price: 1,
+        isActive: true,
+      },
+      {
+        id: Math.floor(Math.random() * 1000000),
+        name: 'Helmet',
+        level: 1,
+        shield: 1,
+        type: 'helmet',
+        price: 1,
+        isActive: true,
+      },
+      {
+        id: Math.floor(Math.random() * 1000000),
+        name: 'Armor',
+        level: 1,
+        shield: 1,
+        type: 'armor',
+        price: 1,
+        isActive: true,
+      }
+    ];
+
     const testUser = await this.prisma.user.create({
       data: {
         telegramId: randomNumber.toString(),
         displayName: 'Test User',
         isNewUser: false,
-        inventory: [],
-        balance: { money: 100000, shield: 0, tools: 1000 }
+        inventory: initialItems,
+        equipment: initialItems,
+        balance: { money: 100000, shield: 3, tools: 1000, usdt: 1000 }
       }
     });
 

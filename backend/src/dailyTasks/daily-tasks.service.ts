@@ -310,7 +310,8 @@ export class DailyTasksService {
         };
       }
       const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
-      balance.money += userTask.task.coin;
+      // balance.tools += userTask.task.coin;
+      balance.tools += 100;
   
       const updatedUser = await this.prisma.user.update({
         where: { telegramId: userId.toString() },

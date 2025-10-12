@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateItemDto } from './dto/create-item.dto';
 
@@ -175,8 +175,8 @@ export class ShopService {
       where: { telegramId },
       data: {
         balance: {
-          money: balance.money - toolQuantity,
-          usdt: balance.usdt,
+          money: balance.money,
+          usdt: balance.usdt - toolQuantity,
           shield: balance.shield,
           tools: balance.tools + toolQuantity,
         },

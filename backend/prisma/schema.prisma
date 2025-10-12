@@ -20,6 +20,7 @@ model User {
   balance       Json     @default("{\"money\": 0,\"usdt\": 0,\"shield\": 0, \"tools\": 0}")
   inventory     Json     @default("[]")
   equipment     Json     @default("[]")
+  lastLogin     DateTime? // Last login date for daily bonus tracking
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   tasks         UserTask[]

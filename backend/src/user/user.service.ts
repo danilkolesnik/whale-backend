@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { generateReferralLink } from '../utils/generateReferralLink';
-import { UPGRADE_SHIELD, UPGRADE_CHANCES_ITEMS,UPGRADE_TOOL_PRICE } from '../utils/constant';
+import { UPGRADE_TOOL_PRICE } from '../utils/constant';
 
 @Injectable()
 export class UserService {
@@ -161,12 +161,12 @@ export class UserService {
     // Initialize or increment attempt counter
     item.attempts = (item.attempts || 0) + 1;
 
-    // Remove the testSequence logic
-    const isSuccessful = Math.random() < UPGRADE_CHANCES_ITEMS[item.type][currentLevel + 1] || 0;
+    // Fixed success rate: 10% success, 90% failure
+    const isSuccessful = Math.random() < 0.1;
 
     if (isSuccessful) {
       item.level = currentLevel + 1;
-      item.shield = UPGRADE_SHIELD[item.type][currentLevel + 1] || 0;
+      item.shield = (item.shield || 0) + 1; // Fixed +1 shield improvement
       item.attempts = 0;
 
       if (item.isActive) {
@@ -207,14 +207,7 @@ export class UserService {
         }
       };
     } else {
-      const inventoryIndex = inventory.findIndex(i => i.id === itemId);
-      if (inventoryIndex !== -1) {
-        inventory.splice(inventoryIndex, 1);
-      }
-      const equipmentIndex = equipment.findIndex(i => i.id === itemId);
-      if (equipmentIndex !== -1) {
-        equipment.splice(equipmentIndex, 1);
-      }
+      // Item stays in inventory and equipment, only tools are spent
       const totalShield = equipment.reduce((sum, item) => sum + item.shield, 0);
 
       await this.prisma.user.update({
