@@ -164,7 +164,10 @@ export class ShopService {
 
     const balance = user.balance as { money: number; shield: number; tools: number, usdt: number };
 
-    if(toolQuantity > balance.money) {
+    // Calculate required USDT: 10 USDT = 200 tools, so 1 USDT = 20 tools
+    const requiredUsdt = toolQuantity / 20;
+
+    if(requiredUsdt > balance.usdt) {
       return{
         code: 400,
         message: 'Not enough USDT',
@@ -176,7 +179,7 @@ export class ShopService {
       data: {
         balance: {
           money: balance.money,
-          usdt: balance.usdt - toolQuantity,
+          usdt: balance.usdt - requiredUsdt,
           shield: balance.shield,
           tools: balance.tools + toolQuantity,
         },
@@ -185,7 +188,12 @@ export class ShopService {
 
     return{
       code: 200,
-      message: 'Money bought successfully',
+      message: 'Tools bought successfully',
+      data: {
+        toolsReceived: toolQuantity,
+        usdtSpent: requiredUsdt,
+        remainingUsdt: balance.usdt - requiredUsdt
+      }
     }
     
   }

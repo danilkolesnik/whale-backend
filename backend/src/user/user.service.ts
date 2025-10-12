@@ -161,8 +161,11 @@ export class UserService {
     // Initialize or increment attempt counter
     item.attempts = (item.attempts || 0) + 1;
 
-    // Fixed success rate: 10% success, 90% failure
-    const isSuccessful = Math.random() < 0.1;
+    // Dynamic success rate based on level
+    // Levels 1-50: 50% success, 50% failure
+    // Levels 51+: 10% success, 90% failure
+    const successRate = currentLevel >= 50 ? 0.1 : 0.5;
+    const isSuccessful = Math.random() < successRate;
 
     if (isSuccessful) {
       item.level = currentLevel + 1;
