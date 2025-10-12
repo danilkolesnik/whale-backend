@@ -43,27 +43,27 @@ export default function WhaleComponent() {
         setSelectedItem(item);
     };
 
-    const putOnItem = async (item: Item) => {
-        const currentItem = equipment[item.type];
-        if(item.type === 'Armor'){
-            setArmorItem(item);
-        } else if(item.type === 'Helmet'){
-            setHelmetItem(item);
-        } else if(item.type === 'Leg'){
-            setLegItem(item);
-        }
+    // const putOnItem = async (item: Item) => {
+    //     const currentItem = equipment[item.type];
+    //     if(item.type === 'Armor'){
+    //         setArmorItem(item);
+    //     } else if(item.type === 'Helmet'){
+    //         setHelmetItem(item);
+    //     } else if(item.type === 'Leg'){
+    //         setLegItem(item);
+    //     }
 
-        toast.success(t('whaleComponent.putOnSuccess'));
-        try {
-            if(currentItem){
-                await unequipMutation.mutateAsync(currentItem.id);
-            }
-            await equipMutation.mutateAsync(item.id);
-            await queryClient.invalidateQueries({queryKey: ['user']});
-        } catch (error) {
-          console.log(error);
-        }
-    };
+    //     toast.success(t('whaleComponent.putOnSuccess'));
+    //     try {
+    //         if(currentItem){
+    //             await unequipMutation.mutateAsync(currentItem.id);
+    //         }
+    //         await equipMutation.mutateAsync(item.id);
+    //         await queryClient.invalidateQueries({queryKey: ['user']});
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    // };
 
     useEffect(() => {
         if (equipmentStore) {
@@ -138,9 +138,19 @@ export default function WhaleComponent() {
                                         item = null;
                                 }
                                 return (
-                                    <div key={slot} className="size-14 bg-[#222930] relative  rounded-[10px] [box-shadow:0_0_2px_0_rgba(174,210,255,0.8),0_0_4px_0_rgba(174,210,255,0.4),0_0_8px_0_rgba(174,210,255,0.3),0_0_12px_0_rgba(174,210,255,0.4),0_0_20px_0_rgba(174,210,255,0.3)] flex items-center justify-center">
+                                    <div 
+                                        onClick={() => {
+                                            handleItemClick(item)
+                                            detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        }} 
+                                        key={slot} 
+                                        className={`
+                                            size-14 relative  rounded-[10px] [box-shadow:0_0_2px_0_rgba(174,210,255,0.8),0_0_4px_0_rgba(174,210,255,0.4),0_0_8px_0_rgba(174,210,255,0.3),0_0_12px_0_rgba(174,210,255,0.4),0_0_20px_0_rgba(174,210,255,0.3)] flex items-center justify-center
+                                            ${selectedItem?.id === item?.id ? 'bg-[#AED2FF]': 'bg-[#222930]'}
+                                        `}
+                                    >
                                         <div className="flex justify-center w-full absolute top-[2px] z-10">
-                                            <span className="text-[#E4F1FF] font-doppio font-normal text-[8px] [text-shadow:0_0_1_rgba(0, 0, 0, 1),0_0_4_rgba(0, 0, 0, 1)]">
+                                            <span className={`${selectedItem?.id === item?.id ? 'text-[#000]' : 'text-[#E4F1FF]'} font-normal font-doppio text-[8px] [text-shadow:0_0_1_rgba(0, 0, 0, 1),0_0_4_rgba(0, 0, 0, 1)]`}>
                                                 {slot}
                                             </span>
                                         </div>
@@ -178,23 +188,15 @@ export default function WhaleComponent() {
                             <div className="h-[77px] w-[72px] bg-[#AED2FF] rounded-[15px] [shadow:0_0_20px_0_rgba(109, 160, 225, 0.2),0_0_14px_0_rgba(109, 160, 225, 0.2),0_0_3px_0_rgba(174, 210, 255, 0.15)]">
                                 <InventoryItem textSize={10} item={selectedItem!}/>
                             </div>
-                            <div className="flex flex-col gap-1.5 ">
-                                <span className="w-25 h-4 font-encode font-semibold text-[14px] text-[#E4F1FF]">
+                            <div className="flex flex-col justify-between">
+                                <span className="text-center font-encode font-semibold text-[14px] text-[#E4F1FF]">
                                     {selectedItem.name}
                                 </span>
-                                <p className="w-[170px] h-6 font-encode font-normal text-[8px] leading-2.5 text-[#AED2FF] tracking-wide">
+                                <p className="text-center font-encode font-normal text-[8px] leading-2.5 text-[#AED2FF] tracking-wide">
                                     {t('whaleComponent.level')} {selectedItem.level} {selectedItem.type}. {t('whaleComponent.shield')} {selectedItem.shield}.
                                 </p>
                                 <div className="flex gap-1 w-[170px] h-6">
                                     <ArmourImprovement item={selectedItem} setSelectedItem={setSelectedItem} />
-                                    <button  
-                                        className="w-20 h-6 bg-[#6DA0E1] rounded-[10px] flex items-center justify-center"
-                                        onClick={() => putOnItem(selectedItem)} 
-                                    >             
-                                        <span className="font-doppio font-normal text-[14px] text-[#222930] h-[22px]">
-                                            {t('whaleComponent.putOn')}
-                                        </span>
-                                    </button>
                                 </div>
                             </div>
                         </div>

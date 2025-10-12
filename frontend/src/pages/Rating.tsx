@@ -82,11 +82,11 @@ export default function Rating() {
                         <p className="font-encode text-[10px] text-[#E4F1FF]/80 font-normal">{t('rating.dontMissChance')}</p>
                         <RatingInfo />
                     </div>
-                    <button onClick={addToRating} disabled={userExis} className={`${userExis ? "opacity-50" : ""} bg-[#6DA0E1] shadow-[0_0_2px_0_rgba(109,160,225,0.6),0_0_6px_0_rgba(109,160,225,0.6),0_0_16px_0_rgba(109,160,225,0.4)] h-8 rounded-2xl mt-[14px] flex items-center justify-center`}>
+                    {/* <button onClick={addToRating} disabled={userExis} className={`${userExis ? "opacity-50" : ""} bg-[#6DA0E1] shadow-[0_0_2px_0_rgba(109,160,225,0.6),0_0_6px_0_rgba(109,160,225,0.6),0_0_16px_0_rgba(109,160,225,0.4)] h-8 rounded-2xl mt-[14px] flex items-center justify-center`}>
                         <span className="font-encode text-[12px] font-semibold text-[#121318] text-center px-[10px]">
                             {t('rating.joinNow')}
                         </span>
-                    </button>
+                    </button> */}
             </div>
         </Card>
         <GlowCard>

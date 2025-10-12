@@ -87,7 +87,7 @@ export default function ArmourImprovement({ item,setSelectedItem }: ArmourImprov
     return (
         <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <button className="w-20 h-6 bg-[#6DA0E133] border border-[#AED2FF] rounded-[10px] flex items-center justify-center outline-none focus:outline-none">
+                    <button className="w-full h-6 bg-[#6DA0E133] border border-[#AED2FF] rounded-[10px] flex items-center justify-center outline-none focus:outline-none">
                         <span className="font-doppio font-normal text-[14px] text-[#AED2FF] h-[22px]">
                             {t('whaleComponent.upgrade')}
                         </span>

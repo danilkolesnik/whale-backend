@@ -39,9 +39,9 @@ const Navbar = React.memo(({balance}: NavbarProps) => {
                 onClick={() => setOpen(true)}
             >
                     <UsdtIcon />
-                    {/* <div className="flex items-end justify-center">
+                    <div className="flex items-end justify-center">
                             <span className="font-doppio text-[12px] text-[#E4F1FF] h-[17px] w-fit">{usdt.toFixed(2)}</span>
-                    </div> */}
+                    </div>
                     <PlusIcon />
                 </button>
         
