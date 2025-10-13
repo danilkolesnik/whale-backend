@@ -53,7 +53,7 @@ export class RatingService {
     const eligibleUsers = allUsers.filter(user => {
       try {
         const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
-        return balance && typeof balance === 'object' && 'shield' in balance && balance.shield > 10;
+        return balance && typeof balance === 'object' && 'shield' in balance && balance.shield > 2;
       } catch (error) {
         console.error('Invalid balance format for user:', user.telegramId);
         return false;
@@ -200,7 +200,7 @@ export class RatingService {
     const eligibleUsers = allUsers.filter(user => {
       try {
         const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
-        return balance && typeof balance === 'object' && 'shield' in balance && balance.shield > 10;
+        return balance && typeof balance === 'object' && 'shield' in balance && balance.shield > 2;
       } catch (error) {
         console.error('Invalid balance format for user:', user.telegramId);
         return false;
