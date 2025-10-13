@@ -107,6 +107,7 @@ export class RatingService {
 
     console.log('Top users:', top100Users);
     console.log('Total eligible users:', allEligibleUserIds.length);
+    console.log('All eligible user IDs:', allEligibleUserIds);
     
 
     for (let i = 0; i < top100Users.length; i++) {
@@ -136,8 +137,8 @@ export class RatingService {
         where: { telegramId: top100Users[i].telegramId },
         data: {
           balance: {
-            money: money + reward,
-            tools: top100Users[i].tools,
+            money: top100Users[i].money,
+            tools: top100Users[i].tools + reward,
             shield: top100Users[i].shield,
             usdt: top100Users[i].usdt
           }
