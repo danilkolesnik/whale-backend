@@ -29,7 +29,7 @@ export default function BuyTools({ open, setOpen }: Props) {
     const buyToolsMutation = useBuyTools();
 
     useEffect(() => {
-        setConvertedQuantity(Number(quantity) * 1);
+        setConvertedQuantity(Number(quantity) * 0.05);
     }, [quantity]);
 
     const handleQuantity = (type: string) => {
@@ -160,7 +160,7 @@ export default function BuyTools({ open, setOpen }: Props) {
                               </div>
                             </div>
                             </div>
-                            <div className="py-1.5 w-full rounded-[30px] h-full bg-[#6DA0E133] w-full mt-3">
+                            <div className="py-1.5 w-full rounded-[30px] h-full bg-[#6DA0E133] mt-3">
                                 <p className="text-[#E4F1FF] text-center font-medium font-encode text-[10px] w-[220px] m-auto">
                                     {t('buyTools.quantitySelectionPlaceholder')}
                                 </p>

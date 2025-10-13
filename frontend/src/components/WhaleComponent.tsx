@@ -145,7 +145,7 @@ export default function WhaleComponent() {
                                         }} 
                                         key={slot} 
                                         className={`
-                                            size-14 relative  rounded-[10px] [box-shadow:0_0_2px_0_rgba(174,210,255,0.8),0_0_4px_0_rgba(174,210,255,0.4),0_0_8px_0_rgba(174,210,255,0.3),0_0_12px_0_rgba(174,210,255,0.4),0_0_20px_0_rgba(174,210,255,0.3)] flex items-center justify-center
+                                            size-16 relative  rounded-[10px] [box-shadow:0_0_2px_0_rgba(174,210,255,0.8),0_0_4px_0_rgba(174,210,255,0.4),0_0_8px_0_rgba(174,210,255,0.3),0_0_12px_0_rgba(174,210,255,0.4),0_0_20px_0_rgba(174,210,255,0.3)] flex items-center justify-center
                                             ${selectedItem?.id === item?.id ? 'bg-[#AED2FF]': 'bg-[#222930]'}
                                         `}
                                     >
@@ -184,7 +184,7 @@ export default function WhaleComponent() {
                     </div> */}
                     {selectedItem ? (
                         <div ref={detailRef} className="w-full bg-[#222930] rounded-[15px] h-[112px] mt-4 max-w-[315px] mx-auto">
-                        <div className="flex gap-2 p-[18px]">
+                        <div className="flex p-[18px] justify-around">
                             <div className="h-[77px] w-[72px] bg-[#AED2FF] rounded-[15px] [shadow:0_0_20px_0_rgba(109, 160, 225, 0.2),0_0_14px_0_rgba(109, 160, 225, 0.2),0_0_3px_0_rgba(174, 210, 255, 0.15)]">
                                 <InventoryItem textSize={10} item={selectedItem!}/>
                             </div>
