@@ -91,8 +91,6 @@ export class RatingService {
       };
     });
 
-    users.sort((a, b) => b.shield - a.shield);
-
     const top100Users = users.slice(0, 9);
 
     // Создаем новый раунд рейтинга со всеми отфильтрованными пользователями
