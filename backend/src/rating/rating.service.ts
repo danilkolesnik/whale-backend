@@ -193,11 +193,30 @@ export class RatingService {
       await this.prisma.rating.deleteMany();
     }
 
+    // Получаем всех пользователей с щитом больше 10
+    const allUsers = await this.prisma.user.findMany();
+    
+    // Фильтруем пользователей с щитом больше 10
+    const eligibleUsers = allUsers.filter(user => {
+      try {
+        const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
+        return balance && typeof balance === 'object' && 'shield' in balance && balance.shield > 10;
+      } catch (error) {
+        console.error('Invalid balance format for user:', user.telegramId);
+        return false;
+      }
+    });
+
+    // Получаем ID всех подходящих пользователей
+    const eligibleUserIds = eligibleUsers.map(user => user.telegramId);
+
     await this.prisma.rating.create({
       data: {
-        users: [],
+        users: eligibleUserIds,
         roundCreatedAt: new Date()
       }
     });
+
+    console.log('Created new rating round with', eligibleUserIds.length, 'eligible users');
   } 
 } 
