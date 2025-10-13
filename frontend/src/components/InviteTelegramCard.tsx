@@ -1,6 +1,7 @@
 import user_invite from "../assets/icons/user-invite.svg"
 import user_premium_invite from "../assets/icons/user-invitePrem.svg"
 import { useTranslation } from 'react-i18next';
+import { ToolsIcon} from "@/assets/icons/icons"
 import money from "../assets/icons/tools/money.png";
 
 
@@ -16,8 +17,10 @@ export default function InviteTelegramCards() {
                     {t('inviteTelegram.inviteFriends')}
                 </p>
                 <div className="h-[20px] flex items-center gap-[2px]">
-                    <span className="font-encode text-[10px] font-medium  text-[#6DA0E1]">+1000</span>
-                    <img src={money} alt="tools" className="w-[12px]" />
+                    <span className="font-encode text-[10px] font-medium  text-[#6DA0E1]">+100</span>
+                    <span className="scale-[0.7]">
+                        <ToolsIcon />
+                    </span>
                 </div>
             </div>
         </div>
@@ -28,8 +31,10 @@ export default function InviteTelegramCards() {
                     {t('inviteTelegram.invitePremiumFriends')}
                 </p>
                 <div className="h-[20px] flex items-center gap-[2px]">
-                    <span className="font-encode text-[10px] font-medium  text-[#6DA0E1]">+2000</span>
-                    <img src={money} alt="tools" className="w-[12px]" />
+                    <span className="font-encode text-[10px] font-medium  text-[#6DA0E1]">+200</span>
+                    <span className="scale-[0.7]">
+                        <ToolsIcon />
+                    </span>
                 </div>
             </div>
         </div>
