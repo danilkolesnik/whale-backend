@@ -137,7 +137,7 @@ export class RatingService {
         where: { telegramId: top100Users[i].telegramId },
         data: {
           balance: {
-            money: top100Users[i].money,
+            money: money,
             tools: top100Users[i].tools + reward,
             shield: top100Users[i].shield,
             usdt: top100Users[i].usdt
