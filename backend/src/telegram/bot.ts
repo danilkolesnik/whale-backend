@@ -151,7 +151,8 @@ bot.on('callback_query', async (ctx) => {
           [{ text: '👥 Користувачі', callback_data: 'users_menu' }],
           [{ text: '🛍️ Магазин', callback_data: 'shop_menu' }],
           [{ text: '📋 Завдання', callback_data: 'tasks_menu' }],
-          [{ text: '⚙️ Налаштування прокачки', callback_data: 'upgrade_menu' }]
+          [{ text: '⚙️ Налаштування прокачки', callback_data: 'upgrade_menu' }],
+          [{ text: '🏅 Рейтинг', callback_data: 'rating_menu' }]
         ]
       }
     });
