@@ -99,6 +99,14 @@ model Rating {
   roundCreatedAt DateTime @default(now())
 }
 
+model RatingReward {
+  id        Int      @id @default(autoincrement())
+  place     Int      @unique
+  reward    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Transaction {
   id            Int      @id @default(autoincrement())
   telegramId    String

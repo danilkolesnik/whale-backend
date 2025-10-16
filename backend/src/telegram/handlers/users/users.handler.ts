@@ -59,7 +59,7 @@ export async function handleUpdateUserMenu(ctx: BotContext) {
           [{ text: '🛡️ Оновити щит', callback_data: 'update_user_shield' }],
           [{ text: '💎 Оновити USDT', callback_data: 'update_user_usdt' }],
           [{ text: '🔧 Оновити інструменти', callback_data: 'update_user_tools' }],
-          [{ text: '🎒 Оновити предмети за типом', callback_data: 'update_items_by_type_menu' }],
+          [{ text: '🎒 Оновити параметри предметів', callback_data: 'update_items_by_type_menu' }],
           [{ text: '🔙 Назад', callback_data: 'users_menu' }]
         ]
       }
@@ -72,7 +72,7 @@ export async function handleUpdateUserMenu(ctx: BotContext) {
           [{ text: '🛡️ Оновити щит', callback_data: 'update_user_shield' }],
           [{ text: '💎 Оновити USDT', callback_data: 'update_user_usdt' }],
           [{ text: '🔧 Оновити інструменти', callback_data: 'update_user_tools' }],
-          [{ text: '🎒 Оновити предмети за типом', callback_data: 'update_items_by_type_menu' }],
+          [{ text: '🎒 Оновити параметри предметів', callback_data: 'update_items_by_type_menu' }],
           [{ text: '🔙 Назад', callback_data: 'users_menu' }]
         ]
       }

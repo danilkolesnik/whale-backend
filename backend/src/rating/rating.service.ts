@@ -47,7 +47,6 @@ export class RatingService {
 
     // Получаем всех пользователей с щитом больше 10
     const allUsers = await this.prisma.user.findMany();
-    let topUsers: any[] = [];
 
     // Фильтруем пользователей с щитом больше 10
     const eligibleUsers = allUsers.filter(user => {
@@ -91,7 +90,10 @@ export class RatingService {
       };
     });
 
-    const top100Users = users.slice(0, 9);
+    // сортируем по количеству щита по убыванию
+    users.sort((a, b) => (b.shield || 0) - (a.shield || 0));
+    // топ-10 пользователей
+    const topUsers = users.slice(0, 10);
 
     // Создаем новый раунд рейтинга со всеми отфильтрованными пользователями
     const allEligibleUserIds = users.map(user => user.telegramId);
@@ -103,42 +105,41 @@ export class RatingService {
       }
     });
 
-    console.log('Top users:', top100Users);
+    console.log('Top users:', topUsers);
     console.log('Total eligible users:', allEligibleUserIds.length);
     console.log('All eligible user IDs:', allEligibleUserIds);
     
 
-    for (let i = 0; i < top100Users.length; i++) {
-      let reward = 0;
-      if (i === 0) reward = 10000;
-      else if (i === 1) reward = 9000;
-      else if (i === 2) reward = 8000;
-      else if (i === 3) reward = 7000;
-      else if (i === 4) reward = 6000;
-      else if (i === 5) reward = 5000;
-      else if (i === 6) reward = 4000;
-      else if (i === 7) reward = 3000;
-      else if (i === 8) reward = 2000;
-      else if (i === 9) reward = 1000;
+    // получаем призы из БД
+    const rewards = await this.prisma.ratingReward.findMany({
+      orderBy: { place: 'asc' }
+    });
+    const placeToReward = new Map<number, number>(
+      rewards.map(r => [r.place, r.reward])
+    );
+
+    for (let i = 0; i < topUsers.length; i++) {
+      const place = i + 1;
+      const reward = placeToReward.get(place) || 0;
 
       let money = 0;
       try {
-        const balance = top100Users[i].balance as { money: number; shield: number; tools: number, usdt: number };
+        const balance = topUsers[i].balance as { money: number; shield: number; tools: number, usdt: number };
         if (balance && typeof balance === 'object' && 'money' in balance) {
           money = balance.money;
         }
       } catch (error) {
-        console.error('Invalid balance format for user:', top100Users[i].telegramId);
+        console.error('Invalid balance format for user:', topUsers[i].telegramId);
       }
 
       await this.prisma.user.update({
-        where: { telegramId: top100Users[i].telegramId },
+        where: { telegramId: topUsers[i].telegramId },
         data: {
           balance: {
             money: money,
-            tools: top100Users[i].tools + reward,
-            shield: top100Users[i].shield,
-            usdt: top100Users[i].usdt
+            tools: topUsers[i].tools + reward,
+            shield: topUsers[i].shield,
+            usdt: topUsers[i].usdt
           }
         }
       });
