@@ -147,45 +147,30 @@ export class RatingService {
   }
 
   async getRatingList() {
-    const ratingRounds = await this.prisma.rating.findMany();
-    const userIds = ratingRounds.flatMap(round => round.users as string[]);
-    const users = await this.prisma.user.findMany({
-      where: {
-        telegramId: { in: userIds }
-      }
-    });
-    const userMap = new Map(users.map(user => [user.telegramId, user]));
+    const allUsers = await this.prisma.user.findMany();
 
-    return ratingRounds.map(round => {
-      const roundUsers = (round.users as string[]).map(telegramId => {
-        const user = userMap.get(telegramId) as any;
-        if (user) {
-          let shield = 0;
-          let tools = 0;
-          const balance = user.balance;
-          if (balance && typeof balance === 'object') {
-            if ('shield' in balance && typeof balance.shield === 'number') {
-              shield = balance.shield;
-            }
-            if ('tools' in balance && typeof balance.tools === 'number') {
-              tools = balance.tools;
-            }
-          }
-          return {
-            displayName: user.displayName,
-            telegramId: user.telegramId,
-            shield,
-            tools
-          };
+    const ratingUsers = allUsers.map(user => {
+      let shield = 0;
+      let tools = 0;
+      const balance = user.balance as any;
+      if (balance && typeof balance === 'object') {
+        if ('shield' in balance && typeof balance.shield === 'number') {
+          shield = balance.shield;
         }
-        return { telegramId };
-      });
-      roundUsers.sort((a, b) => (b.shield || 0) - (a.shield || 0));
+        if ('tools' in balance && typeof balance.tools === 'number') {
+          tools = balance.tools;
+        }
+      }
       return {
-        ...round,
-        users: roundUsers
+        displayName: user.displayName,
+        telegramId: user.telegramId,
+        shield,
+        tools
       };
     });
+
+    ratingUsers.sort((a, b) => (b.shield || 0) - (a.shield || 0));
+    return ratingUsers;
   }
 
   async createRating() {
