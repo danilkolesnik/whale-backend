@@ -29,6 +29,14 @@ export interface SessionData {
   waitingForTools?: boolean;
   waitingForToolsValue?: boolean;
   updateToolsTelegramId?: string;
+
+  // === Добавлено для обновления предметов ===
+  waitingForItemTelegramId?: boolean;
+  waitingForItemId?: boolean;
+  waitingForItemValue?: boolean;
+  updateItemTelegramId?: string;
+  updateItemId?: number;
+  itemUpdateType?: 'level' | 'shield';
 }
 
 export type BotContext = Context & {

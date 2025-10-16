@@ -1,6 +1,6 @@
 import { Bot, session } from 'grammy';
 import { BotContext } from './handlers/types';
-import { handleUsersMenu, handleViewUserMenu, handleUpdateUserMenu, handleGetAllUsers, handleUserInput, handleUpdateUserMoney, handleUpdateUserShield, handleUpdateUserUsdt, handleUpdateUserTools, handleUserTextInput } from './handlers/users/users.handler';
+import { handleUsersMenu, handleViewUserMenu, handleUpdateUserMenu, handleGetAllUsers, handleUserInput, handleUpdateUserMoney, handleUpdateUserShield, handleUpdateUserUsdt, handleUpdateUserTools, handleUpdateItemMenu, handleUpdateItemLevel, handleUpdateItemShield, handleUserTextInput } from './handlers/users/users.handler';
 import { handleShopMenu, handleGetShopItems, handleCreateShopItem, handleShopItemInput } from './handlers/shop/shop.handler';
 import { handleTasksMenu, handleCreateTaskMenu, handleCreateTaskSubscription, handleCreateTaskInvite, handleCreateTaskExternalSub, handleGetAllTasks, handleTaskInput } from './handlers/tasks/tasks.handler';
 import { handleUpgradeMenu, handleViewUpgradeSettings, handleCreateUpgradeSettings, handleEditUpgradeSettings, handleResetSequenceMenu, handleUpgradeInput, handleResetSequence } from './handlers/upgrade/upgrade.handler';
@@ -62,6 +62,12 @@ bot.on('callback_query', async (ctx) => {
     await handleUpdateUserUsdt(ctx);
   } else if (callbackData === 'update_user_tools') {
     await handleUpdateUserTools(ctx);
+  } else if (callbackData === 'update_item_menu') {
+    await handleUpdateItemMenu(ctx);
+  } else if (callbackData === 'update_item_level') {
+    await handleUpdateItemLevel(ctx);
+  } else if (callbackData === 'update_item_shield') {
+    await handleUpdateItemShield(ctx);
   }
 
   // Shop menu
@@ -135,7 +141,8 @@ bot.on('message:text', async (ctx) => {
   if (session.waitingForMoney || session.waitingForMoneyValue || 
       session.waitingForShield || session.waitingForShieldValue ||
       session.waitingForUsdt || session.waitingForUsdtValue ||
-      session.waitingForTools || session.waitingForToolsValue) {
+      session.waitingForTools || session.waitingForToolsValue ||
+      session.waitingForItemTelegramId || session.waitingForItemId || session.waitingForItemValue) {
     await handleUserTextInput(ctx);
     return;
   }
@@ -144,7 +151,8 @@ bot.on('message:text', async (ctx) => {
     if (!(session.waitingForMoney || session.waitingForMoneyValue || 
           session.waitingForShield || session.waitingForShieldValue ||
           session.waitingForUsdt || session.waitingForUsdtValue ||
-          session.waitingForTools || session.waitingForToolsValue)) {
+          session.waitingForTools || session.waitingForToolsValue ||
+          session.waitingForItemTelegramId || session.waitingForItemId || session.waitingForItemValue)) {
       await handleUserInput(ctx);
     }
   } else if (session.itemType) {
