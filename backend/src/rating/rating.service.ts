@@ -149,31 +149,26 @@ export class RatingService {
   async getRatingList() {
     const ratingRounds = await this.prisma.rating.findMany();
     const allUsers = await this.prisma.user.findMany();
-    const userMap = new Map(allUsers.map(user => [user.telegramId, user]));
 
     return ratingRounds.map(round => {
-      const roundUsers = (round.users as string[]).map(telegramId => {
-        const user = userMap.get(telegramId) as any;
-        if (user) {
-          let shield = 0;
-          let tools = 0;
-          const balance = user.balance;
-          if (balance && typeof balance === 'object') {
-            if ('shield' in balance && typeof balance.shield === 'number') {
-              shield = balance.shield;
-            }
-            if ('tools' in balance && typeof balance.tools === 'number') {
-              tools = balance.tools;
-            }
+      const roundUsers = allUsers.map((user: any) => {
+        let shield = 0;
+        let tools = 0;
+        const balance = user.balance;
+        if (balance && typeof balance === 'object') {
+          if ('shield' in balance && typeof balance.shield === 'number') {
+            shield = balance.shield;
           }
-          return {
-            displayName: user.displayName,
-            telegramId: user.telegramId,
-            shield,
-            tools
-          };
+          if ('tools' in balance && typeof balance.tools === 'number') {
+            tools = balance.tools;
+          }
         }
-        return { telegramId };
+        return {
+          displayName: user.displayName,
+          telegramId: user.telegramId,
+          shield,
+          tools
+        };
       });
       roundUsers.sort((a, b) => (b.shield || 0) - (a.shield || 0));
       return {
