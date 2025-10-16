@@ -106,7 +106,7 @@ services:
       dockerfile: Dockerfile
     container_name: whale-bot
     environment:
-      - TELEGRAM_BOT_TOKEN=7738656789:AAFKiGGh_UFLg29NIIBFs7G5PRpbrMpdu7k
+      - TELEGRAM_BOT_TOKEN=8036987446:AAFiY_q4TVpZKm2sQB32JJbIpKpzxsL0aZs
       - NODE_ENV=development
     volumes:
       - ./backend:/app
