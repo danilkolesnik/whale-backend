@@ -52,6 +52,10 @@ export interface SessionData {
     useSequence?: boolean;
     sequence?: boolean[];
   };
+  // Rating rewards editing
+  waitingForRewardPlace?: boolean;
+  waitingForRewardAmount?: boolean;
+  rewardPlace?: number;
 }
 
 export type BotContext = Context & {

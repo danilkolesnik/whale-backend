@@ -4,6 +4,7 @@ import { handleUsersMenu, handleViewUserMenu, handleUpdateUserMenu, handleGetAll
 import { handleShopMenu, handleGetShopItems, handleCreateShopItem, handleShopItemInput } from './handlers/shop/shop.handler';
 import { handleTasksMenu, handleCreateTaskMenu, handleCreateTaskSubscription, handleCreateTaskInvite, handleCreateTaskExternalSub, handleGetAllTasks, handleTaskInput } from './handlers/tasks/tasks.handler';
 import { handleUpgradeMenu, handleViewUpgradeSettings, handleCreateUpgradeSettings, handleEditUpgradeSettings, handleResetSequenceMenu, handleUpgradeInput, handleResetSequence } from './handlers/upgrade/upgrade.handler';
+import { handleRatingMenu, handleViewRewards, handleSetRewardPrompt, handleRatingTextInput } from './handlers/rating/rating.handler';
 
 const bot = new Bot<BotContext>(process.env.TELEGRAM_BOT_TOKEN || '');
 
@@ -33,7 +34,8 @@ bot.command('admin', async (ctx) => {
         [{ text: '👥 Користувачі', callback_data: 'users_menu' }],
         [{ text: '🛍️ Магазин', callback_data: 'shop_menu' }],
         [{ text: '📋 Завдання', callback_data: 'tasks_menu' }],
-        [{ text: '⚙️ Налаштування прокачки', callback_data: 'upgrade_menu' }]
+        [{ text: '⚙️ Налаштування прокачки', callback_data: 'upgrade_menu' }],
+        [{ text: '🏅 Рейтинг', callback_data: 'rating_menu' }]
       ]
     }
   });
@@ -132,6 +134,15 @@ bot.on('callback_query', async (ctx) => {
     await handleResetSequence(ctx, levelRange);
   }
 
+  // Rating menu
+  else if (callbackData === 'rating_menu') {
+    await handleRatingMenu(ctx);
+  } else if (callbackData === 'rating_view_rewards') {
+    await handleViewRewards(ctx);
+  } else if (callbackData === 'rating_set_reward') {
+    await handleSetRewardPrompt(ctx);
+  }
+
   // Navigation
   else if (callbackData === 'back_to_main') {
     await ctx.editMessageText('Головне меню:', {
@@ -155,7 +166,12 @@ bot.on('message:text', async (ctx) => {
       session.waitingForUsdt || session.waitingForUsdtValue ||
       session.waitingForTools || session.waitingForToolsValue ||
       session.waitingForItemTelegramId || session.waitingForItemId || session.waitingForItemValue ||
-      session.waitingForItemsByTypeTelegramId || session.waitingForItemsByTypeParameter || session.waitingForItemsByTypeValue) {
+      session.waitingForItemsByTypeTelegramId || session.waitingForItemsByTypeParameter || session.waitingForItemsByTypeValue ||
+      session.waitingForRewardPlace || session.waitingForRewardAmount) {
+    if (session.waitingForRewardPlace || session.waitingForRewardAmount) {
+      await handleRatingTextInput(ctx);
+      return;
+    }
     await handleUserTextInput(ctx);
     return;
   }
