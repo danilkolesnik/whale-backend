@@ -315,7 +315,7 @@ export class UserService {
     };
   }
 
-  async updateUserParameters(telegramId: string, updateData: Partial<{ money: number; shield: number }>) {
+  async updateUserParameters(telegramId: string, updateData: Partial<{ money: number; shield: number; usdt: number; tools: number }>) {
     const user = await this.prisma.user.findUnique({
       where: { telegramId },
     });
@@ -329,8 +329,8 @@ export class UserService {
       where: { telegramId },
       data: {
         balance: {
-          usdt: (user.balance as any).usdt,
-          tools: (user.balance as any).tools,
+          usdt: updateData.usdt !== undefined ? updateData.usdt : (user.balance as any).usdt,
+          tools: updateData.tools !== undefined ? updateData.tools : (user.balance as any).tools,
           money: updateData.money !== undefined ? updateData.money : (user.balance as any).money,
           shield: updateData.shield !== undefined ? updateData.shield : (user.balance as any).shield,
         },

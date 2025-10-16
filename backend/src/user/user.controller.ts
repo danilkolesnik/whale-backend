@@ -477,7 +477,7 @@ export class UserController {
   @Post('update-parameters')
   @ApiOperation({ 
     summary: 'Update user parameters',
-    description: 'Updates user\'s money and shield balance. Useful for admin operations or game events.'
+    description: 'Updates user\'s money, shield, usdt and tools balance. Useful for admin operations or game events.'
   })
   @ApiBody({
     schema: {
@@ -499,6 +499,18 @@ export class UserController {
           type: 'number',
           description: 'New shield balance (optional)',
           example: 50,
+          minimum: 0
+        },
+        usdt: {
+          type: 'number',
+          description: 'New USDT balance (optional)',
+          example: 100,
+          minimum: 0
+        },
+        tools: {
+          type: 'number',
+          description: 'New tools balance (optional)',
+          example: 25,
           minimum: 0
         }
       }
@@ -528,11 +540,13 @@ export class UserController {
     }
   })
   async updateUserParameters(
-    @Body() body: { telegramId: string; money?: number; shield?: number }
+    @Body() body: { telegramId: string; money?: number; shield?: number; usdt?: number; tools?: number }
   ) {
     return this.userService.updateUserParameters(body.telegramId, {
       money: body.money,
       shield: body.shield,
+      usdt: body.usdt,
+      tools: body.tools,
     });
   }
 

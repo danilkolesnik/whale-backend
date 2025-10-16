@@ -1,14 +1,14 @@
 import { Context } from 'grammy';
 import axios from 'axios';
 import { API_URL } from '../../../utils/constant';
-import { BotContext } from '../../types';
+import { BotContext } from '../types';
 
 export async function handleUsersMenu(ctx: BotContext) {
   if (ctx.callbackQuery) {
     await ctx.editMessageText('Меню користувачів:', {
       reply_markup: {
         inline_keyboard: [
-          [{ text: '📋 Список всіх користувачів', callback_data: 'get_all_users' }],
+          [{ text: '📊 Статистика користувачів', callback_data: 'get_all_users' }],
           [{ text: '🔍 Переглянути користувача', callback_data: 'view_user_menu' }],
           [{ text: '💰 Оновити параметри', callback_data: 'update_user_menu' }],
           [{ text: '🔙 Назад', callback_data: 'back_to_main' }]
@@ -19,7 +19,7 @@ export async function handleUsersMenu(ctx: BotContext) {
     await ctx.reply('Меню користувачів:', {
       reply_markup: {
         inline_keyboard: [
-          [{ text: '📋 Список всіх користувачів', callback_data: 'get_all_users' }],
+          [{ text: '📊 Статистика користувачів', callback_data: 'get_all_users' }],
           [{ text: '🔍 Переглянути користувача', callback_data: 'view_user_menu' }],
           [{ text: '💰 Оновити параметри', callback_data: 'update_user_menu' }],
           [{ text: '🔙 Назад', callback_data: 'back_to_main' }]
@@ -57,6 +57,8 @@ export async function handleUpdateUserMenu(ctx: BotContext) {
         inline_keyboard: [
           [{ text: '💰 Оновити гроші', callback_data: 'update_user_money' }],
           [{ text: '🛡️ Оновити щит', callback_data: 'update_user_shield' }],
+          [{ text: '💎 Оновити USDT', callback_data: 'update_user_usdt' }],
+          [{ text: '🔧 Оновити інструменти', callback_data: 'update_user_tools' }],
           [{ text: '🔙 Назад', callback_data: 'users_menu' }]
         ]
       }
@@ -67,6 +69,8 @@ export async function handleUpdateUserMenu(ctx: BotContext) {
         inline_keyboard: [
           [{ text: '💰 Оновити гроші', callback_data: 'update_user_money' }],
           [{ text: '🛡️ Оновити щит', callback_data: 'update_user_shield' }],
+          [{ text: '💎 Оновити USDT', callback_data: 'update_user_usdt' }],
+          [{ text: '🔧 Оновити інструменти', callback_data: 'update_user_tools' }],
           [{ text: '🔙 Назад', callback_data: 'users_menu' }]
         ]
       }
@@ -77,10 +81,10 @@ export async function handleUpdateUserMenu(ctx: BotContext) {
 export async function handleGetAllUsers(ctx: BotContext) {
   try {
     const users = await fetchUsers();
-    const usersList = users.map(user => `ID: ${String(user.telegramId)}\nІм'я: ${String(user.displayName)}`).join('\n\n');
+    const usersCount = users.length;
     
     if (ctx.callbackQuery) {
-      await ctx.editMessageText(`Список користувачів:\n\n${usersList}`, {
+      await ctx.editMessageText(`📊 Статистика користувачів:\n\n👥 Загальна кількість користувачів: ${usersCount}`, {
         reply_markup: {
           inline_keyboard: [
             [{ text: '🔙 Назад', callback_data: 'users_menu' }]
@@ -88,7 +92,7 @@ export async function handleGetAllUsers(ctx: BotContext) {
         }
       });
     } else {
-      await ctx.reply(`Список користувачів:\n\n${usersList}`, {
+      await ctx.reply(`📊 Статистика користувачів:\n\n👥 Загальна кількість користувачів: ${usersCount}`, {
         reply_markup: {
           inline_keyboard: [
             [{ text: '🔙 Назад', callback_data: 'users_menu' }]
@@ -139,6 +143,28 @@ export async function handleUpdateUserShield(ctx: BotContext) {
   });
 }
 
+export async function handleUpdateUserUsdt(ctx: BotContext) {
+  ctx.session.waitingForUsdt = true;
+  await ctx.editMessageText('Введіть Telegram ID користувача, якому потрібно оновити USDT:', {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+      ]
+    }
+  });
+}
+
+export async function handleUpdateUserTools(ctx: BotContext) {
+  ctx.session.waitingForTools = true;
+  await ctx.editMessageText('Введіть Telegram ID користувача, якому потрібно оновити інструменти:', {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+      ]
+    }
+  });
+}
+
 export async function handleUserInput(ctx: BotContext) {
   const telegramId = ctx.message?.text;
   if (!telegramId) {
@@ -156,8 +182,10 @@ export async function handleUserInput(ctx: BotContext) {
     const user = response.data.data;
     await ctx.reply(`
 Ім'я: ${user.displayName || 'Невідомо'}
-Баланс: ${user.balance.money || 0}
-Загальний щит: ${user.balance.shield || 0}
+💰 Гроші: ${user.balance.money || 0}
+🛡️ Загальний щит: ${user.balance.shield || 0}
+💎 USDT: ${user.balance.usdt || 0}
+🔧 Інструменти: ${user.balance.tools || 0}
 Инвентарь:
 ${user.inventory.map((item, index) => `
 ${index + 1}. Назва: ${item.name}
@@ -229,7 +257,7 @@ export async function handleUserTextInput(ctx: BotContext) {
         money
       });
       await ctx.reply('Гроші оновлено!', {
-        reply_markup: {
+       reply_markup: {
           inline_keyboard: [
             [{ text: '🔙 Назад', callback_data: 'users_menu' }]
           ]
@@ -309,6 +337,132 @@ export async function handleUserTextInput(ctx: BotContext) {
     }
     ctx.session.waitingForShieldValue = false;
     ctx.session.updateShieldTelegramId = undefined;
+    return;
+  }
+  // Обновление USDT
+  if (ctx.session.waitingForUsdt) {
+    const telegramId = ctx.message?.text;
+    if (!telegramId) {
+      await ctx.reply('Будь ласка, введіть коректний Telegram ID.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
+      return;
+    }
+    ctx.session.updateUsdtTelegramId = telegramId;
+    ctx.session.waitingForUsdt = false;
+    ctx.session.waitingForUsdtValue = true;
+    await ctx.reply('Введіть нову суму USDT:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+        ]
+      }
+    });
+    return;
+  }
+  if (ctx.session.waitingForUsdtValue) {
+    const usdt = Number(ctx.message?.text);
+    if (isNaN(usdt)) {
+      await ctx.reply('Будь ласка, введіть коректну суму.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
+      return;
+    }
+    const telegramId = ctx.session.updateUsdtTelegramId;
+    try {
+      await axios.post(`${API_URL}/user/update-parameters`, {
+        telegramId,
+        usdt
+      });
+      await ctx.reply('USDT оновлено!', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
+    } catch (e) {
+      await ctx.reply('Помилка при оновленні USDT.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
+    }
+    ctx.session.waitingForUsdtValue = false;
+    ctx.session.updateUsdtTelegramId = undefined;
+    return;
+  }
+  // Обновление инструментов
+  if (ctx.session.waitingForTools) {
+    const telegramId = ctx.message?.text;
+    if (!telegramId) {
+      await ctx.reply('Будь ласка, введіть коректний Telegram ID.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
+      return;
+    }
+    ctx.session.updateToolsTelegramId = telegramId;
+    ctx.session.waitingForTools = false;
+    ctx.session.waitingForToolsValue = true;
+    await ctx.reply('Введіть нову кількість інструментів:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+        ]
+      }
+    });
+    return;
+  }
+  if (ctx.session.waitingForToolsValue) {
+    const tools = Number(ctx.message?.text);
+    if (isNaN(tools)) {
+      await ctx.reply('Будь ласка, введіть коректне число.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
+      return;
+    }
+    const telegramId = ctx.session.updateToolsTelegramId;
+    try {
+      await axios.post(`${API_URL}/user/update-parameters`, {
+        telegramId,
+        tools
+      });
+      await ctx.reply('Інструменти оновлено!', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
+    } catch (e) {
+      await ctx.reply('Помилка при оновленні інструментів.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'users_menu' }]
+          ]
+        }
+      });
+    }
+    ctx.session.waitingForToolsValue = false;
+    ctx.session.updateToolsTelegramId = undefined;
     return;
   }
 }

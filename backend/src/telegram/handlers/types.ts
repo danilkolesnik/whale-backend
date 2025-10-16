@@ -14,6 +14,19 @@ export interface SessionData {
   itemShield?: number;
   itemLevel?: number;
   itemPrice?: number;
+  // === Добавлено для обновления параметров пользователя ===
+  waitingForMoney?: boolean;
+  waitingForMoneyValue?: boolean;
+  updateMoneyTelegramId?: string;
+  waitingForShield?: boolean;
+  waitingForShieldValue?: boolean;
+  updateShieldTelegramId?: string;
+  waitingForUsdt?: boolean;
+  waitingForUsdtValue?: boolean;
+  updateUsdtTelegramId?: string;
+  waitingForTools?: boolean;
+  waitingForToolsValue?: boolean;
+  updateToolsTelegramId?: string;
   // Upgrade settings fields
   upgradeAction?: string;
   upgradeStep?: string;

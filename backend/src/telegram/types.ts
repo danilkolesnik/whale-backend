@@ -20,6 +20,15 @@ export interface SessionData {
   waitingForShield?: boolean;
   waitingForShieldValue?: boolean;
   updateShieldTelegramId?: string;
+
+  // === Добавлено для обновления USDT и инструментов ===
+  waitingForUsdt?: boolean;
+  waitingForUsdtValue?: boolean;
+  updateUsdtTelegramId?: string;
+
+  waitingForTools?: boolean;
+  waitingForToolsValue?: boolean;
+  updateToolsTelegramId?: string;
 }
 
 export type BotContext = Context & {

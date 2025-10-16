@@ -1,6 +1,6 @@
 import { Bot, session } from 'grammy';
 import { BotContext } from './handlers/types';
-import { handleUsersMenu, handleViewUserMenu, handleUpdateUserMenu, handleGetAllUsers, handleUserInput, handleUpdateUserMoney, handleUpdateUserShield, handleUserTextInput } from './handlers/users/users.handler';
+import { handleUsersMenu, handleViewUserMenu, handleUpdateUserMenu, handleGetAllUsers, handleUserInput, handleUpdateUserMoney, handleUpdateUserShield, handleUpdateUserUsdt, handleUpdateUserTools, handleUserTextInput } from './handlers/users/users.handler';
 import { handleShopMenu, handleGetShopItems, handleCreateShopItem, handleShopItemInput } from './handlers/shop/shop.handler';
 import { handleTasksMenu, handleCreateTaskMenu, handleCreateTaskSubscription, handleCreateTaskInvite, handleCreateTaskExternalSub, handleGetAllTasks, handleTaskInput } from './handlers/tasks/tasks.handler';
 import { handleUpgradeMenu, handleViewUpgradeSettings, handleCreateUpgradeSettings, handleEditUpgradeSettings, handleResetSequenceMenu, handleUpgradeInput, handleResetSequence } from './handlers/upgrade/upgrade.handler';
@@ -58,6 +58,10 @@ bot.on('callback_query', async (ctx) => {
     await handleUpdateUserMoney(ctx);
   } else if (callbackData === 'update_user_shield') {
     await handleUpdateUserShield(ctx);
+  } else if (callbackData === 'update_user_usdt') {
+    await handleUpdateUserUsdt(ctx);
+  } else if (callbackData === 'update_user_tools') {
+    await handleUpdateUserTools(ctx);
   }
 
   // Shop menu
@@ -128,13 +132,19 @@ bot.on('callback_query', async (ctx) => {
 // Handle text messages
 bot.on('message:text', async (ctx) => {
   const session: any = ctx.session;
-  if (session.waitingForMoney || session.waitingForMoneyValue || session.waitingForShield || session.waitingForShieldValue) {
+  if (session.waitingForMoney || session.waitingForMoneyValue || 
+      session.waitingForShield || session.waitingForShieldValue ||
+      session.waitingForUsdt || session.waitingForUsdtValue ||
+      session.waitingForTools || session.waitingForToolsValue) {
     await handleUserTextInput(ctx);
     return;
   }
   if (session.waitingForTelegramId) {
-    // Не вызывать handleUserInput, если сейчас обновляются деньги или щит
-    if (!(session.waitingForMoney || session.waitingForMoneyValue || session.waitingForShield || session.waitingForShieldValue)) {
+    // Не вызывать handleUserInput, если сейчас обновляются параметры пользователя
+    if (!(session.waitingForMoney || session.waitingForMoneyValue || 
+          session.waitingForShield || session.waitingForShieldValue ||
+          session.waitingForUsdt || session.waitingForUsdtValue ||
+          session.waitingForTools || session.waitingForToolsValue)) {
       await handleUserInput(ctx);
     }
   } else if (session.itemType) {
