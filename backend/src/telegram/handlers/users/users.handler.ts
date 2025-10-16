@@ -59,6 +59,7 @@ export async function handleUpdateUserMenu(ctx: BotContext) {
           [{ text: '🛡️ Оновити щит', callback_data: 'update_user_shield' }],
           [{ text: '💎 Оновити USDT', callback_data: 'update_user_usdt' }],
           [{ text: '🔧 Оновити інструменти', callback_data: 'update_user_tools' }],
+          [{ text: '🎒 Оновити предмети за типом', callback_data: 'update_items_by_type_menu' }],
           [{ text: '🔙 Назад', callback_data: 'users_menu' }]
         ]
       }
@@ -71,6 +72,7 @@ export async function handleUpdateUserMenu(ctx: BotContext) {
           [{ text: '🛡️ Оновити щит', callback_data: 'update_user_shield' }],
           [{ text: '💎 Оновити USDT', callback_data: 'update_user_usdt' }],
           [{ text: '🔧 Оновити інструменти', callback_data: 'update_user_tools' }],
+          [{ text: '🎒 Оновити предмети за типом', callback_data: 'update_items_by_type_menu' }],
           [{ text: '🔙 Назад', callback_data: 'users_menu' }]
         ]
       }
@@ -208,6 +210,94 @@ export async function handleUpdateItemShield(ctx: BotContext) {
     reply_markup: {
       inline_keyboard: [
         [{ text: '🔙 Назад', callback_data: 'update_item_menu' }]
+      ]
+    }
+  });
+}
+
+export async function handleUpdateItemsByTypeMenu(ctx: BotContext) {
+  if (ctx.callbackQuery) {
+    await ctx.editMessageText('Виберіть тип предмета:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🛡️ Armor', callback_data: 'update_items_armor' }],
+          [{ text: '⛑️ Helmet', callback_data: 'update_items_helmet' }],
+          [{ text: '🦵 Leg', callback_data: 'update_items_leg' }],
+          [{ text: '🔙 Назад', callback_data: 'update_user_menu' }]
+        ]
+      }
+    });
+  } else {
+    await ctx.reply('Виберіть тип предмета:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🛡️ Armor', callback_data: 'update_items_armor' }],
+          [{ text: '⛑️ Helmet', callback_data: 'update_items_helmet' }],
+          [{ text: '🦵 Leg', callback_data: 'update_items_leg' }],
+          [{ text: '🔙 Назад', callback_data: 'update_user_menu' }]
+        ]
+      }
+    });
+  }
+}
+
+export async function handleUpdateItemsArmor(ctx: BotContext) {
+  ctx.session.waitingForItemsByTypeTelegramId = true;
+  ctx.session.itemsByTypeUpdateType = 'armor';
+  await ctx.editMessageText('Введіть Telegram ID користувача:', {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: '🔙 Назад', callback_data: 'update_items_by_type_menu' }]
+      ]
+    }
+  });
+}
+
+export async function handleUpdateItemsHelmet(ctx: BotContext) {
+  ctx.session.waitingForItemsByTypeTelegramId = true;
+  ctx.session.itemsByTypeUpdateType = 'helmet';
+  await ctx.editMessageText('Введіть Telegram ID користувача:', {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: '🔙 Назад', callback_data: 'update_items_by_type_menu' }]
+      ]
+    }
+  });
+}
+
+export async function handleUpdateItemsLeg(ctx: BotContext) {
+  ctx.session.waitingForItemsByTypeTelegramId = true;
+  ctx.session.itemsByTypeUpdateType = 'leg';
+  await ctx.editMessageText('Введіть Telegram ID користувача:', {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: '🔙 Назад', callback_data: 'update_items_by_type_menu' }]
+      ]
+    }
+  });
+}
+
+export async function handleUpdateItemsByTypeLevel(ctx: BotContext) {
+  ctx.session.waitingForItemsByTypeParameter = false;
+  ctx.session.itemsByTypeParameter = 'level';
+  ctx.session.waitingForItemsByTypeValue = true;
+  await ctx.editMessageText('Введіть новий рівень:', {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: '🔙 Назад', callback_data: 'update_items_by_type_menu' }]
+      ]
+    }
+  });
+}
+
+export async function handleUpdateItemsByTypeShield(ctx: BotContext) {
+  ctx.session.waitingForItemsByTypeParameter = false;
+  ctx.session.itemsByTypeParameter = 'shield';
+  ctx.session.waitingForItemsByTypeValue = true;
+  await ctx.editMessageText('Введіть новий щит:', {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: '🔙 Назад', callback_data: 'update_items_by_type_menu' }]
       ]
     }
   });
@@ -645,6 +735,93 @@ export async function handleUserTextInput(ctx: BotContext) {
     ctx.session.updateItemTelegramId = undefined;
     ctx.session.updateItemId = undefined;
     ctx.session.itemUpdateType = undefined;
+    return;
+  }
+  // Обновление предметов по типу
+  if (ctx.session.waitingForItemsByTypeTelegramId) {
+    const telegramId = ctx.message?.text;
+    if (!telegramId) {
+      await ctx.reply('Будь ласка, введіть коректний Telegram ID.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'update_items_by_type_menu' }]
+          ]
+        }
+      });
+      return;
+    }
+    
+    ctx.session.updateItemsByTypeTelegramId = telegramId;
+    ctx.session.waitingForItemsByTypeTelegramId = false;
+    ctx.session.waitingForItemsByTypeParameter = true;
+    
+    await ctx.reply('Виберіть параметр для оновлення:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '📈 Рівень', callback_data: 'update_items_by_type_level' }],
+          [{ text: '🛡️ Щит', callback_data: 'update_items_by_type_shield' }],
+          [{ text: '🔙 Назад', callback_data: 'update_items_by_type_menu' }]
+        ]
+      }
+    });
+    return;
+  }
+  
+  if (ctx.session.waitingForItemsByTypeValue) {
+    const value = Number(ctx.message?.text);
+    if (isNaN(value)) {
+      await ctx.reply('Будь ласка, введіть коректне число.', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'update_items_by_type_menu' }]
+          ]
+        }
+      });
+      return;
+    }
+    
+    const telegramId = ctx.session.updateItemsByTypeTelegramId;
+    const itemType = ctx.session.itemsByTypeUpdateType;
+    const parameter = ctx.session.itemsByTypeParameter;
+    
+    try {
+      const updateData: any = {
+        telegramId,
+        itemType
+      };
+      
+      if (parameter === 'level') {
+        updateData.itemLevel = value;
+      } else if (parameter === 'shield') {
+        updateData.itemShield = value;
+      }
+      
+      await axios.post(`${API_URL}/user/update-parameters`, updateData);
+      
+      const updateType = parameter === 'level' ? 'рівень' : 'щит';
+      await ctx.reply(`${updateType.charAt(0).toUpperCase() + updateType.slice(1)} всіх предметів типу '${itemType}' оновлено!`, {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'update_items_by_type_menu' }]
+          ]
+        }
+      });
+    } catch (e) {
+      const updateType = parameter === 'level' ? 'рівня' : 'щита';
+      await ctx.reply(`Помилка при оновленні ${updateType} предметів.`, {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'update_items_by_type_menu' }]
+          ]
+        }
+      });
+    }
+    
+    // Очистка сессии
+    ctx.session.waitingForItemsByTypeValue = false;
+    ctx.session.updateItemsByTypeTelegramId = undefined;
+    ctx.session.itemsByTypeUpdateType = undefined;
+    ctx.session.itemsByTypeParameter = undefined;
     return;
   }
 }

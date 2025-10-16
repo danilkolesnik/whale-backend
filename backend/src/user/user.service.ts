@@ -315,7 +315,15 @@ export class UserService {
     };
   }
 
-  async updateUserParameters(telegramId: string, updateData: Partial<{ money: number; shield: number; usdt: number; tools: number }>) {
+  async updateUserParameters(telegramId: string, updateData: Partial<{ 
+    money: number; 
+    shield: number; 
+    usdt: number; 
+    tools: number;
+    itemType?: string;
+    itemLevel?: number;
+    itemShield?: number;
+  }>) {
     const user = await this.prisma.user.findUnique({
       where: { telegramId },
     });
@@ -324,10 +332,52 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
+    let inventory = user.inventory as any[] || [];
+    let equipment = user.equipment as any[] || [];
+
+    // Update item parameters if itemType is provided
+    if (updateData.itemType) {
+      // Find items of the specified type in inventory
+      const itemsToUpdate = inventory.filter(item => item.type === updateData.itemType);
+      
+      if (itemsToUpdate.length === 0) {
+        throw new NotFoundException(`No items of type '${updateData.itemType}' found in inventory`);
+      }
+
+      // Update each item of the specified type
+      itemsToUpdate.forEach(item => {
+        if (updateData.itemLevel !== undefined) {
+          item.level = updateData.itemLevel;
+        }
+        if (updateData.itemShield !== undefined) {
+          item.shield = updateData.itemShield;
+        }
+
+        // Update the same item in equipment if it exists
+        const equippedItem = equipment.find(e => e.id === item.id);
+        if (equippedItem) {
+          if (updateData.itemLevel !== undefined) {
+            equippedItem.level = updateData.itemLevel;
+          }
+          if (updateData.itemShield !== undefined) {
+            equippedItem.shield = updateData.itemShield;
+          }
+        }
+      });
+
+      // Recalculate total shield if we updated shield values or level (since level affects shield)
+      if (updateData.itemShield !== undefined || updateData.itemLevel !== undefined) {
+        const totalShield = equipment.reduce((sum, item) => sum + (item.shield || 0), 0);
+        updateData.shield = totalShield;
+      }
+    }
+
     // Update user data
     return await this.prisma.user.update({
       where: { telegramId },
       data: {
+        inventory: inventory,
+        equipment: equipment,
         balance: {
           usdt: updateData.usdt !== undefined ? updateData.usdt : (user.balance as any).usdt,
           tools: updateData.tools !== undefined ? updateData.tools : (user.balance as any).tools,

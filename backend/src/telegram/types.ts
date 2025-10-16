@@ -37,6 +37,14 @@ export interface SessionData {
   updateItemTelegramId?: string;
   updateItemId?: number;
   itemUpdateType?: 'level' | 'shield';
+  
+  // === Добавлено для обновления предметов по типу ===
+  waitingForItemsByTypeTelegramId?: boolean;
+  waitingForItemsByTypeParameter?: boolean;
+  waitingForItemsByTypeValue?: boolean;
+  updateItemsByTypeTelegramId?: string;
+  itemsByTypeUpdateType?: 'armor' | 'helmet' | 'leg';
+  itemsByTypeParameter?: 'level' | 'shield';
 }
 
 export type BotContext = Context & {

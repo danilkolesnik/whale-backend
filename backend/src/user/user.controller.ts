@@ -477,7 +477,7 @@ export class UserController {
   @Post('update-parameters')
   @ApiOperation({ 
     summary: 'Update user parameters',
-    description: 'Updates user\'s money, shield, usdt and tools balance. Useful for admin operations or game events.'
+    description: 'Updates user\'s money, shield, usdt, tools balance and item parameters by type. Useful for admin operations or game events.'
   })
   @ApiBody({
     schema: {
@@ -512,6 +512,24 @@ export class UserController {
           description: 'New tools balance (optional)',
           example: 25,
           minimum: 0
+        },
+        itemType: {
+          type: 'string',
+          description: 'Type of items to update (optional)',
+          example: 'armor',
+          enum: ['armor', 'helmet', 'leg']
+        },
+        itemLevel: {
+          type: 'number',
+          description: 'New level for items of specified type (optional)',
+          example: 5,
+          minimum: 1
+        },
+        itemShield: {
+          type: 'number',
+          description: 'New shield value for items of specified type (optional)',
+          example: 10,
+          minimum: 0
         }
       }
     }
@@ -540,13 +558,25 @@ export class UserController {
     }
   })
   async updateUserParameters(
-    @Body() body: { telegramId: string; money?: number; shield?: number; usdt?: number; tools?: number }
+    @Body() body: { 
+      telegramId: string; 
+      money?: number; 
+      shield?: number; 
+      usdt?: number; 
+      tools?: number;
+      itemType?: string;
+      itemLevel?: number;
+      itemShield?: number;
+    }
   ) {
     return this.userService.updateUserParameters(body.telegramId, {
       money: body.money,
       shield: body.shield,
       usdt: body.usdt,
       tools: body.tools,
+      itemType: body.itemType,
+      itemLevel: body.itemLevel,
+      itemShield: body.itemShield,
     });
   }
 

@@ -1,6 +1,6 @@
 import { Bot, session } from 'grammy';
 import { BotContext } from './handlers/types';
-import { handleUsersMenu, handleViewUserMenu, handleUpdateUserMenu, handleGetAllUsers, handleUserInput, handleUpdateUserMoney, handleUpdateUserShield, handleUpdateUserUsdt, handleUpdateUserTools, handleUpdateItemMenu, handleUpdateItemLevel, handleUpdateItemShield, handleUserTextInput } from './handlers/users/users.handler';
+import { handleUsersMenu, handleViewUserMenu, handleUpdateUserMenu, handleGetAllUsers, handleUserInput, handleUpdateUserMoney, handleUpdateUserShield, handleUpdateUserUsdt, handleUpdateUserTools, handleUpdateItemMenu, handleUpdateItemLevel, handleUpdateItemShield, handleUpdateItemsByTypeMenu, handleUpdateItemsArmor, handleUpdateItemsHelmet, handleUpdateItemsLeg, handleUpdateItemsByTypeLevel, handleUpdateItemsByTypeShield, handleUserTextInput } from './handlers/users/users.handler';
 import { handleShopMenu, handleGetShopItems, handleCreateShopItem, handleShopItemInput } from './handlers/shop/shop.handler';
 import { handleTasksMenu, handleCreateTaskMenu, handleCreateTaskSubscription, handleCreateTaskInvite, handleCreateTaskExternalSub, handleGetAllTasks, handleTaskInput } from './handlers/tasks/tasks.handler';
 import { handleUpgradeMenu, handleViewUpgradeSettings, handleCreateUpgradeSettings, handleEditUpgradeSettings, handleResetSequenceMenu, handleUpgradeInput, handleResetSequence } from './handlers/upgrade/upgrade.handler';
@@ -68,6 +68,18 @@ bot.on('callback_query', async (ctx) => {
     await handleUpdateItemLevel(ctx);
   } else if (callbackData === 'update_item_shield') {
     await handleUpdateItemShield(ctx);
+  } else if (callbackData === 'update_items_by_type_menu') {
+    await handleUpdateItemsByTypeMenu(ctx);
+  } else if (callbackData === 'update_items_armor') {
+    await handleUpdateItemsArmor(ctx);
+  } else if (callbackData === 'update_items_helmet') {
+    await handleUpdateItemsHelmet(ctx);
+  } else if (callbackData === 'update_items_leg') {
+    await handleUpdateItemsLeg(ctx);
+  } else if (callbackData === 'update_items_by_type_level') {
+    await handleUpdateItemsByTypeLevel(ctx);
+  } else if (callbackData === 'update_items_by_type_shield') {
+    await handleUpdateItemsByTypeShield(ctx);
   }
 
   // Shop menu
@@ -142,7 +154,8 @@ bot.on('message:text', async (ctx) => {
       session.waitingForShield || session.waitingForShieldValue ||
       session.waitingForUsdt || session.waitingForUsdtValue ||
       session.waitingForTools || session.waitingForToolsValue ||
-      session.waitingForItemTelegramId || session.waitingForItemId || session.waitingForItemValue) {
+      session.waitingForItemTelegramId || session.waitingForItemId || session.waitingForItemValue ||
+      session.waitingForItemsByTypeTelegramId || session.waitingForItemsByTypeParameter || session.waitingForItemsByTypeValue) {
     await handleUserTextInput(ctx);
     return;
   }
@@ -152,7 +165,8 @@ bot.on('message:text', async (ctx) => {
           session.waitingForShield || session.waitingForShieldValue ||
           session.waitingForUsdt || session.waitingForUsdtValue ||
           session.waitingForTools || session.waitingForToolsValue ||
-          session.waitingForItemTelegramId || session.waitingForItemId || session.waitingForItemValue)) {
+          session.waitingForItemTelegramId || session.waitingForItemId || session.waitingForItemValue ||
+          session.waitingForItemsByTypeTelegramId || session.waitingForItemsByTypeParameter || session.waitingForItemsByTypeValue)) {
       await handleUserInput(ctx);
     }
   } else if (session.itemType) {
