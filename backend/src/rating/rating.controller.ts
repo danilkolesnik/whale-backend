@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Put } from '@nestjs/common';
 import { RatingService } from './rating.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 
@@ -47,5 +47,29 @@ export class RatingController {
   @ApiResponse({ status: 200, description: 'Rating reset successfully' })
   async resetRating() {
     return this.ratingService.resetWeeklyRating();
+  }
+
+  @Get('rewards')
+  @ApiOperation({ summary: 'List rating rewards' })
+  @ApiResponse({ status: 200, description: 'Current rewards for places' })
+  async getRewards() {
+    return this.ratingService.getRatingRewards();
+  }
+
+  @Put('rewards')
+  @ApiOperation({ summary: 'Set reward for a place' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        place: { type: 'number', example: 1 },
+        reward: { type: 'number', example: 12345 },
+      },
+      required: ['place', 'reward']
+    }
+  })
+  @ApiResponse({ status: 200, description: 'Reward updated' })
+  async setReward(@Body('place') place: number, @Body('reward') reward: number) {
+    return this.ratingService.setRatingReward(Number(place), Number(reward));
   }
 } 

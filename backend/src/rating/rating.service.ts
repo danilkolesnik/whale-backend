@@ -220,4 +220,16 @@ export class RatingService {
 
     console.log('Created new rating round with', eligibleUserIds.length, 'eligible users');
   } 
+  
+  async getRatingRewards() {
+    return this.prisma.ratingReward.findMany({ orderBy: { place: 'asc' } });
+  }
+
+  async setRatingReward(place: number, reward: number) {
+    return this.prisma.ratingReward.upsert({
+      where: { place },
+      update: { reward },
+      create: { place, reward }
+    });
+  }
 } 
