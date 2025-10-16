@@ -24,7 +24,7 @@ export async function handleViewRewards(ctx: BotContext) {
   try {
     const { data } = await axios.get(`${API_URL}/rating/rewards`);
     const lines = (data || [])
-      .map((r: any) => `Место ${r.place}: ${r.reward}`)
+      .map((r: any) => `Місце ${r.place}: ${r.reward}`)
       .join('\n');
     await ctx.editMessageText(lines || 'Нагороди не налаштовані', {
       reply_markup: {
@@ -80,7 +80,13 @@ export async function handleRatingTextInput(ctx: BotContext) {
         place: Number(session.rewardPlace),
         reward: Number(reward)
       }, { headers: { 'Content-Type': 'application/json' } });
-      await ctx.reply(`Нагороду для місця ${session.rewardPlace} оновлено: ${reward}`);
+      await ctx.reply(`Нагороду для місця ${session.rewardPlace} оновлено: ${reward}` , {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔙 Назад', callback_data: 'rating_menu' }]
+          ]
+        }
+      });
     } catch (e) {
       await ctx.reply('Помилка під час збереження нагороди');
     } finally {
