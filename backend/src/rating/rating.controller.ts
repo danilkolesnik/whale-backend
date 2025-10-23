@@ -39,7 +39,7 @@ export class RatingController {
   @ApiOperation({ summary: 'Create rating' })
   @ApiResponse({ status: 200, description: 'Rating created successfully' })
   async createRating() {
-    return this.ratingService.createRating();
+    return this.ratingService.resetWeeklyRating();
   }
 
   @Post('reset')
