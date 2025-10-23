@@ -118,6 +118,11 @@ export class RatingService {
       rewards.map(r => [r.place, r.reward])
     );
 
+    console.log('[Rating Rewards] Starting distribution', {
+      topUsersCount: topUsers.length,
+      rewardsConfig: rewards
+    });
+
     for (let i = 0; i < topUsers.length; i++) {
       const place = i + 1;
       const reward = placeToReward.get(place) || 0;
@@ -132,18 +137,28 @@ export class RatingService {
         console.error('Invalid balance format for user:', topUsers[i].telegramId);
       }
 
+      const beforeTools = topUsers[i].tools || 0;
+      const afterTools = beforeTools + reward;
+
+      console.log(
+        `[Rating Rewards] Place ${place}: ${topUsers[i].displayName} (${topUsers[i].telegramId}) ` +
+        `reward=+${reward} tools (before=${beforeTools}, after=${afterTools})`
+      );
+
       await this.prisma.user.update({
         where: { telegramId: topUsers[i].telegramId },
         data: {
           balance: {
             money: money,
-            tools: topUsers[i].tools + reward,
+            tools: afterTools,
             shield: topUsers[i].shield,
             usdt: topUsers[i].usdt
           }
         }
       });
     }
+
+    console.log('[Rating Rewards] Distribution finished');
   }
 
   async getRatingList() {
