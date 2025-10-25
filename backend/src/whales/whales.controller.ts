@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/s
 import { WhalesService } from './whales.service';
 import { CreateWhaleDto } from './dto/create-whale.dto';
 import { ContributeToWhaleDto } from './dto/contribute-to-whale.dto';
+import { WhaleResponseDto } from './dto/whale-response.dto';
 import { Whale } from './interfaces/whale.interface';
 
 @ApiTags('Whales')
@@ -16,7 +17,7 @@ export class WhalesController {
   @ApiResponse({ 
     status: 201, 
     description: 'Whale successfully created',
-    type: Object
+    type: WhaleResponseDto
   })
   @ApiResponse({ 
     status: 400, 
@@ -35,9 +36,9 @@ export class WhalesController {
     schema: {
       type: 'object',
       properties: {
-        success: { type: 'boolean' },
-        message: { type: 'string' },
-        whale: { type: 'object' }
+        success: { type: 'boolean', example: true },
+        message: { type: 'string', example: 'Successfully contributed 100.5 to whale abc123def' },
+        whale: { $ref: '#/components/schemas/WhaleResponseDto' }
       }
     }
   })
@@ -58,7 +59,7 @@ export class WhalesController {
   @ApiResponse({ 
     status: 200, 
     description: 'List of all whales',
-    type: [Object]
+    type: [WhaleResponseDto]
   })
   findAll(): Whale[] {
     return this.whalesService.findAll();
@@ -74,7 +75,7 @@ export class WhalesController {
   @ApiResponse({ 
     status: 200, 
     description: 'Whale found',
-    type: Object
+    type: WhaleResponseDto
   })
   @ApiResponse({ 
     status: 404, 
