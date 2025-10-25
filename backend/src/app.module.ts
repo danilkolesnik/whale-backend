@@ -17,6 +17,7 @@ import { TonCheckModule } from './ton-check/ton-check.module';
 import { DailyTasksModule } from './dailyTasks/daily-tasks.module';
 import { RatingModule } from './rating/rating.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { WhalesModule } from './whales/whales.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { TransactionModule } from './transaction/transaction.module';
     ScheduleModule.forRoot(),
     RatingModule,
     TransactionModule,
+    WhalesModule,
   ],
   controllers: [AppController],
   providers: [AppService, CronService],
