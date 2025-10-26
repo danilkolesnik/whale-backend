@@ -30,7 +30,7 @@ export class WhalesService {
   async contributeToWhale(contributeDto: ContributeToWhaleDto): Promise<{ success: boolean; message: string; whale?: Whale; prize?: number; winner?: string }> {
     const { userId, whaleId, amount } = contributeDto;
 
-    // Найти кита в БД
+
     const whaleDb = await this.prisma.whale.findUnique({
       where: { id: whaleId }
     });
@@ -77,7 +77,14 @@ export class WhalesService {
       },
     });
 
-    const updatedUsers = [...whale.users, userId];
+    let updatedUsers: string[] = [];
+
+    if(whale.users.includes(userId)){
+      updatedUsers = [...whale.users];
+    }else{
+      updatedUsers = [...whale.users, userId];
+    }
+    
     const updatedMoneyTotal = whale.moneyTotal + amount;
     
     const oldMoneyTotal = whale.moneyTotal;
