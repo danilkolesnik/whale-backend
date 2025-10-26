@@ -137,57 +137,43 @@ export class WhalesService {
     updatedUsers: string[],
     currentUserId: string
   ): Promise<{ prize?: number; prizeWinner?: string; moneyTotal?: number; users?: string[] }> {
-    // Вычисляем сколько полных циклов прошло
-    const oldCycles = Math.floor(oldMoneyTotal / totalMilestone);
-    const newCycles = Math.floor(updatedMoneyTotal / totalMilestone);
-    const cyclesPassed = newCycles - oldCycles;
-    
-    // Если прошли через новую границу цикла (или сразу превысили total)
-    if (cyclesPassed > 0 && updatedUsers.length > 0) {
-      // Приз = весь total от кита (например, если кит с total=100k, приз = 100k)
+    // Если moneyTotal превысил total, выдаем приз один раз и всё обнуляем
+    if (updatedMoneyTotal >= totalMilestone && updatedUsers.length > 0) {
       const prize = totalMilestone;
-      let lastWinner: string | undefined = undefined;
-
+      
       const recentContributors = [...new Set(updatedUsers)];
+      const winner = recentContributors[Math.floor(Math.random() * recentContributors.length)];
 
-      // Выдаем приз за каждый пройденный цикл
-      for (let i = 0; i < cyclesPassed; i++) {
-        const winner = recentContributors[Math.floor(Math.random() * recentContributors.length)];
-        lastWinner = winner;
+      const winnerUser = await this.prisma.user.findUnique({
+        where: { telegramId: winner }
+      });
 
-        const winnerUser = await this.prisma.user.findUnique({
-          where: { telegramId: winner }
-        });
-
-        if (winnerUser) {
-          const winnerBalance = winnerUser.balance as { money: number; shield: number; tools: number; usdt: number };
-          
-          await this.prisma.user.update({
-            where: { telegramId: winner },
-            data: {
-              balance: {
-                money: winnerBalance.money + prize,
-                shield: winnerBalance.shield,
-                tools: winnerBalance.tools,
-                usdt: winnerBalance.usdt,
-              },
+      if (winnerUser) {
+        const winnerBalance = winnerUser.balance as { money: number; shield: number; tools: number; usdt: number };
+        
+        await this.prisma.user.update({
+          where: { telegramId: winner },
+          data: {
+            balance: {
+              money: winnerBalance.money + prize,
+              shield: winnerBalance.shield,
+              tools: winnerBalance.tools,
+              usdt: winnerBalance.usdt,
             },
-          });
-        }
+          },
+        });
       }
 
-      // Вычисляем остаток
-      const remainder = updatedMoneyTotal % totalMilestone;
-
+      // После выдачи приза всё обнуляется
       return { 
         prize, 
-        prizeWinner: lastWinner,
-        moneyTotal: remainder,
-        users: remainder > 0 ? updatedUsers : []
+        prizeWinner: winner,
+        moneyTotal: 0,
+        users: []
       };
     }
 
-    // Если не достигли максимума цикла, оставляем как есть
+    // Если еще не достигли total, оставляем как есть
     return {
       moneyTotal: updatedMoneyTotal,
       users: updatedUsers
