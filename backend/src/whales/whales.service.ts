@@ -178,7 +178,7 @@ export class WhalesService {
 
   async findAll(): Promise<Whale[]> {
     const whales = await this.prisma.whale.findMany({
-      orderBy: { createdAt: 'desc' }
+      orderBy: { total: 'asc' }
     });
 
     return whales.map(whale => ({
