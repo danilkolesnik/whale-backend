@@ -138,9 +138,8 @@ export class WhalesService {
     currentUserId: string
   ): Promise<{ prize?: number; prizeWinner?: string; moneyTotal?: number; users?: string[] }> {
     const prizeRange = { min: 1, max: 40 };
-    const milestoneReached = oldMoneyTotal < totalMilestone && updatedMoneyTotal >= totalMilestone;
 
-    if (milestoneReached) {
+    if (updatedMoneyTotal >= totalMilestone) {
       const prizePercentage = Math.random() * (prizeRange.max - prizeRange.min) + prizeRange.min;
       const prize = Math.floor((totalMilestone * prizePercentage) / 100);
 
@@ -166,8 +165,6 @@ export class WhalesService {
               },
             },
           });
-
-          // Обнуляем moneyTotal для следующего цикла
           return { 
             prize, 
             prizeWinner: winner,
