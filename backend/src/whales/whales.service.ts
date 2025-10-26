@@ -90,12 +90,11 @@ export class WhalesService {
     const oldMoneyTotal = whale.moneyTotal;
     
     const result = await this.checkAndDistributePrize(
-      whaleDb.id,
       whale.total,
       oldMoneyTotal,
-      amount,
       updatedMoneyTotal,
-      updatedUsers
+      updatedUsers,
+      userId
     );
 
     // Обновить кита в БД
@@ -111,11 +110,13 @@ export class WhalesService {
       where: { id: whaleId }
     });
 
+    const hasWon = result.prizeWinner === userId;
+
     return {
-      success: true,
-      message: result.prizeWinner 
-        ? `Successfully contributed ${amount} to whale ${whaleId}. Prize of ${result.prize} awarded to ${result.prizeWinner}!`
-        : `Successfully contributed ${amount} to whale ${whaleId}`,
+      success: hasWon,
+      message: hasWon
+        ? `Congratulations! You won the prize of ${result.prize}!`
+        : `Your contribution of ${amount} was successful. The prize was awarded to another player.`,
       whale: updatedWhale ? {
         id: updatedWhale.id,
         total: updatedWhale.total,
@@ -130,12 +131,11 @@ export class WhalesService {
   }
 
   private async checkAndDistributePrize(
-    whaleId: string,
     totalMilestone: number,
     oldMoneyTotal: number,
-    contributionAmount: number,
     updatedMoneyTotal: number,
-    updatedUsers: string[]
+    updatedUsers: string[],
+    currentUserId: string
   ): Promise<{ prize?: number; prizeWinner?: string; moneyTotal?: number; users?: string[] }> {
     const prizeRange = { min: 1, max: 40 };
     const milestoneReached = oldMoneyTotal < totalMilestone && updatedMoneyTotal >= totalMilestone;
@@ -167,6 +167,7 @@ export class WhalesService {
             },
           });
 
+          // Обнуляем moneyTotal для следующего цикла
           return { 
             prize, 
             prizeWinner: winner,
