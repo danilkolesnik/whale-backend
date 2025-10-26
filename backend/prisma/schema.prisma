@@ -149,3 +149,12 @@ model UserTask {
 
   @@unique([userId, taskId])
 }
+
+model Whale {
+  id         String   @id @default(uuid())
+  total      Float    // Total amount that users should contribute
+  users      Json     @default("[]") // Array of user IDs who contributed
+  moneyTotal Float    @default(0) // Total amount already contributed
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}

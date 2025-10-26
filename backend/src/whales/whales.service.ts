@@ -6,30 +6,47 @@ import { Whale } from './interfaces/whale.interface';
 
 @Injectable()
 export class WhalesService {
-  private whales: Whale[] = [];
-
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createWhaleDto: CreateWhaleDto): Whale {
-    const whale: Whale = {
-      id: this.generateId(),
-      ...createWhaleDto,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+  async create(createWhaleDto: CreateWhaleDto): Promise<Whale> {
+    const whaleDb = await this.prisma.whale.create({
+      data: {
+        total: createWhaleDto.total,
+        users: createWhaleDto.users,
+        moneyTotal: createWhaleDto.moneyTotal,
+      },
+    });
 
-    this.whales.push(whale);
-    return whale;
+    return {
+      id: whaleDb.id,
+      total: whaleDb.total,
+      users: whaleDb.users as string[],
+      moneyTotal: whaleDb.moneyTotal,
+      createdAt: whaleDb.createdAt,
+      updatedAt: whaleDb.updatedAt,
+    };
   }
 
   async contributeToWhale(contributeDto: ContributeToWhaleDto): Promise<{ success: boolean; message: string; whale?: Whale; prize?: number; winner?: string }> {
     const { userId, whaleId, amount } = contributeDto;
 
-    // Найти кита
-    const whale = this.whales.find(w => w.id === whaleId);
-    if (!whale) {
+    // Найти кита в БД
+    const whaleDb = await this.prisma.whale.findUnique({
+      where: { id: whaleId }
+    });
+    
+    if (!whaleDb) {
       throw new NotFoundException('Whale not found');
     }
+
+    const whale: Whale = {
+      id: whaleDb.id,
+      total: whaleDb.total,
+      users: whaleDb.users as string[],
+      moneyTotal: whaleDb.moneyTotal,
+      createdAt: whaleDb.createdAt,
+      updatedAt: whaleDb.updatedAt,
+    };
 
     // Найти пользователя в базе данных
     const user = await this.prisma.user.findUnique({
@@ -60,60 +77,70 @@ export class WhalesService {
       },
     });
 
-    // Обновить данные кита
-    const whaleIndex = this.whales.findIndex(w => w.id === whaleId);
-    if (whaleIndex !== -1) {
-      const oldMoneyTotal = this.whales[whaleIndex].moneyTotal;
-      this.whales[whaleIndex].moneyTotal += amount;
-      this.whales[whaleIndex].users.push(userId);
-      this.whales[whaleIndex].updatedAt = new Date();
-      
-      const result = await this.checkAndDistributePrize(whaleIndex, oldMoneyTotal, amount);
+    const updatedUsers = [...whale.users, userId];
+    const updatedMoneyTotal = whale.moneyTotal + amount;
+    
+    const oldMoneyTotal = whale.moneyTotal;
+    
+    const result = await this.checkAndDistributePrize(
+      whaleDb.id,
+      whale.total,
+      oldMoneyTotal,
+      amount,
+      updatedMoneyTotal,
+      updatedUsers
+    );
 
-      return {
-        success: true,
-        message: result.prizeWinner 
-          ? `Successfully contributed ${amount} to whale ${whaleId}. Prize of ${result.prize} awarded to ${result.prizeWinner}!`
-          : `Successfully contributed ${amount} to whale ${whaleId}`,
-        whale: this.whales[whaleIndex],
-        prize: result.prize,
-        winner: result.prizeWinner
-      };
-    }
+    // Обновить кита в БД
+    await this.prisma.whale.update({
+      where: { id: whaleId },
+      data: {
+        moneyTotal: result.moneyTotal ?? updatedMoneyTotal,
+        users: result.users ?? updatedUsers,
+      },
+    });
+
+    const updatedWhale = await this.prisma.whale.findUnique({
+      where: { id: whaleId }
+    });
 
     return {
       success: true,
-      message: `Successfully contributed ${amount} to whale ${whaleId}`,
-      whale: this.whales[whaleIndex]
+      message: result.prizeWinner 
+        ? `Successfully contributed ${amount} to whale ${whaleId}. Prize of ${result.prize} awarded to ${result.prizeWinner}!`
+        : `Successfully contributed ${amount} to whale ${whaleId}`,
+      whale: updatedWhale ? {
+        id: updatedWhale.id,
+        total: updatedWhale.total,
+        users: updatedWhale.users as string[],
+        moneyTotal: updatedWhale.moneyTotal,
+        createdAt: updatedWhale.createdAt,
+        updatedAt: updatedWhale.updatedAt,
+      } : whale,
+      prize: result.prize,
+      winner: result.prizeWinner
     };
   }
 
-  private async checkAndDistributePrize(whaleIndex: number, oldMoneyTotal: number, contributionAmount: number): Promise<{ prize?: number; prizeWinner?: string }> {
-    const whale = this.whales[whaleIndex];
-    const prizeRange = { min: 1, max: 40 }; // 1-40% приз
-    
-    // Проверяем, достигли ли мы кратного 100k или total
-    const totalMilestone = whale.total;
-    const contributionEnd = whale.moneyTotal;
-
-    // Проверяем, пересекает ли внесение границу total (100% пулла)
-    const milestoneReached = oldMoneyTotal < totalMilestone && contributionEnd >= totalMilestone;
+  private async checkAndDistributePrize(
+    whaleId: string,
+    totalMilestone: number,
+    oldMoneyTotal: number,
+    contributionAmount: number,
+    updatedMoneyTotal: number,
+    updatedUsers: string[]
+  ): Promise<{ prize?: number; prizeWinner?: string; moneyTotal?: number; users?: string[] }> {
+    const prizeRange = { min: 1, max: 40 };
+    const milestoneReached = oldMoneyTotal < totalMilestone && updatedMoneyTotal >= totalMilestone;
 
     if (milestoneReached) {
-      // Рассчитываем размер приза (1-40% от total)
       const prizePercentage = Math.random() * (prizeRange.max - prizeRange.min) + prizeRange.min;
-      const prize = Math.floor((whale.total * prizePercentage) / 100);
+      const prize = Math.floor((totalMilestone * prizePercentage) / 100);
 
-      // Находим пользователей, которые внесли монеты после 60% пулла (последние 40%)
-      const prizeStartRange = Math.floor(totalMilestone * 0.6);
-      
-      // Для упрощения берем последних пользователей (можно улучшить хранением истории)
-      if (whale.users.length > 0) {
-        // Берем последних пользователей как потенциальных кандидатов
-        const recentContributors = [...new Set(whale.users)]; // уникальные пользователи
+      if (updatedUsers.length > 0) {
+        const recentContributors = [...new Set(updatedUsers)];
         const winner = recentContributors[Math.floor(Math.random() * recentContributors.length)];
 
-        // Выдаем приз победителю
         const winnerUser = await this.prisma.user.findUnique({
           where: { telegramId: winner }
         });
@@ -133,27 +160,53 @@ export class WhalesService {
             },
           });
 
-          // Обнуляем пулл для следующего цикла
-          this.whales[whaleIndex].moneyTotal = 0;
-          this.whales[whaleIndex].users = [];
-
-          return { prize, prizeWinner: winner };
+          return { 
+            prize, 
+            prizeWinner: winner,
+            moneyTotal: 0,
+            users: []
+          };
         }
       }
     }
 
-    return {};
+    return {
+      moneyTotal: updatedMoneyTotal,
+      users: updatedUsers
+    };
   }
 
-  findAll(): Whale[] {
-    return this.whales;
+  async findAll(): Promise<Whale[]> {
+    const whales = await this.prisma.whale.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+
+    return whales.map(whale => ({
+      id: whale.id,
+      total: whale.total,
+      users: whale.users as string[],
+      moneyTotal: whale.moneyTotal,
+      createdAt: whale.createdAt,
+      updatedAt: whale.updatedAt,
+    }));
   }
 
-  findOne(id: string): Whale | undefined {
-    return this.whales.find(whale => whale.id === id);
-  }
+  async findOne(id: string): Promise<Whale | null> {
+    const whaleDb = await this.prisma.whale.findUnique({
+      where: { id }
+    });
 
-  private generateId(): string {
-    return Math.random().toString(36).substr(2, 9);
+    if (!whaleDb) {
+      return null;
+    }
+
+    return {
+      id: whaleDb.id,
+      total: whaleDb.total,
+      users: whaleDb.users as string[],
+      moneyTotal: whaleDb.moneyTotal,
+      createdAt: whaleDb.createdAt,
+      updatedAt: whaleDb.updatedAt,
+    };
   }
 }

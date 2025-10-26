@@ -23,7 +23,7 @@ export class WhalesController {
     status: 400, 
     description: 'Bad request - invalid data' 
   })
-  create(@Body() createWhaleDto: CreateWhaleDto): Whale {
+  async create(@Body() createWhaleDto: CreateWhaleDto): Promise<Whale> {
     return this.whalesService.create(createWhaleDto);
   }
 
@@ -63,7 +63,7 @@ export class WhalesController {
     description: 'List of all whales',
     type: [WhaleResponseDto]
   })
-  findAll(): Whale[] {
+  async findAll(): Promise<Whale[]> {
     return this.whalesService.findAll();
   }
 
@@ -83,7 +83,7 @@ export class WhalesController {
     status: 404, 
     description: 'Whale not found' 
   })
-  findOne(@Param('id') id: string): Whale | undefined {
+  async findOne(@Param('id') id: string): Promise<Whale | null> {
     return this.whalesService.findOne(id);
   }
 }
