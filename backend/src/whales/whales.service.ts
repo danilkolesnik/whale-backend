@@ -97,7 +97,7 @@ export class WhalesService {
       userId
     );
 
-    // Обновить кита в БД
+    // Сначала обновляем кита в БД с новым moneyTotal (или 0, если был приз)
     await this.prisma.whale.update({
       where: { id: whaleId },
       data: {
@@ -137,13 +137,14 @@ export class WhalesService {
     updatedUsers: string[],
     currentUserId: string
   ): Promise<{ prize?: number; prizeWinner?: string; moneyTotal?: number; users?: string[] }> {
-    const prizeRange = { min: 1, max: 40 };
-
     if (updatedMoneyTotal >= totalMilestone) {
-      const prizePercentage = Math.random() * (prizeRange.max - prizeRange.min) + prizeRange.min;
-      const prize = Math.floor((totalMilestone * prizePercentage) / 100);
+      // Проверяем, был ли уже обнулен пулл (если moneyTotal уже достиг total)
+      const shouldDistributePrize = oldMoneyTotal < totalMilestone;
 
-      if (updatedUsers.length > 0) {
+      if (shouldDistributePrize && updatedUsers.length > 0) {
+        // Победитель получает всю сумму, которая накопилась в moneyTotal до обнуления
+        const prize = updatedMoneyTotal;
+
         const recentContributors = [...new Set(updatedUsers)];
         const winner = recentContributors[Math.floor(Math.random() * recentContributors.length)];
 
@@ -165,6 +166,8 @@ export class WhalesService {
               },
             },
           });
+
+          // После выдачи приза обнуляем пулл для следующего цикла
           return { 
             prize, 
             prizeWinner: winner,
