@@ -137,16 +137,23 @@ export class WhalesService {
     updatedUsers: string[],
     currentUserId: string
   ): Promise<{ prize?: number; prizeWinner?: string; moneyTotal?: number; users?: string[] }> {
-    if (updatedMoneyTotal >= totalMilestone) {
-      // Проверяем, был ли уже обнулен пулл (если moneyTotal уже достиг total)
-      const shouldDistributePrize = oldMoneyTotal < totalMilestone;
+    // Вычисляем сколько полных циклов прошло
+    const oldCycles = Math.floor(oldMoneyTotal / totalMilestone);
+    const newCycles = Math.floor(updatedMoneyTotal / totalMilestone);
+    const cyclesPassed = newCycles - oldCycles;
+    
+    // Если прошли через новую границу цикла (или сразу превысили total)
+    if (cyclesPassed > 0 && updatedUsers.length > 0) {
+      // Приз = весь total от кита (например, если кит с total=100k, приз = 100k)
+      const prize = totalMilestone;
+      let lastWinner: string | undefined = undefined;
 
-      if (shouldDistributePrize && updatedUsers.length > 0) {
-        // Победитель получает всю сумму, которая накопилась в moneyTotal до обнуления
-        const prize = updatedMoneyTotal;
+      const recentContributors = [...new Set(updatedUsers)];
 
-        const recentContributors = [...new Set(updatedUsers)];
+      // Выдаем приз за каждый пройденный цикл
+      for (let i = 0; i < cyclesPassed; i++) {
         const winner = recentContributors[Math.floor(Math.random() * recentContributors.length)];
+        lastWinner = winner;
 
         const winnerUser = await this.prisma.user.findUnique({
           where: { telegramId: winner }
@@ -166,18 +173,21 @@ export class WhalesService {
               },
             },
           });
-
-          // После выдачи приза обнуляем пулл для следующего цикла
-          return { 
-            prize, 
-            prizeWinner: winner,
-            moneyTotal: 0,
-            users: []
-          };
         }
       }
+
+      // Вычисляем остаток
+      const remainder = updatedMoneyTotal % totalMilestone;
+
+      return { 
+        prize, 
+        prizeWinner: lastWinner,
+        moneyTotal: remainder,
+        users: remainder > 0 ? updatedUsers : []
+      };
     }
 
+    // Если не достигли максимума цикла, оставляем как есть
     return {
       moneyTotal: updatedMoneyTotal,
       users: updatedUsers
