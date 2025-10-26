@@ -38,7 +38,9 @@ export class WhalesController {
       properties: {
         success: { type: 'boolean', example: true },
         message: { type: 'string', example: 'Successfully contributed 100.5 to whale abc123def' },
-        whale: { $ref: '#/components/schemas/WhaleResponseDto' }
+        whale: { $ref: '#/components/schemas/WhaleResponseDto' },
+        prize: { type: 'number', example: 250 },
+        winner: { type: 'string', example: 'user123' }
       }
     }
   })
