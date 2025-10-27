@@ -5,6 +5,7 @@ import { handleShopMenu, handleGetShopItems, handleCreateShopItem, handleShopIte
 import { handleTasksMenu, handleCreateTaskMenu, handleCreateTaskSubscription, handleCreateTaskInvite, handleCreateTaskExternalSub, handleGetAllTasks, handleTaskInput } from './handlers/tasks/tasks.handler';
 import { handleUpgradeMenu, handleViewUpgradeSettings, handleCreateUpgradeSettings, handleEditUpgradeSettings, handleResetSequenceMenu, handleUpgradeInput, handleResetSequence } from './handlers/upgrade/upgrade.handler';
 import { handleRatingMenu, handleViewRewards, handleSetRewardPrompt, handleRatingTextInput } from './handlers/rating/rating.handler';
+import { handleWhalesMenu, handleGetAllWhales } from './handlers/whales/whales.handler';
 
 const bot = new Bot<BotContext>(process.env.TELEGRAM_BOT_TOKEN || '');
 
@@ -34,8 +35,9 @@ bot.command('admin', async (ctx) => {
         [{ text: '👥 Користувачі', callback_data: 'users_menu' }],
         [{ text: '🛍️ Магазин', callback_data: 'shop_menu' }],
         [{ text: '📋 Завдання', callback_data: 'tasks_menu' }],
-        [{ text: '⚙️ Налаштування прокачки', callback_data: 'upgrade_menu' }],
-        [{ text: '🏅 Рейтинг', callback_data: 'rating_menu' }]
+        // [{ text: '⚙️ Налаштування прокачки', callback_data: 'upgrade_menu' }],
+        [{ text: '🏅 Рейтинг', callback_data: 'rating_menu' }],
+        [{ text: '🐋 Кити', callback_data: 'whales_menu' }]
       ]
     }
   });
@@ -143,6 +145,13 @@ bot.on('callback_query', async (ctx) => {
     await handleSetRewardPrompt(ctx);
   }
 
+  // Whales menu
+  else if (callbackData === 'whales_menu') {
+    await handleWhalesMenu(ctx);
+  } else if (callbackData === 'get_all_whales') {
+    await handleGetAllWhales(ctx);
+  }
+
   // Navigation
   else if (callbackData === 'back_to_main') {
     await ctx.editMessageText('Головне меню:', {
@@ -151,8 +160,9 @@ bot.on('callback_query', async (ctx) => {
           [{ text: '👥 Користувачі', callback_data: 'users_menu' }],
           [{ text: '🛍️ Магазин', callback_data: 'shop_menu' }],
           [{ text: '📋 Завдання', callback_data: 'tasks_menu' }],
-          [{ text: '⚙️ Налаштування прокачки', callback_data: 'upgrade_menu' }],
-          [{ text: '🏅 Рейтинг', callback_data: 'rating_menu' }]
+          // [{ text: '⚙️ Налаштування прокачки', callback_data: 'upgrade_menu' }],
+          [{ text: '🏅 Рейтинг', callback_data: 'rating_menu' }],
+          [{ text: '🐋 Кити', callback_data: 'whales_menu' }]
         ]
       }
     });
