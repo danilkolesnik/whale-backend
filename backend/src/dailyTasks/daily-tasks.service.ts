@@ -288,7 +288,7 @@ export class DailyTasksService {
             completedAt: new Date()
           }
         });
-      } else if (userTask.task.type === 'external_sub') {
+      } else if (userTask.task.type === 'external_sub' || userTask.task.type === 'daily') {
         await this.prisma.userTask.update({
           where: {
             userId_taskId: {
