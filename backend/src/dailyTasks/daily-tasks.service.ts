@@ -310,8 +310,8 @@ export class DailyTasksService {
         };
       }
       const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
-      // balance.tools += userTask.task.coin;
-      balance.tools += 100;
+      balance.tools += userTask.task.coin;
+      // balance.tools += 100;
   
       const updatedUser = await this.prisma.user.update({
         where: { telegramId: userId.toString() },
@@ -379,6 +379,25 @@ export class DailyTasksService {
     } catch (error) {
       console.log(error);
       return { success: false, error: 'Failed to check subscription' };
+    }
+  }
+
+  async completeDailyTask(telegramId: string, taskId: number): Promise<{ success: boolean; error?: string }> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { telegramId: telegramId },
+        include: { tasks: true }
+      });
+      if (!user) {
+        return { success: false, error: 'User not found' };
+      }
+      const taskIdInt = parseInt(taskId.toString(), 10);
+      const userTask = await this.prisma.userTask.findUnique({
+        where: { userId_taskId: { userId: user.telegramId, taskId: taskIdInt } },
+      });
+    } catch (error) {
+      console.log(error);
+      return { success: false, error: 'Failed to complete daily task' };
     }
   }
 

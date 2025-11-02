@@ -136,13 +136,14 @@ model UpgradeSettings {
 
 model UserTask {
   id           Int      @id @default(autoincrement())
-  userId   String
+  userId       String
   taskId       Int
   status       String   // 'available', 'in_progress', 'completed'
   completedAt  DateTime?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   friendsCount Int?     // Optional field for invite tasks
+  active       Boolean  @default(true)
 
   user         User     @relation(fields: [userId], references: [telegramId])
   task         Task     @relation(fields: [taskId], references: [id])

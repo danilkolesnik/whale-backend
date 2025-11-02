@@ -1,8 +1,8 @@
 import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateTaskDto {
-  @IsEnum(['subscription', 'invite', 'external_sub'])
-  type: 'subscription' | 'invite' | 'external_sub';
+  @IsEnum(['subscription', 'invite', 'external_sub', 'daily'])
+  type: 'subscription' | 'invite' | 'external_sub' | 'daily';
 
   @IsNumber()
   coin: number;
