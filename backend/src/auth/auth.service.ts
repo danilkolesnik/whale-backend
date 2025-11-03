@@ -146,9 +146,7 @@ export class AuthService {
       
       // If user hasn't logged in today and at least one day has passed since registration, give daily bonus
       if ((!lastLogin || lastLogin < today) && today > registrationDate) {
-        updatedBalance.tools += 2;
-        
-        // Update user with new balance and lastLogin
+        // updatedBalance.tools += 2;
         await this.prisma.user.update({
           where: { id: user.id },
           data: {

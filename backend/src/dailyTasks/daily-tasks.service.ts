@@ -124,7 +124,6 @@ export class DailyTasksService {
           }
         }
       });
-
       if (existingUserTask) {
         return {
           success: false,
@@ -336,99 +335,10 @@ export class DailyTasksService {
           },
           data: {
             status: 'completed',
-            completedAt: new Date()
+            completedAt: new Date(),
+            ...(userTask.task.type === 'daily' ? { lastCompletedAt: new Date() } : {})
           }
         });
-        // For daily tasks, set lastCompletedAt to start the day window
-        if (userTask.task.type === 'daily' && !userTask.lastCompletedAt) {
-          await this.prisma.userTask.update({
-            where: {
-              userId_taskId: {
-                userId: user.telegramId,
-                taskId: taskIdInt
-              }
-            },
-            data: { lastCompletedAt: new Date() }
-          });
-        }
-      } else if (userTask.task.type === 'daily') {
-        // Проверка для daily задач: должно пройти 24 часа с последнего выполнения
-        if (userTask.lastCompletedAt) {
-          const lastCompletedAt = new Date(userTask.lastCompletedAt);
-          const now = new Date();
-          const hoursPassed = (now.getTime() - lastCompletedAt.getTime()) / (1000 * 60 * 60); // Разница в часах
-          
-          if (hoursPassed < 24) {
-            // Если прошло меньше 24 часов - возвращаем ошибку
-            return {
-              success: false,
-              error: `Task can be completed only once per 24 hours. Please wait ${Math.ceil(24 - hoursPassed)} more hours.`
-            };
-          }
-          
-          // Сохраняем данные задачи до удаления
-          const taskCoin = userTask.task.coin;
-          const taskData = { ...userTask.task, type: userTask.task.type as TaskType, taskId: userTask.task.id };
-          
-          // Выдаем награду ДО удаления задачи
-          if (!user.balance) {
-            return {
-              success: false,
-              error: 'User balance not found'
-            };
-          }
-          const balance = user.balance as { money: number; shield: number; tools: number; usdt: number };
-          balance.tools += taskCoin;
-          
-          const updatedUser = await this.prisma.user.update({
-            where: { telegramId: userId.toString() },
-            data: {
-              balance: {
-                money: balance.money,
-                shield: balance.shield,
-                tools: balance.tools,
-                usdt: balance.usdt
-              }
-            }
-          });
-          
-          // Удаляем задачу из UserTask после выдачи награды
-          await this.prisma.userTask.delete({
-            where: {
-              userId_taskId: {
-                userId: user.telegramId,
-                taskId: taskIdInt
-              }
-            }
-          });
-          
-          return {
-            success: true,
-            data: {
-              task: {
-                ...taskData,
-                status: 'completed'
-              },
-              reward: taskCoin,
-              user: updatedUser
-            }
-          };
-        } else {
-          // Если lastCompletedAt нет (первое выполнение) - выполняем задачу
-          await this.prisma.userTask.update({
-            where: {
-              userId_taskId: {
-                userId: user.telegramId,
-                taskId: taskIdInt
-              }
-            },
-            data: {
-              status: 'completed',
-              completedAt: new Date(),
-              lastCompletedAt: new Date()
-            }
-          });
-        }
       }
 
       if (!user.balance) {
