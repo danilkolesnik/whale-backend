@@ -201,41 +201,28 @@ export class DailyTasksService {
       }
 
 
-      // Daily tasks: allow once per calendar day. If done today, block; if last completion was on a previous day, delete record.
+      // Daily tasks: if lastCompletedAt != today, delete the task so user can retake it
       if (userTask.task.type === 'daily' && userTask.lastCompletedAt) {
-        const last = new Date(userTask.lastCompletedAt);
         const now = new Date();
-        const isSameDay =
-          last.getFullYear() === now.getFullYear() &&
-          last.getMonth() === now.getMonth() &&
-          last.getDate() === now.getDate();
-        if (isSameDay) {
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const last = new Date(userTask.lastCompletedAt);
+        const lastDay = new Date(last.getFullYear(), last.getMonth(), last.getDate());
+        
+        if (lastDay.getTime() !== today.getTime()) {
+          // If lastCompletedAt is not today, delete the task
+          await this.prisma.userTask.delete({
+            where: {
+              userId_taskId: {
+                userId: user.telegramId,
+                taskId: taskIdInt
+              }
+            }
+          });
           return {
             success: false,
-            error: 'Daily task already completed today'
+            error: 'Task not found for user'
           };
         }
-        // Last completion was on a previous day → cleanup the old daily task entry
-        await this.prisma.userTask.delete({
-          where: {
-            userId_taskId: {
-              userId: user.telegramId,
-              taskId: taskIdInt
-            }
-          }
-        });
-        return {
-          success: true,
-          data: {
-            task: {
-              ...userTask.task,
-              status: 'completed',
-              type: userTask.task.type as TaskType,
-              taskId: userTask.task.taskId
-            },
-            reward: 0
-          }
-        };
       }
 
       if (userTask.status === 'completed') {
